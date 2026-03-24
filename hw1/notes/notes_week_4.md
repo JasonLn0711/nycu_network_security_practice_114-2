@@ -177,11 +177,69 @@ The Linux `elf(5)` manual says ELF is the format of **Executable and Linking For
 
 That means a Linux binary is not just “a blob of bytes.” It has structure.
 
+## Plain-English meaning
+
+An **ELF file** is a Linux-style binary file with a standard internal layout.
+
+In beginner terms, you can think of it as:
+
+* the **container** that holds compiled program data,
+* plus the **labels and structure** that tell tools and the operating system how to understand that data.
+
+So ELF is not the program logic by itself. It is the organized file format that wraps that logic in a way Linux tools can inspect and the operating system can load.
+
+That is why commands like `file` and `readelf` are useful: they are not guessing blindly. They are reading a file that follows a known format.
+
 A very useful beginner distinction is:
 
 * **Object file (`.o`)** = a partly finished compiled piece
 * **Executable** = the final thing the OS can run
 * **Shared object (`.so`)** = reusable compiled library code loaded at run time ([man7.org][2])
+
+## Beginner examples
+
+Here are a few beginner-friendly examples of what that means in real life:
+
+**1. `hello.o`**
+
+If you compile with:
+
+```bash
+gcc -c hello.c
+```
+
+you get `hello.o`.
+That file is usually an **ELF relocatable object file**.
+It is real compiled machine-level code, but it is usually **not** the final runnable program yet.
+
+**2. `hello`**
+
+If you compile with:
+
+```bash
+gcc hello.c -o hello
+```
+
+you get `hello`.
+That file is usually an **ELF executable**.
+This is the one the operating system can try to run directly.
+
+**3. `libsomething.so`**
+
+A file ending in `.so` is usually a **shared object**.
+You can think of it as compiled library code that another program can use at run time instead of copying all that code into every executable.
+
+**4. A core file**
+
+If a program crashes and the system saves its memory state for debugging, that saved file can also be an ELF-related file type called a **core file**.
+You do not normally “run” it. It is more like a snapshot for investigation.
+
+So a beginner-friendly summary is:
+
+* `hello.o` = one compiled piece
+* `hello` = the runnable program
+* `libsomething.so` = shared compiled helper code
+* core file = crash snapshot for debugging
 
 ## Visual structure tree
 
