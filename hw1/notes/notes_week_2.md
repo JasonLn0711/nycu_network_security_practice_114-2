@@ -1,5 +1,3 @@
-Absolutely.
-
 Based on what you’ve told me, I’m treating you as **a beginner student learning from zero for a binary-analysis / reverse-engineering assignment**, not someone trying to become a Linux system administrator overnight. So this handout is built around the subset of Linux that will actually help you finish coursework: **not getting lost in folders, reading text output, fixing execute permissions, and running programs correctly**.
 
 ## Week 2 purpose
