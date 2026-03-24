@@ -49,6 +49,35 @@ Inside it, you might later have:
 
 The important point today is not memorizing commands. It is realizing that all of these live in **one tree**, and every path is just “a route through that tree.”
 
+**Visual map.**
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "darkMode": true,
+    "background": "#0f172a",
+    "primaryColor": "#1e293b",
+    "primaryTextColor": "#e2e8f0",
+    "primaryBorderColor": "#93c5fd",
+    "lineColor": "#cbd5e1",
+    "textColor": "#e2e8f0",
+    "mainBkg": "#111827",
+    "edgeLabelBackground": "#0b1220",
+    "noteBkgColor": "#1f2937",
+    "noteTextColor": "#f8fafc"
+  }
+} }%%
+flowchart TD
+    A["/"] --> B["home"]
+    B --> C["yourname"]
+    C --> D["reverse-hw"]
+    D --> E["binary/"]
+    D --> F["screenshots/"]
+    D --> G["report/"]
+    C -. "~ points here" .-> C
+```
+
 **If you are coming from Windows.** The biggest mental shift is this: stop thinking in terms of `C:\something\something`. In Linux, think in terms of a single tree beginning at `/`. Ubuntu’s docs explicitly call `/` the root of that unified filesystem. ([Ubuntu Documentation][2])
 
 **Mini practice.**
@@ -141,6 +170,14 @@ cd /home/yourname/reverse-hw/binary
 ```
 
 If you cannot navigate to the file, you cannot run it. This is why navigation is not a side topic; it is part of the real assignment workflow.
+
+**Quick SOP.**
+If you feel lost in the terminal:
+
+1. Run `pwd` to see exactly where you are.
+2. Run `ls` or `ls -a` to see what is in that location.
+3. Use `cd ..` to go up one level, `cd` to go home, or `cd /absolute/path` to jump directly.
+4. Run `pwd` again after moving, so you confirm the change instead of guessing.
 
 **Mini practice.**
 Try these in order:
@@ -264,6 +301,15 @@ mkdir -p project/week2/screens
 `rm` is not “move to recycle bin.” Treat it like a sharp tool.
 
 You do not need recursive deletion yet. For now, get comfortable with simple file removal only.
+
+**Quick SOP.**
+Before any file operation, especially `mv` or `rm`:
+
+1. Run `pwd` so you know which folder you are affecting.
+2. Run `ls` to confirm the target file name really exists.
+3. Use `cp` if you want a backup before renaming or deleting.
+4. Use `mv` when the goal is rename or relocation, not duplication.
+5. Use `rm` only when you are sure you no longer need the file.
 
 **Checkpoint.**
 Without looking back, explain the difference between:
@@ -401,6 +447,32 @@ means:
 * others can read
 
 No one can execute it yet.
+
+**Visual map.**
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "darkMode": true,
+    "background": "#0f172a",
+    "primaryColor": "#1e293b",
+    "primaryTextColor": "#e2e8f0",
+    "primaryBorderColor": "#93c5fd",
+    "lineColor": "#cbd5e1",
+    "textColor": "#e2e8f0",
+    "mainBkg": "#111827",
+    "edgeLabelBackground": "#0b1220",
+    "noteBkgColor": "#1f2937",
+    "noteTextColor": "#f8fafc"
+  }
+} }%%
+flowchart LR
+    A["-rw-r--r--"] --> B["-<br/>file type"]
+    A --> C["rw-<br/>user"]
+    A --> D["r--<br/>group"]
+    A --> E["r--<br/>others"]
+```
 
 **Symbolic mode examples.**
 
@@ -614,6 +686,43 @@ echo candidate_key | ./crackme
 
 To a beginner, these can look like random magic spells. They are not. They are just three different ways of feeding data to a program or saving what it prints.
 
+**Visual map.**
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "darkMode": true,
+    "background": "#0f172a",
+    "primaryColor": "#1e293b",
+    "primaryTextColor": "#e2e8f0",
+    "primaryBorderColor": "#93c5fd",
+    "lineColor": "#cbd5e1",
+    "textColor": "#e2e8f0",
+    "mainBkg": "#111827",
+    "edgeLabelBackground": "#0b1220",
+    "noteBkgColor": "#1f2937",
+    "noteTextColor": "#f8fafc"
+  }
+} }%%
+flowchart TD
+    A["You run a program"] --> B{"How is data provided?"}
+    B -->|argument| C["./checker mykey"]
+    B -->|stdin pipe| D["echo mykey | ./checker"]
+    B -->|output saved| E["./checker > result.txt"]
+    C --> F["program reads argv[1]"]
+    D --> G["program reads standard input"]
+    E --> H["shell writes stdout to file"]
+```
+
+**Quick SOP.**
+If a program does not run the way you expect:
+
+1. Check whether you meant `program` or `./program`.
+2. Decide whether the input should be an argument or standard input.
+3. If you need to save the output, add `>` and a file name.
+4. Run `echo $?` right after the command to inspect success or failure.
+
 **Mini practice.**
 Run these:
 
@@ -653,6 +762,16 @@ If you can explain those three in plain English, you are doing very well.
 **Goal.** Put the whole week together into one smooth workflow.
 
 This day is less about new facts and more about **fluency**.
+
+**Quick SOP.**
+When doing the integration lab, keep this rhythm:
+
+1. navigate with `pwd` and `cd`,
+2. inspect with `ls`,
+3. create or organize files with `mkdir`, `touch`, `cp`, `mv`,
+4. read outputs with `cat`, `head`, `tail`,
+5. verify permissions with `ls -l` and adjust with `chmod`,
+6. finish by checking `echo $?` so you know whether the last command succeeded.
 
 ## Integration lab
 

@@ -81,6 +81,32 @@ Examples:
 So when someone says “this binary is a program,” they really mean:
 **this file contains instructions that the computer can execute**.
 
+### Visual model
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "darkMode": true,
+    "background": "#0f172a",
+    "primaryColor": "#1e293b",
+    "primaryTextColor": "#e2e8f0",
+    "primaryBorderColor": "#93c5fd",
+    "lineColor": "#cbd5e1",
+    "textColor": "#e2e8f0",
+    "mainBkg": "#111827",
+    "edgeLabelBackground": "#0b1220",
+    "noteBkgColor": "#1f2937",
+    "noteTextColor": "#f8fafc"
+  }
+} }%%
+flowchart LR
+    A["Input"] --> B["Processing"]
+    B --> C["Output"]
+    A -. "key, numbers, password" .-> A
+    C -. "answer, success, failure" .-> C
+```
+
 ### Extended example for you
 
 Because you are learning this for an assignment, think of a program like a very strict grading robot.
@@ -220,6 +246,34 @@ When you run a program, the OS helps:
 
 Later, when you run a Linux binary, the OS is part of the story.
 
+### Visual model
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "darkMode": true,
+    "background": "#0f172a",
+    "primaryColor": "#1e293b",
+    "primaryTextColor": "#e2e8f0",
+    "primaryBorderColor": "#93c5fd",
+    "lineColor": "#cbd5e1",
+    "textColor": "#e2e8f0",
+    "mainBkg": "#111827",
+    "edgeLabelBackground": "#0b1220",
+    "noteBkgColor": "#1f2937",
+    "noteTextColor": "#f8fafc"
+  }
+} }%%
+flowchart LR
+    A["You"] --> B["Program"]
+    B --> C["Operating System"]
+    C --> D["Hardware"]
+    C --> E["Files"]
+    C --> F["Memory"]
+    C --> G["Keyboard / Screen"]
+```
+
 ### Extended example for you
 
 Suppose you open a game, a browser, and a music app at the same time.
@@ -319,6 +373,16 @@ Think of two ways to describe a classroom:
 * Relative: “From where you are now, go upstairs and turn left”
 
 The second description only works if I know your starting point.
+
+### Quick SOP
+
+When reading a path:
+
+1. Check whether it starts with `/`.
+2. If it starts with `/`, treat it as an absolute path from the top.
+3. If it does not, treat it as relative to your current location.
+4. Identify the final name in the path as the target file or folder.
+5. Ask yourself, “Where am I standing first?” before interpreting a relative path.
 
 ### Today’s work
 
@@ -438,6 +502,33 @@ echo hello
 * command: `echo`
 * argument: `hello`
 
+### Visual model
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "darkMode": true,
+    "background": "#0f172a",
+    "primaryColor": "#1e293b",
+    "primaryTextColor": "#e2e8f0",
+    "primaryBorderColor": "#93c5fd",
+    "lineColor": "#cbd5e1",
+    "textColor": "#e2e8f0",
+    "mainBkg": "#111827",
+    "edgeLabelBackground": "#0b1220",
+    "noteBkgColor": "#1f2937",
+    "noteTextColor": "#f8fafc"
+  }
+} }%%
+flowchart TD
+    A["Terminal window"] --> B["Shell"]
+    B --> C["Command"]
+    C --> D["Argument"]
+    C -. "example: echo" .-> C
+    D -. "example: hello" .-> D
+```
+
 ### Why this matters later
 
 A lot of security and reverse-engineering workflows happen through commands because commands are:
@@ -515,6 +606,33 @@ The executable sits somewhere in the **file system**, so you need its **path**.
 You may launch it through a **GUI** or through the **command line**.
 
 That entire chain is the foundation for your later assignment.
+
+### Visual model
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "darkMode": true,
+    "background": "#0f172a",
+    "primaryColor": "#1e293b",
+    "primaryTextColor": "#e2e8f0",
+    "primaryBorderColor": "#93c5fd",
+    "lineColor": "#cbd5e1",
+    "textColor": "#e2e8f0",
+    "mainBkg": "#111827",
+    "edgeLabelBackground": "#0b1220",
+    "noteBkgColor": "#1f2937",
+    "noteTextColor": "#f8fafc"
+  }
+} }%%
+flowchart LR
+    A["Source code"] --> B["Binary / Executable"]
+    B --> C["Operating System"]
+    C --> D["Running program"]
+    D --> E["Terminal or GUI"]
+    B -. "located by path" .-> F["File system"]
+```
 
 ### Your end-of-week task
 

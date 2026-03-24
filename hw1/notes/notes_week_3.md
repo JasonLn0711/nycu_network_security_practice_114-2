@@ -143,6 +143,33 @@ else
 
 That is the programming version of a rule.
 
+## Visual branch shape
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "darkMode": true,
+    "background": "#0f172a",
+    "primaryColor": "#1e293b",
+    "primaryTextColor": "#e2e8f0",
+    "primaryBorderColor": "#93c5fd",
+    "lineColor": "#cbd5e1",
+    "textColor": "#e2e8f0",
+    "mainBkg": "#111827",
+    "edgeLabelBackground": "#0b1220",
+    "noteBkgColor": "#1f2937",
+    "noteTextColor": "#f8fafc"
+  }
+} }%%
+flowchart TD
+    A["Check condition"] --> B{"Is it true?"}
+    B -->|yes| C["Run the if branch"]
+    B -->|no| D["Run the else branch"]
+    C --> E["Continue program"]
+    D --> E
+```
+
 ## A very important C idea
 
 In C, a condition is not “magic true/false language.”
@@ -247,6 +274,14 @@ For beginner reading:
 
 * use `while` when you think “repeat until condition changes”
 * use `for` when you think “count through positions 0, 1, 2, 3…”
+
+## Quick SOP — How to trace a loop by hand
+
+1. Write down the starting value before the loop begins.
+2. Check the loop condition exactly as written.
+3. If the condition is true, record what the loop body does this round.
+4. Apply the update step such as `i++` or `x = x - 1`.
+5. Repeat until the condition becomes false, then stop immediately.
 
 ## Student-style example
 
@@ -429,6 +464,33 @@ int main(int argc, char *argv[])
 }
 ```
 
+## Visual input paths
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "darkMode": true,
+    "background": "#0f172a",
+    "primaryColor": "#1e293b",
+    "primaryTextColor": "#e2e8f0",
+    "primaryBorderColor": "#93c5fd",
+    "lineColor": "#cbd5e1",
+    "textColor": "#e2e8f0",
+    "mainBkg": "#111827",
+    "edgeLabelBackground": "#0b1220",
+    "noteBkgColor": "#1f2937",
+    "noteTextColor": "#f8fafc"
+  }
+} }%%
+flowchart TD
+    A["User provides data"] --> B{"How does it enter?"}
+    B -->|program started with arguments| C["main(argc, argv)"]
+    B -->|program reads while running| D["stdin"]
+    C --> E["argv[1], argv[2], ..."]
+    D --> F["input function reads bytes"]
+```
+
 ## Why this matters for your future assignment
 
 A checker program may take input in two common ways:
@@ -534,6 +596,31 @@ This is really storing:
 * `0`
 
 So the array needs 4 slots, not 3. ([gnu.org][12])
+
+## Visual string layout
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "darkMode": true,
+    "background": "#0f172a",
+    "primaryColor": "#1e293b",
+    "primaryTextColor": "#e2e8f0",
+    "primaryBorderColor": "#93c5fd",
+    "lineColor": "#cbd5e1",
+    "textColor": "#e2e8f0",
+    "mainBkg": "#111827",
+    "edgeLabelBackground": "#0b1220",
+    "noteBkgColor": "#1f2937",
+    "noteTextColor": "#f8fafc"
+  }
+} }%%
+flowchart LR
+    A["word[0]<br/>'c'"] --> B["word[1]<br/>'a'"]
+    B --> C["word[2]<br/>'t'"]
+    C --> D["word[3]<br/>0 or '\\0'"]
+```
 
 ## Two library functions you will meet constantly
 
@@ -678,6 +765,14 @@ This tiny program contains almost every pattern you need this week:
 * output with `printf`
 
 That is enough to start reading simple decompiled verification logic with much less panic.
+
+## Quick SOP — How to read a tiny verifier
+
+1. Find where input enters the program, usually `argv[...]` or standard input.
+2. Mark each condition that can reject the input.
+3. Note each helper function call and guess its job from its name or arguments.
+4. Watch for string checks such as `strcmp`, length checks, and fixed literals.
+5. Identify the exact lines that print success and failure so you can trace what reaches them.
 
 ## Today’s practice
 
