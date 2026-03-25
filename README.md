@@ -2,6 +2,11 @@
 
 Study repository for the NYCU `Network Security Practice` course. This repository currently serves as a course-material archive and note-taking workspace rather than a software project: it contains lecture notes, homework-prep notes, and bundled handouts/slides used for study.
 
+## Author
+
+Jason Chia-Sheng Lin  
+PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University (NYCU)
+
 ## What This Repository Contains
 
 - `notes/`
@@ -128,13 +133,11 @@ That sequence moves from basic computing concepts to beginner reverse-engineerin
 
 ## License
 
-Original notes and documentation in this repository are licensed under `CC BY-NC 4.0`. See [LICENSE](LICENSE) for the exact scope.
+Original notes and documentation in this repository are licensed under `CC BY-NC 4.0`.
 
-Important exclusions:
-
-- `handouts/` is excluded from the repository license.
-- Any quoted text, screenshots, figures, externally hosted images, or other third-party material remain under their original terms.
-- If you intend to publish this repository publicly, verify that you have permission to redistribute the files inside `handouts/`.
+- The full legal text is in [LICENSE](LICENSE).
+- The repository-specific coverage and exclusions are described in [LICENSE_SCOPE.md](LICENSE_SCOPE.md).
+- `handouts/` and other third-party materials are not covered by the repository license.
 
 ## Disclaimer
 
