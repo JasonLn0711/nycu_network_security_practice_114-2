@@ -11,6 +11,7 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 
 - `notes/`
   - Weekly lecture notes and expanded summaries tied to class dates.
+  - Handout-aligned study notes under `notes/handouts/`, with one Markdown note per bundled slide deck.
   - Focus areas currently include introduction, malware, environment variables, access control, Linux security basics, and Set-UID / privileged programs.
 - `hw1/notes/`
   - A structured five-week self-study track for Homework 1.
@@ -41,6 +42,17 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 │       ├── notes_week_4.md
 │       └── notes_week_5.md
 └── notes/
+    ├── handouts/
+    │   ├── a_introduction.md
+    │   ├── b1_malware.md
+    │   ├── b2_environment_variables.md
+    │   ├── c1_linux_security_basics.md
+    │   ├── c2_setuid.md
+    │   ├── c3_access_control_models.md
+    │   ├── c4_bell_lapadula.md
+    │   ├── c5_selinux.md
+    │   ├── c6_windows_access_control.md
+    │   └── index.md
     ├── nsp_260225_w1.md
     ├── nsp_260304_w2-1.md
     ├── nsp_260304_w2.md
@@ -57,6 +69,21 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 | `notes/nsp_260304_w2-1.md` | Environment variables, process inheritance, linker abuse, external-program attacks | Chinese, focused on environment-variable attack surfaces |
 | `notes/nsp_260304_w2.md` | Environment variables, access control, Set-UID, service architecture, file permissions | Chinese, combines multiple week-2 topics in one file |
 | `notes/nsp_260311_w3.md` | Linux security basics, authentication, `/etc/passwd` and `/etc/shadow`, capabilities, Set-UID risks, secure design principles | Chinese, deeper host-security note |
+
+### Handout Notes
+
+| File | Tied Handout | Main Coverage |
+| --- | --- | --- |
+| `notes/handouts/a_introduction.md` | `handouts/A. Introduction.pdf` | Course structure, prerequisites, grading, and topic map |
+| `notes/handouts/b1_malware.md` | `handouts/B1. Malware.pdf` | Malware history, taxonomy, propagation, concealment, and detection mindset |
+| `notes/handouts/b2_environment_variables.md` | `handouts/B2. Environment_Variables.pptx` | Process environments, inheritance, attack surfaces, and safer invocation patterns |
+| `notes/handouts/c1_linux_security_basics.md` | `handouts/C1. Linux_Security_Basics.pdf` | Linux identities, permissions, ACLs, privilege mechanisms, and authentication basics |
+| `notes/handouts/c2_setuid.md` | `handouts/C2. SetUID.pdf` | Set-UID mechanics, attack surfaces, capability leaks, and least-privilege design |
+| `notes/handouts/c3_access_control_models.md` | `handouts/C3. Access Control Models.pdf` | Policy vs model, access matrix, ACLs vs capabilities, DAC/MAC, and later models |
+| `notes/handouts/c4_bell_lapadula.md` | `handouts/C4. Bell-LaPadula.pdf` | Confidentiality lattice, simple security condition, `*-property`, and model limitations |
+| `notes/handouts/c5_selinux.md` | `handouts/C5. SELinux.pdf` | SELinux contexts, type enforcement, transitions, policy modules, and audit-driven debugging |
+| `notes/handouts/c6_windows_access_control.md` | `handouts/C6. Windows Access Control.pdf` | Windows tokens, descriptors, integrity levels, UI isolation, and UAC |
+| `notes/handouts/index.md` | All handouts | Directory index and recommended reading order |
 
 ### Homework 1 Study Track
 
@@ -87,6 +114,9 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 - `notes/nsp_YYMMDD_wN.md`
   - Course note for a specific lecture date and week number.
   - Example: `nsp_260311_w3.md` corresponds to a note associated with `2026-03-11`, week 3.
+- `notes/handouts/<code>_<topic>.md`
+  - Handout-aligned summary note keyed to the bundled slide filename.
+  - Example: `c2_setuid.md` matches `handouts/C2. SetUID.pdf`.
 - `hw1/notes/notes_week_N.md`
   - Homework-preparation note grouped by study week rather than lecture date.
 
@@ -95,8 +125,9 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 ### For Review Before or After Class
 
 1. Start with the relevant file in `handouts/` to see the official topic framing.
-2. Read the matching file in `notes/` for expanded explanations and study-oriented organization.
-3. Add your own clarifications, examples, command snippets, or diagrams directly into the Markdown notes.
+2. Read the matching file in `notes/handouts/` for a handout-specific concept map and review checklist.
+3. Read the matching file in `notes/` for expanded explanations, mixed-language lecture detail, or broader study framing.
+4. Add your own clarifications, examples, command snippets, or diagrams directly into the Markdown notes.
 
 ### For Homework 1 Preparation
 
