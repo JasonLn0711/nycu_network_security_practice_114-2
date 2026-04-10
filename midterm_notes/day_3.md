@@ -695,6 +695,35 @@ TCP session hijacking targets an existing TCP connection. The attacker needs to 
 **Step 4：SYN queue 被塞滿**
 結果新的合法連線請求進不來，被 reject。 
 
+### Workflow 圖
+
+```mermaid
+sequenceDiagram
+    participant A as Attacker
+    participant S as Victim Server
+    participant F as 偽造來源位址
+    participant L as Legitimate Client
+
+    loop 大量送出偽造 SYN
+        A->>S: SYN(src = spoofed IP)
+        S->>S: 配置半開連線資源\n放進 SYN queue
+        S->>F: SYN+ACK
+        Note over S,F: 等待第三次 ACK
+    end
+
+    Note over S: 因為來源位址是假的\n最後 ACK 不會回來
+    Note over S: half-open entries 持續占用資源\n直到 timeout
+    Note over S: SYN queue 逐漸被塞滿
+
+    L->>S: 合法 SYN
+    S-->>L: 連線延遲、失敗或被拒絕
+
+    Note over S,L: 攻擊重點不是偷資料\n而是耗盡 server 的連線建立資源
+```
+
+這張圖的主線要背成：
+**攻擊者只要大量丟 SYN，server 就會先替每個請求保留半開連線狀態；因為等不到最後 ACK，這些 entry 會卡到 timeout，最後把 SYN queue 塞滿。**
+
 ### 4. 這題要寫的關鍵詞
 
 * spoofed source addresses
@@ -759,6 +788,59 @@ In a SYN flood attack, the attacker sends a large number of SYN packets, often w
 **Step 4：Server 從 ACK 還原先前資訊**
 例如 deduce MSS，必要時才正式建立連線。 
 
+### 補充理解：為什麼叫「先不要真的把完整 half-open state 塞進 queue」？
+
+白話來說，傳統 TCP server 在收到 SYN 的當下，就會先想：
+
+>「這個人可能真的要連進來，我先替他留一個位置。」
+
+這個「先留位置」的動作，就是把 half-open connection state 放進 SYN queue。問題是：  
+如果來的 SYN 有很多其實是假的，server 還是會先替它們保留位置，結果 queue 很快就被占滿。
+
+SYN cookie 的核心修法就是：
+
+> **收到 SYN 時，先不要急著替這條連線保留完整狀態；先把必要資訊編進 SYN+ACK 的 sequence number，等最後 ACK 真的回來，再正式建立連線。**
+
+你可以把它想成：
+
+* **沒有 SYN cookie**：有人來按門鈴，server 立刻幫他保留座位，等很久看他會不會真的進門。
+* **有 SYN cookie**：有人來按門鈴，server 先發一張「驗證票」給他；只有真的拿著票回來的人，server 才正式留座位。
+
+所以被延後的不是「整個 TCP 連線」，而是：
+
+* 不先建立完整的 half-open queue entry
+* 不先保存完整 per-connection state
+* 等 ACK 回來並驗證通過，才建立真正的連線狀態
+
+### 核心差異整理
+
+* **傳統作法**：收到 SYN 就先 allocate state，代價早付
+* **SYN cookie 作法**：收到 SYN 先回可驗證的 cookie，等 ACK 回來才 allocate state，代價延後付
+
+### Workflow 圖：傳統 TCP vs SYN Cookies
+
+```mermaid
+flowchart TD
+    A["Client 送出 SYN"] --> B{"Server 有開 SYN cookies 嗎？"}
+
+    B -- 沒有 --> C["立刻建立 half-open state"]
+    C --> D["把連線資訊放進 SYN queue<br/>例如 MSS、半開連線狀態"]
+    D --> E["Server 回 SYN+ACK"]
+    E --> F{"最後 ACK 有回來嗎？"}
+    F -- 沒有 --> G["entry 留在 queue 裡直到 timeout"]
+    G --> H["很多假 SYN 累積後<br/>SYN queue 被塞滿"]
+    F -- 有 --> I["完成三向交握<br/>建立正式連線"]
+
+    B -- 有 --> J["先不建立完整 half-open state"]
+    J --> K["把必要資訊 encode 到<br/>SYN+ACK 的 initial sequence number"]
+    K --> L["Server 回 SYN+ACK cookie"]
+    L --> M{"最後 ACK 有回來嗎？"}
+    M -- 沒有 --> N["Server 幾乎沒有替假請求保留 queue 資源"]
+    M -- 有 --> O["Server 驗證 ACK"]
+    O --> P["從 ACK 還原必要資訊"]
+    P --> Q["這時才建立真正的連線狀態"]
+```
+
 ### 4. 它為什麼有效？
 
 因為 SYN flood 的痛點就是：
@@ -770,6 +852,9 @@ SYN cookie 的思路則是：
 > **在 final ACK 回來前，我先不替你保留真正的 per-connection state。**
 
 所以 queue 不容易被塞爆。
+
+**一句話總結：**
+SYN cookie 的本質不是把攻擊流量消失，而是把 server「太早分配資源」這個弱點改掉；沒有最後 ACK，就不值得替你真正佔住 half-open queue。
 
 ### 5. 優點與缺點
 
