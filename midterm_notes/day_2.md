@@ -377,12 +377,48 @@ Because a Trojan Horse can exploit the legitimate privileges of an authorized su
 
 ### 一句話白話理解
 
-BLP 是一個專門保護 **機密不外洩** 的模型。
+BLP 是一個用**安全等級控制資訊流**的模型，重點是避免**高機密資料流到低權限對象**。
+
+### 它到底在防什麼？
+
+你可以把 BLP 想成：
+
+> 系統不是只問「你有沒有檔案權限」，而是更進一步問「這份資訊的敏感等級，能不能流到你這裡？」
+
+所以 BLP 真正在管的，不只是一般的**存取權限**，而是 **information flow**。
+
+也就是說，它在意的是：
+
+* 誰可以看到高機密資料
+* 高機密資料看完之後，能不能被寫到比較低等級的地方
+
+這也是為什麼後面一定會接到：
+
+* **no read up**
+* **no write down**
 
 ### 正式定義
 
-BLP 是 confidentiality model。
-它把 subjects 的 clearance 與 objects 的 classification 放在多層級安全結構中，目的在防止高機密資訊流向低權限對象。
+Bell-LaPadula（BLP）是一個 **multilevel security confidentiality model**。
+它把 subjects 的 **clearance** 與 objects 的 **classification** 放在同一個多層級安全結構中，並透過強制規則限制資訊流，以防止未授權揭露（unauthorized disclosure）。
+
+### 名詞先分清楚
+
+* **Clearance**：subject 被允許接觸到的最高安全等級
+* **Classification**：object 本身的敏感等級
+* **Security level**：系統拿來比較高低的安全標籤；在更完整的模型裡還可能加上 categories
+
+### 它怎麼做到？
+
+BLP 的做法其實很直觀：
+
+1. 先把人或 process（subject）標上安全等級
+2. 再把檔案、資料庫、訊息（object）標上安全等級
+3. 最後規定高等級資訊不能隨便流到低等級世界
+
+所以你可以把 BLP 理解成：
+
+> **用標籤管理資訊流，而不是只用擁有者決定權限。**
 
 ### 等級
 
@@ -402,16 +438,39 @@ flowchart TD
     C --> U["Unclassified"]
 ```
 
-高在上、低在下，資訊流應該往上，不應往下。
+高在上、低在下。
+對 **confidentiality** 來說，重點是：**高機密資訊不應往下流**。
 課堂也進一步講 security categories，形成 lattice。
+
+### 補充白話知識
+
+* BLP 最核心的關心點是 **confidentiality**，不是 integrity。
+* 它很適合描述軍事、政府這種「分級保密」的情境。
+* 它不是在回答「誰擁有這個檔案」，而是在回答「這份資訊可不可以流到這個等級」。
+* 跟 **DAC** 相比，DAC 比較像「持有權限的人可不可以操作」，BLP 比較像「這份資訊能不能流到那個安全等級」。
+
+### 考試一句話
+
+> Bell-LaPadula is a multilevel security model for confidentiality. It prevents unauthorized disclosure by controlling information flow between subjects and objects with security labels.
 
 ---
 
 ## 2. Simple Security Property = No Read Up
 
-### 白話理解
+### 一句話白話理解
 
 你不能往上讀比你等級更高的資料。
+
+### 它在擋什麼？
+
+它要擋的是：
+
+* 低等級 subject 直接看到高機密資訊
+* 因為「看到了」而造成保密性失守
+
+換句話說，simple security 是在防止：
+
+> **低權限主體直接讀到高權限物件。**
 
 ### 正式定義
 
@@ -420,6 +479,11 @@ Subject `s` can read object `o` iff:
 * `L(o) ≤ L(s)`
 * 且 `s` 對 `o` 有 read permission
   這叫 **simple security condition**，也就是 **no read up**。
+
+如果先用最直觀的方式記：
+
+* **subject 的等級要大於等於 object 的等級**
+* 才能讀
 
 ### 為什麼
 
@@ -431,6 +495,16 @@ Subject `s` can read object `o` iff:
 * Confidential 使用者不能讀 Secret 郵件檔案
   投影片示例 Tamara / Samuel / Claire / Ulaley 就是在說這個。
 
+### 補充白話知識
+
+* `No read up` 不代表高等級的人不能讀低等級資料；相反地，在 BLP 裡高等級通常可以讀低等級。
+* 這也正是為什麼後面還需要 `no write down`；不然高等級主體讀完高資料後，還是可能把內容往下寫出去。
+
+### ⚠️ 最容易搞混
+
+* 這條規則保護的是 **confidentiality**，不是 integrity。
+* 它的意思不是「高等級資料比較重要所以誰都不能碰」，而是「低等級主體不能直接看到更高等級的內容」。
+
 ### 考試模板
 
 > The simple security property states that a subject may read an object only if the subject’s security level dominates the object’s level. It is often summarized as “no read up.” 
@@ -439,9 +513,20 @@ Subject `s` can read object `o` iff:
 
 ## 3. *-Property = No Write Down
 
-### 白話理解
+### 一句話白話理解
 
 你不能把高等級資訊寫到低等級物件。
+
+### 它在擋什麼？
+
+它要擋的是：
+
+* 高等級資訊被帶到低等級世界
+* 合法讀到的機密資料，被合法寫到不該去的地方
+
+所以它防的不是「亂寫檔案」而已，而是：
+
+> **機密資訊往低等級方向外流。**
 
 ### 正式定義
 
@@ -450,6 +535,13 @@ Subject `s` can write object `o` iff:
 * `L(s) ≤ L(o)`
 * 且 `s` 對 `o` 有 write permission
   這叫 ***-property**，也就是 **no write down**。
+
+先用最直觀的方式記：
+
+* **subject 的等級不能高於 object 的等級**
+* 才能寫
+
+也就是你可以寫到**同級或更高**，但不能往更低寫。
 
 ### 為什麼超重要
 
@@ -464,6 +556,54 @@ Subject `s` can write object `o` iff:
 * B 可讀 Y，不能讀 X
 * 木馬偽裝成 A 執行，把 X 複製到 Y
 * B 再讀 Y，就等於間接讀 X。
+
+### 常見疑問釐清：那如果真的被複製到低檔了呢？
+
+很多人讀到這裡會卡住：
+
+> BLP 不是不讓高等級資訊流到低等級嗎？  
+> 那如果某個 subject 還是把高檔內容複製到低檔，別人是不是就能讀那個低檔？
+
+答案是：
+
+* **對，若複製真的成功了，外洩其實就已經發生了。**
+* 之後低等級 subject 只要對那個低等級檔案本來就有 read 權限，就可能讀到內容。
+
+也就是說，BLP 真正想阻止的關鍵步驟是：
+
+1. 高等級 subject 先讀到高等級資料
+2. 再把那份資料**寫到低等級 object**
+
+第二步就是 `*-property` 要擋的事。
+
+所以你可以這樣理解：
+
+* `no read up`：防止低等級主體**直接讀到**高資料
+* `no write down`：防止高資料被**帶到低等級檔案**
+
+如果 `high -> low` 的複製已經發生，那代表保密性已經被破壞；
+此時其他低等級 subject 是否能讀到，通常就要看：
+
+* 它對那個低等級檔案有沒有 **read permission**
+* 它本身的等級是否允許讀那個低等級 object
+
+通常答案會是「可以」，
+而這也正是為什麼 BLP 一定要在**寫入低等級檔案之前**就把它擋下來。
+
+你也可以記成一句話：
+
+> **BLP 不是等資料外洩之後再補救，而是要在 high-to-low 寫入那一步就先阻止外洩。**
+
+### 補充白話知識
+
+* `No write down` 是 BLP 最關鍵、也最常和 Trojan Horse 綁在一起考的規則。
+* 它不是說低等級檔案不能被寫，而是說**高等級 subject 不能把高資訊帶去低等級 object**。
+* 所以這條規則的本質仍然是在保護 **confidentiality**，不是在保護低等級檔案不被修改。
+
+### ⚠️ 最容易搞混
+
+* 很多人看到 `write down` 會以為這是在講檔案完整性，其實這裡講的是**資訊外洩**。
+* `No read up` 和 `no write down` 要一起看，因為 BLP 要管的是整條資訊流，而不是單一一次讀或寫的動作。
 
 ### 你考試一定要這樣寫
 

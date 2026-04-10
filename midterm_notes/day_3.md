@@ -53,6 +53,63 @@ D1 把網路協定堆疊分成四層：
 | Internet    | 網際層   | IP，負責封包在網路中轉送                |
 | Link        | 鏈路層   | Ethernet / Wi‑Fi，處理本地網路傳送    |
 
+白話理解：
+**TCP/IP stack 不是單一協定，而是一種分層合作的網路通訊架構。**
+每一層只處理自己該負責的問題，上層不用直接理解底層細節，這樣設計的好處是模組化、好維護，也比較容易替換某一層的實作。
+
+你可以把它想成「寄包裹的分工流水線」：
+
+* Application 決定你要傳什麼內容
+* Transport 決定怎麼可靠或快速地送
+* Internet 決定要送到哪個 IP
+* Link 負責在本地網路上真的把 frame 送出去
+
+### 資料實際怎麼走？
+
+送資料時，資料會**由上往下封裝（encapsulation）**；收資料時，則會**由下往上解封裝（decapsulation）**。
+
+1. **Application layer**
+   應用程式先產生資料，例如瀏覽器建立 HTTP request。
+2. **Transport layer**
+   傳輸層接手資料；如果使用 TCP，就補上連線、排序、ACK 等可靠性機制；如果使用 UDP，就用較輕量的方式傳送。
+3. **Internet layer**
+   IP 幫資料加上來源與目的 IP，決定封包如何跨網路轉送到遠端。
+4. **Link layer**
+   鏈路層把資料包成 frame，透過 Ethernet 或 Wi‑Fi 在區域網路上實際送出。
+5. **Receiver**
+   接收端收到後，會從 Link 往上拆回 Internet、Transport、Application，最後交給對應的應用程式。
+
+### 分層觀念圖
+
+```mermaid
+flowchart TD
+    A["Application 應用層<br/>HTTP DNS SSH TLS/SSL"] --> B["Transport 傳輸層<br/>TCP / UDP"]
+    B --> C["Internet 網際層<br/>IP"]
+    C --> D["Link 鏈路層<br/>Ethernet / Wi-Fi"]
+```
+
+這張圖的重點是：資料在送出前，會從應用層一路往下交給下一層；每一層都會補上自己的控制資訊。
+
+### 封裝 / 解封裝流程圖
+
+```mermaid
+sequenceDiagram
+    participant App as 應用程式
+    participant T as 傳輸層
+    participant I as 網際層
+    participant L as 鏈路層
+    participant R as 接收端
+
+    App->>T: 交付應用資料
+    T->>I: 加上 TCP/UDP 資訊
+    I->>L: 加上 IP 資訊
+    L->>R: 在本地鏈路上送出 frame
+    R->>R: 由下往上解封裝
+```
+
+這張圖要背的不是圖形本身，而是流程：
+**傳送端往下封裝，接收端往上解封裝。**
+
 這題常見失分點是：
 很多人把 TLS 認成「網路底層協定」。其實這份課程脈絡裡，TLS 比較像是架在 socket / transport 之上的安全機制，用來保護應用流量。
 
