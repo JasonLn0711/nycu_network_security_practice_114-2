@@ -905,6 +905,75 @@ D2 說：
 
 > TLS 的目的，是在應用資料開始傳送前，先協商安全參數、完成金鑰交換與身分認證，讓後續 session 受到加密與完整性保護。
 
+### 3. 白話理解：TLS / SSL 到底在補什麼洞？
+
+如果沒有 TLS，應用程式資料雖然可以透過 TCP 正常送到對方，但中間的人可能做到：
+
+* **偷看內容**：例如帳號密碼、cookie、聊天內容
+* **竄改內容**：例如修改封包內容、插入惡意資料
+* **冒充對方**：例如 MITM 假裝自己是合法 server
+
+所以 TLS 想補的不是「封包送不送得到」，而是：
+
+* **Confidentiality 機密性**：讓別人就算截到資料也看不懂
+* **Integrity 完整性**：讓別人不能偷偷改內容而不被發現
+* **Authentication 身分驗證**：讓 client 有機會確認「我連到的真的是那台 server」
+
+### 4. SSL 跟 TLS 要怎麼理解？
+
+考試常把 `SSL/TLS` 放在一起寫，但你可以這樣記：
+
+* **SSL** 是比較早期的名稱
+* **TLS** 是後來較新的標準，也是現在實務上主要使用的版本
+
+所以現在看到 `SSL/TLS`，通常可以理解成：
+**這一整套用來保護 client-server 應用流量的安全機制。**
+
+### 5. 為什麼它對 ARP spoofing / sniffing / MITM 特別重要？
+
+因為前面 Day 3 一直在講的很多攻擊，本質上都在利用：
+**網路可以送資料，但資料本身沒有被保護。**
+
+例如：
+
+* **ARP spoofing + sniffing**：攻擊者把流量導到自己身上偷看內容
+* **MITM**：攻擊者夾在中間觀察或修改資料
+* **TCP session hijacking / injection**：攻擊者想插入或偽造資料
+
+而 TLS 的作用就是：
+**即使流量真的被攔到，中間人看到的也應該只是加密後的資料，而且亂改內容會被驗證機制抓到。**
+
+### 6. 高層次流程怎麼看？
+
+你現在先不要把 TLS 想成一大坨細節，先記住這個防禦順序：
+
+1. 先有 TCP 連線。
+2. 接著做 TLS handshake。
+3. 雙方協商安全參數、做金鑰交換、驗證身分。
+4. 後續應用資料才進入加密保護的 session。
+
+也就是說：
+**TLS 不是拿來取代 TCP，而是架在 TCP 之上，讓原本不安全的應用流量變成受保護的流量。**
+
+### Workflow 圖
+
+```mermaid
+flowchart TD
+    A["Client 想連到 Server"] --> B["先建立 TCP 連線"]
+    B --> C["開始 TLS handshake"]
+    C --> D["協商版本與 cipher suites"]
+    D --> E["驗證 Server 身分<br/>例如 certificate / CA chain"]
+    E --> F["完成 key exchange<br/>建立 session keys"]
+    F --> G["進入受保護的 TLS session"]
+    G --> H["Application data 開始傳送"]
+    H --> I["中間人就算截到流量<br/>看到的也應是加密內容"]
+    H --> J["若有人偷偷改資料<br/>完整性驗證會偵測異常"]
+```
+
+### 7. 一句話總結
+
+TLS / SSL 的核心目的，是在應用資料真正開始傳送前，先建立一個「有加密、有完整性驗證、可做身分驗證」的安全通道，降低 eavesdropping 與 MITM 的風險。
+
 ---
 
 ## Part 9：TLS / SSL Handshake 🔥🔥🔥經典大題
