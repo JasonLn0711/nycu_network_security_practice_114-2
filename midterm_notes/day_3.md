@@ -1051,7 +1051,7 @@ sequenceDiagram
 
 ---
 
-## Part 10：Certificate 到底在做什麼？ ⚠️易錯
+## Part 10：Certificate 到底在做什麼？ 
 
 很多人以為 certificate 是「拿來加密資料的」。
 更精確地說：
@@ -1072,7 +1072,7 @@ sequenceDiagram
 
 ---
 
-## Part 11：Rollback Attack 🔥可能考觀念題
+## Part 11：Rollback Attack
 
 D2 第 12 頁明講：
 
