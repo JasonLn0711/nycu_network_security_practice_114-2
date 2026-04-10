@@ -140,8 +140,80 @@ IP protocol is a best-effort and unreliable network-layer protocol. It does not 
 * **IP address**：拿來做網路層 routing
 * **MAC address**：拿來在本地鏈路層實際送 frame
 
+白話理解：
+**IP 決定「資料要送去哪裡」；MAC 決定「在這個區域網路裡，這個 frame 要先交給哪一張網卡」。**
+
 所以同一台主機如果要在區域網路裡把資料送給 gateway，不是只知道 gateway 的 IP 就夠了，還要知道 **那個 IP 對應的 MAC**。
 這就是 **ARP** 存在的原因。 
+
+換句話說，網路層知道「下一站是 gateway 的 IP」，不代表鏈路層就能直接把資料送出去；因為 Ethernet / Wi‑Fi 真正送 frame 的時候，看的是 **目的 MAC address**，不是 IP address。
+
+### 這段話到底在說什麼？
+
+當主機要把資料送到外部網路時，通常不會直接送給遠端主機的 MAC，而是會先送給 **default gateway**。這時候主機雖然已經知道 gateway 的 IP，但如果不知道 gateway 的 MAC，就無法在本地區域網路上組出正確的 frame，因此封包還是送不出去。
+
+補充澄清：
+這裡的 **gateway**，通常就是這個 LAN 對外的 **router 介面**。同一個 subnet 裡很多主機如果要和外部網路通訊，第一跳通常都是先把封包交給這台 gateway，再由它往外轉送。
+
+而這裡說的 **gateway 的 MAC**，不是你的 MAC，也不是最終遠端主機的 MAC，而是：
+**你所在這個區域網路中，default gateway 那個介面自己的 MAC address。**
+
+要特別注意：
+
+* **Destination IP** 仍然是最終遠端主機的 IP
+* **Destination MAC** 則是第一跳要交付的對象，也就是 gateway 的 MAC
+
+所以送往外部網路時，可以把它想成：
+
+* IP 在表示「最後要送到誰」
+* MAC 在表示「這一跳先交給誰」
+
+另外，router 通常不只一個 MAC。它的每個網路介面都可能有各自的 IP 與 MAC；ARP 找到的，是**你這個 LAN 這一側**的 router 介面 MAC，不是整台 router 共用的一個 MAC。
+
+所以這裡要記的不是「IP 不重要」，而是：
+
+* **IP address** 用來決定邏輯上的下一跳
+* **MAC address** 用來完成本地鏈路上的實際交付
+
+### 實際流程怎麼跑？
+
+1. 主機先看目的 IP 是不是和自己在同一個 subnet。
+2. 如果不是同一個 subnet，就決定把封包先交給 default gateway。
+3. 主機知道 gateway 的 IP，但鏈路層送 frame 前，還需要 gateway 的 MAC。
+4. 主機先查自己的 ARP table，看有沒有 `gateway IP -> gateway MAC` 的快取。
+5. 如果沒有，主機就送出 **ARP request** 廣播詢問：「誰是這個 IP？」
+6. Gateway 回 **ARP reply**，告訴主機自己的 MAC address。
+7. 主機把這組 IP-to-MAC 對應記進 ARP table。
+8. 最後主機才會把 IP packet 包進 frame，並把目的 MAC 填成 gateway 的 MAC，送到本地網路上。
+
+### Workflow 圖
+
+```mermaid
+flowchart TD
+    A["Host 要把資料送到目的 IP"] --> B{"目的 IP\n和自己同 subnet 嗎？"}
+    B -- 是 --> C["直接找目標主機的 MAC"]
+    B -- 否 --> D["決定先交給 default gateway"]
+    D --> E["已知 gateway IP"]
+    E --> F{"ARP table 裡\n有 gateway IP -> MAC 嗎？"}
+    F -- 有 --> G["取出 gateway MAC"]
+    F -- 沒有 --> H["送出 ARP request 廣播"]
+    H --> I["Gateway 回 ARP reply"]
+    I --> J["把 gateway IP -> gateway MAC\n記進 ARP table"]
+    J --> G
+    G --> K["建立 Ethernet frame"]
+    K --> L["Destination MAC = gateway MAC"]
+    L --> M["Source MAC = host MAC"]
+    M --> N["IP packet 內的 Destination IP\n仍然是最終遠端主機 IP"]
+    N --> O["把 frame 送到 LAN"]
+    O --> P["Gateway 收到後再往外部網路轉送"]
+    C --> Q["若同 subnet，frame 直接送給目標主機"]
+```
+
+這張圖最重要的重點是：
+**送到外部網路時，IP 還是指向最終目標，但第一跳的 MAC 會指向 gateway。**
+
+**一句話總結：**
+主機在 LAN 內送資料時，不能只知道下一跳的 IP，還一定要知道該 IP 對應的 MAC；而 ARP 的工作，就是把這個對應關係找出來。
 
 ---
 
@@ -152,6 +224,136 @@ IP protocol is a best-effort and unreliable network-layer protocol. It does not 
 
 正式定義：
 ARP（Address Resolution Protocol）負責把 layer 3 的 IPv4 address 轉成 layer 2 的 Ethernet MAC address；每個 host 會維護一張 IP-to-MAC 對應表。D1 也列出它的訊息型態有 ARP request、ARP reply、ARP announcement。 
+
+### ARP 的三種訊息型態在做什麼？
+
+#### 1. ARP request
+
+白話理解：
+**ARP request 是在區域網路裡大聲問：「誰有這個 IP？請把你的 MAC 告訴我。」**
+
+它通常在主機知道某個 IP、但還不知道對應 MAC 時使用。因為主機不知道目標是誰，所以 ARP request 常常是用 **broadcast** 的方式送到整個 LAN，讓所有主機都收到。
+
+你可以把它記成：
+
+* 目的：查 `IP -> MAC`
+* 傳送方式：通常是廣播
+* 典型句型：`Who has 192.168.1.1? Tell 192.168.1.10`
+
+#### 2. ARP reply
+
+白話理解：
+**ARP reply 是擁有該 IP 的主機回答：「這個 IP 是我，我的 MAC 在這裡。」**
+
+當真正擁有該 IP 的主機收到 request 後，就會回傳自己的 MAC，讓發問者可以把這組對應寫進 ARP table。ARP reply 的重點是：發問者拿到答案後，後續就能建立正確的 Ethernet frame。
+
+你可以把它記成：
+
+* 目的：回覆正確的 `IP -> MAC`
+* 傳送方式：通常是直接回給發問者
+* 典型句型：`192.168.1.1 is at AA:AA:AA:AA:AA:AA`
+
+#### 3. ARP announcement
+
+白話理解：
+**ARP announcement 不是在問別人，而是在主動公告：「這個 IP 現在對應到我的 MAC。」**
+
+它常用在主機剛連上網路、IP/MAC 發生變化、或想更新其他主機快取時。某些教材也會把它跟 **gratuitous ARP** 放在一起理解。重點不是「查詢」，而是「主動宣告自己的 IP-to-MAC 對應」。
+
+常見用途有：
+
+* 更新同一個 LAN 內其他主機的 ARP cache
+* 宣告某個 IP 現在是由自己使用
+* 幫忙偵測 IP 衝突
+
+補充釐清：
+**ARP announcement 的確可能讓其他主機看到「新的 IP-to-MAC 對應」；但它能不能被接受，要看你是在看哪一種表。**
+
+這裡其實有兩張表，不要混在一起：
+
+* **Host 端的 ARP cache**：在沒有保護的 LAN 裡，收到 announcement 後，主機可能真的會更新或覆蓋自己快取中的 `IP -> MAC` 對應。
+* **交換器用來做驗證的 trusted binding table**：在有防護的網路裡，這張表通常不是被任意一包 announcement 更新，而是來自 **DHCP snooping**、管理員設定的 **static binding**，或 **trusted port** 上的合法設備。
+
+所以重點是：
+
+* **announcement 可以更新一般主機的 ARP cache**
+* **announcement 不應該讓任何人任意改掉交換器拿來驗證的 authoritative binding**
+
+合法變更通常會這樣處理：
+
+1. 先由 DHCP 重新發 lease，或由管理員更新 static binding。
+2. 交換器的可信綁定資料先更新。
+3. 主機再送出 ARP announcement / gratuitous ARP，通知 LAN 上其他主機更新自己的 ARP cache。
+
+所以如果你看到：
+原本 `192.168.1.20 -> MAC A`，後來變成 `192.168.1.20 -> MAC B`
+這在 **host 的 ARP cache** 裡可能是合法更新；但在有 DAI 保護的環境裡，交換器還是會檢查這個新對應是否和 trusted binding 一致，不一致就會被當成可疑 ARP。
+
+你可以把它記成：
+
+* request = 我在問別人
+* reply = 我在回答別人
+* announcement = 我主動通知大家
+
+### 一般 ARP 查詢流程
+
+1. Host A 想把資料送給某個 IP，例如 gateway `192.168.1.1`。
+2. Host A 發現自己只有目標 IP，沒有對應 MAC。
+3. Host A 先查本地 ARP table。
+4. 如果沒有快取，就送出 **ARP request** 廣播詢問。
+5. 擁有該 IP 的主機，例如 gateway，收到後回傳 **ARP reply**。
+6. Host A 收到 reply，把 `192.168.1.1 -> gateway MAC` 記進 ARP table。
+7. Host A 之後就能建立正確的 Ethernet frame，把資料送出去。
+
+### ARP request / ARP reply Workflow 圖
+
+```mermaid
+sequenceDiagram
+    participant A as Host A<br/>IP 192.168.1.10<br/>MAC H1
+    participant LAN as LAN
+    participant G as Gateway<br/>IP 192.168.1.1<br/>MAC G1
+
+    A->>A: 查 ARP table<br/>找 192.168.1.1 對應的 MAC
+    A->>LAN: ARP request 廣播<br/>誰有 192.168.1.1？
+    LAN->>G: 把 request 傳給 LAN 上主機
+    G->>A: ARP reply<br/>192.168.1.1 is at G1
+    A->>A: 更新 ARP table<br/>192.168.1.1 -> G1
+    A->>G: 建立 Ethernet frame<br/>Dst MAC = G1
+```
+
+### ARP announcement 流程怎麼看？
+
+ARP announcement 的邏輯不是「我缺答案」，而是「我主動把答案送出去」。
+
+常見情境例如：
+
+1. 主機剛開機或剛取得新的 IP。
+2. 主機主動送出 ARP announcement。
+3. LAN 上其他主機收到後，會更新或覆蓋自己 ARP cache 裡的對應。
+4. 如果有人發現這個 IP 跟自己衝突，就可能觸發衝突檢查或警告。
+
+### ARP announcement Workflow 圖
+
+```mermaid
+flowchart TD
+    A["Host B 啟動或 IP/MAC 發生變化<br/>IP = 192.168.1.20<br/>MAC = B1"] --> B["主動送出 ARP announcement"]
+    B --> C["內容重點：192.168.1.20 對應到 B1"]
+    C --> D["LAN 上其他主機收到公告"]
+    D --> E["更新各自的 ARP cache"]
+    D --> F["若發現相同 IP 已存在<br/>可能偵測到 IP 衝突"]
+```
+
+### 這三種訊息怎麼一起背？
+
+* **ARP request**：我不知道 MAC，所以我發問。
+* **ARP reply**：我知道答案，所以我回覆。
+* **ARP announcement**：我不是被問才回答，而是主動公告自己的對應關係。
+
+### 考試最短整理版
+
+ARP request is broadcast to ask which host owns a given IP address.  
+ARP reply returns the corresponding MAC address to the requester.  
+ARP announcement is a host's unsolicited advertisement of its own IP-to-MAC mapping, often used to update caches or detect conflicts.
 
 **考卷可寫：**
 ARP is used to translate an IPv4 address at the network layer into a MAC address at the data-link layer. Hosts maintain ARP tables that cache IP-to-MAC mappings.
