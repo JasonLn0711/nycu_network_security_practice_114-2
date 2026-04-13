@@ -327,3 +327,195 @@ Payload 是惡意程式成功執行後的實際惡意目的，例如後門、DDo
 **Rootkit 負責隱藏；botnet 負責集中控制；ransomware 負責勒索。** 
 
 下一步最合理：直接進入 **malware 題型演練**，我把這份講義轉成「考卷會怎麼問、你要怎麼答」。
+
+
+結論：
+那就直接進入 **malware 題型演練**。
+你現在不是再看一遍講義，而是把知識壓成**考場可輸出的答案**。
+
+---
+
+## 一、先做最高命中 6 題
+
+### 題 1：What is malware?
+
+**標準答法：**
+Malware 是具有惡意目的、違反系統安全政策的程式。它可能用來未授權存取系統、竊取資訊、破壞資料、隱藏攻擊者存在、建立後門、控制受害主機，或勒索使用者。常見類型包括 trapdoor、logic bomb、trojan horse、virus、worm、zombie／botnet、rootkit。
+
+---
+
+### 題 2：Differentiate Trojan horse, virus, and worm.
+
+**標準答法：**
+Trojan horse 的核心是偽裝。它表面提供正常或預期功能，但暗中執行違反安全政策的動作，通常依賴使用者被騙去執行。
+Virus 是需要宿主程式的自我複製惡意碼。它會感染正常程式、開機區或文件，當受感染宿主被執行時，病毒就開始運作與複製。
+Worm 則不需要宿主，可獨立執行，並透過網路自動掃描、利用漏洞、複製到其他機器，因此傳播速度通常比 virus 更快。
+
+---
+
+### 題 3：What are the infection vectors of a virus?
+
+**標準答法：**
+Virus 的典型感染向量包括：
+
+1. boot sector
+2. executable files，如 `.com`、`.exe`、`.dll`、`.sys`
+3. macro files
+   這表示病毒可能感染開機流程、可執行程式，或透過文件巨集散播。
+
+---
+
+### 題 4：Why can worms spread much faster than viruses?
+
+**標準答法：**
+因為 worm 不需要宿主程式，能獨立執行並自動透過網路擴散。其典型階段是 probing、exploitation、replication、payload。它不需要等使用者去搬運受感染檔案，而是自己找脆弱目標、自己利用漏洞、自己複製，因此可在極短時間內大規模感染主機。Code Red 與 SQL Slammer 都是高速傳播的代表。
+
+---
+
+### 題 5：What is the payload of malware?
+
+**標準答法：**
+Payload 是 malware 成功執行後實際要完成的惡意目的。常見 payload 包括：
+
+* backdoor
+* spam relay
+* DDoS agent
+* credential theft
+* keylogging
+* rootkit hiding
+* ransomware encryption
+  也就是說，傳播只是進場方式，payload 才是真正的攻擊目的。
+
+---
+
+### 題 6：What is a rootkit and why is it dangerous?
+
+**標準答法：**
+Rootkit 是在系統被入侵後，用來隱藏攻擊者存在並提供後門以利再次進入的軟體。簡單 rootkit 可能修改 `ls`、`ps` 等使用者層工具；更進階的 rootkit 會修改 kernel 或更低層機制，因此很難從一般使用者空間偵測。它危險的地方在於：即使系統已被入侵，管理者仍可能看不出異常。
+
+---
+
+## 二、考試很愛出的理解題
+
+### 題 7：Explain the four phases of a worm.
+
+**標準答法：**
+一個 worm 通常經過四個階段：
+
+* **Probing**：掃描可攻擊目標
+* **Exploitation**：利用漏洞取得執行機會
+* **Replication**：把自身複製到新主機
+* **Payload**：執行後門、DDoS、偷帳密等惡意任務
+  這四個階段形成完整的自動化傳播流程。
+
+---
+
+### 題 8：What is the difference between propagation and payload?
+
+**標準答法：**
+Propagation 是 malware 如何從一台主機擴散到另一台主機，例如感染檔案、郵件散播、網路掃描與漏洞利用。
+Payload 是 malware 成功感染後要做的事，例如竊取帳密、發垃圾信、建立 botnet、隱藏自己、加密檔案勒索。
+前者是擴散機制，後者是攻擊目的。
+
+---
+
+### 題 9：What is a botnet?
+
+**標準答法：**
+Botnet 是由多台被入侵主機組成的受控網路。攻擊者先掃描脆弱系統、安裝 zombie agent，受害主機再回連 master server，之後攻擊者可透過控制架構命令這些主機執行 DDoS、phishing、spamming 或 cracking。其本質是把大量受害機器變成可集中調度的攻擊資源。
+
+---
+
+### 題 10：Why is the Morris worm historically important?
+
+**標準答法：**
+Morris worm 是 1988 年 Internet 上第一個重大 worm 攻擊，也是第一個知名利用 buffer overflow 的 worm。它利用多種 Unix 弱點擴散，包括 `sendmail` debug feature、`fingerd` buffer overflow、trusted logins 與 weak passwords。它的重要性不只在於感染，而在於證明 worm 可藉由自動複製造成大規模系統與網路負載癱瘓。
+
+---
+
+## 三、偵測與繞過偵測，這類也常考
+
+### 題 11：How can malware be detected statically?
+
+**標準答法：**
+Static analysis 可透過 hash、string pattern、regular expression、static decryptor、packer code 與 signature matching 偵測 malware。像 ClamAV 就是典型簽章式偵測工具。這類方法依賴惡意碼存在穩定特徵。
+
+---
+
+### 題 12：How do malware evade signature-based detection?
+
+**標準答法：**
+Malware 可透過 encryption、polymorphism 與 metamorphism 規避簽章式偵測。
+
+* **Encryption**：加密惡意主體，避免固定內容被比對
+* **Polymorphism**：不只主體加密，連解密程式也改變
+* **Metamorphism**：直接把程式改寫成語意相同但外觀不同的版本
+  這些技術的目的都是破壞穩定特徵，使 signature detection 更困難。
+
+---
+
+## 四、你要怎麼背，才不會一上考場就散掉？
+
+不要背散裝名詞。背這個骨架：
+
+**Malware = 入口 + 傳播 + payload + 隱藏**
+
+套進去：
+
+* **Trojan**：入口靠騙
+* **Virus**：傳播靠感染宿主
+* **Worm**：傳播靠自主網路擴散
+* **Botnet**：payload 是集中控制大量主機
+* **Rootkit**：隱藏與持久化
+* **Ransomware**：payload 是加密勒索 
+
+---
+
+## 五、閉卷自我稽核方法
+
+你之前問「怎麼做稽核」，這裡直接套到 malware。
+
+### 30 秒紀錄模板
+
+每做完一題，記一行：
+
+```text
+題目 / 預估時間 / 實際時間 / 完成0或1 / 卡點
+```
+
+範例：
+
+```text
+Trojan-virus-worm差異 / 10m / 18m / 0 / worm與virus混掉
+Worm四階段 / 8m / 7m / 1 / OK
+Rootkit定義 / 8m / 15m / 0 / 不會講危險性
+```
+
+### 稽核三指標
+
+1. **完成率** = 完成題數 / 總題數
+2. **時間膨脹比** = 實際 / 預估
+3. **卡點類型**
+
+   * 定義不清
+   * 差異混淆
+   * 不會舉例
+   * 只會背名詞，不會寫成句子
+
+### 怎麼判讀
+
+* 完成率低於 60%：你不是不努力，你是概念沒壓縮好
+* 膨脹比大於 1.5：你目前輸出速度不夠，考場會來不及
+* 最常見卡點如果是「差異混淆」：立刻重做比較題，不要再重看整份講義
+
+---
+
+## 六、最有效的實作方式
+
+今天就做這 3 題，閉卷寫，限時 25 分鐘：
+
+1. Trojan horse、virus、worm 差異
+2. Worm 的四個 phase
+3. Rootkit 為什麼危險
+
+寫完後把你的答案貼上來。我直接幫你批改，指出你哪一句是廢話、哪一句能拿分。
