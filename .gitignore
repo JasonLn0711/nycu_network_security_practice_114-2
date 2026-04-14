@@ -17,3 +17,6 @@ ehthumbs.db
 # Build artifacts (if any)
 build/
 dist/
+
+# Python
+__pycache__/
