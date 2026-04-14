@@ -1,6 +1,6 @@
 # NYCU Network Security Practice 114-2
 
-Study repository for the NYCU `Network Security Practice` course. This repository currently serves as a course-material archive and note-taking workspace rather than a software project: it contains lecture notes, homework-prep notes, and bundled handouts/slides used for study.
+Study repository for the NYCU `Network Security Practice` course. This repository primarily serves as a course-material archive and note-taking workspace: it contains lecture notes, homework-prep notes, bundled handouts/slides used for study, and a lightweight planning/governance slice for agenda-fit checks.
 
 ## Author
 
@@ -19,6 +19,12 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 - `handouts/`
   - Bundled reference material such as PDFs and slides related to the course topics.
   - These appear to be official course or third-party teaching materials and are not covered by the repository's documentation license.
+- `data/capacity/` and `data/goals/`
+  - Structured Markdown inputs for near-term capacity and active goals.
+  - These files let an agent or CLI checker decide whether another commitment fits the current `7`-day and `14`-day agenda.
+- `scripts/`
+  - Small Python helpers for repo-local planning checks.
+  - `scripts/capacity_check.py` reports whether the agenda is `fit`, `tight`, or overloaded/reject-worthy before you add more work.
 
 ## Repository Layout
 
@@ -34,6 +40,11 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 │   ├── C4. Bell-LaPadula.pdf
 │   ├── C5. SELinux.pdf
 │   └── C6. Windows Access Control.pdf
+├── data/
+│   ├── capacity/
+│   │   └── current.md
+│   └── goals/
+│       └── _template.md
 ├── hw1/
 │   └── notes/
 │       ├── notes_week_1.md
@@ -41,6 +52,8 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 │       ├── notes_week_3.md
 │       ├── notes_week_4.md
 │       └── notes_week_5.md
+├── scripts/
+│   └── capacity_check.py
 └── notes/
     ├── handouts/
     │   ├── a_introduction.md
@@ -148,9 +161,40 @@ That sequence moves from basic computing concepts to beginner reverse-engineerin
 - Keep assignment-specific study plans and walkthrough notes under `hw1/`, `hw2/`, and so on as the course progresses.
 - Prefer Markdown for personal notes so diffs stay readable in Git.
 
+### For Agenda And Capacity Checks
+
+1. Update [data/capacity/current.md](data/capacity/current.md) when your real `7`-day or `14`-day sustainable block budget changes.
+2. Copy [data/goals/_template.md](data/goals/_template.md) into a new goal file under `data/goals/` and fill its machine-readable metadata.
+3. Run `python scripts/capacity_check.py status` to diagnose the current agenda.
+4. Run `python scripts/capacity_check.py can-add --title ... --domain ... --priority ... --deadline ... --blocks-7d ... --blocks-14d ... --flexibility ...` before accepting a new commitment.
+5. Let an agent use the checker result as the first response layer: verdict first, reason second, recommendations third.
+
+Example supportive rejection:
+
+```text
+Verdict: reject
+Why: the next 7 days would require 8.5 blocks against a capacity of 8.0; making it fit would pressure protected domains such as family, health
+Recommendations:
+- Defer `Journal fit revision` to its next checkpoint instead of stacking more work into this horizon.
+- Replace an existing primary lane before accepting this new primary commitment.
+- Set a later checkpoint or explicit defer date instead of forcing this into the next 7 to 14 days.
+```
+
+Example `tight` but still possible recommendation:
+
+```text
+Verdict: tight
+Why: the task is technically possible, but it would leave little or no safe buffer for drift
+Recommendations:
+- Shrink `Security midterm readiness` from 4.0 to 2.5 blocks in the next 7 days.
+- If you keep this, remove or downgrade one lower-value commitment rather than borrowing from protected life domains.
+- Consider shrinking `New workshop abstract` to a smaller first milestone before you try to fit the full request.
+```
+
 ## Current Scope And Limitations
 
-- This repository does not currently contain executable labs, code samples beyond note snippets, or automation scripts.
+- This repository still does not contain executable labs or a full planning application.
+- The planning layer is intentionally small: plain Markdown inputs plus one Python checker, not a dashboard or database product.
 - Some notes mix direct course topics with broader study guidance, supplementary examples, and outside references.
 - The Markdown files are study notes, not official transcripts; they may simplify, reorganize, or expand on lecture content for learning purposes.
 - Several notes reference external images, books, slides, or online materials. Those references do not imply those assets are relicensed here.
@@ -161,6 +205,7 @@ That sequence moves from basic computing concepts to beginner reverse-engineerin
 - Add `labs/` if later assignments include commands, exploits, packet captures, or demo code.
 - Add per-topic index pages such as `topics/setuid.md` or `topics/access-control.md` if the note set grows.
 - Add `REFERENCES.md` if you want one place to collect textbooks, papers, slide decks, and URLs cited across the notes.
+- Extend the planning slice with weekly review or metrics only if the lightweight checker stops being enough.
 
 ## License
 
