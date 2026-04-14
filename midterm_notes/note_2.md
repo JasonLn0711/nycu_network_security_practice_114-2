@@ -1,260 +1,843 @@
-好。這一段不要背成零碎 API。
-真正主線只有一句話：
+# Environment Variable 攻擊筆記
 
-**environment variable 是 process 的隱性輸入通道。**
-它原本是為了方便把執行環境傳給程式；但一旦這些值會影響 **dynamic linker、shell、library、或 privileged program** 的行為，它就從「方便機制」變成「攻擊面」。而且這個攻擊面是系統層的，所以課綱把它放在 **System-level Attacks** 下面，不是意外。
+這份版本改成台灣高中生也比較容易讀懂的白話說法。
+目標不是背一堆 API 名字，而是真的知道：
+
+**environment variable 到底是什麼、它為什麼會影響程式、又為什麼會變成攻擊面。**
+
+---
+
+## 先講一句最重要的
+
+**environment variable 可以把它想成：程式開始執行前，系統偷偷塞給它的一張小抄。**
+
+這張小抄上會寫一些資訊，例如：
+
+- 你的家目錄在哪裡
+- 你偏好用哪種語言
+- 去哪裡找指令
+- 去哪裡找函式庫
+
+正常情況下，這些資訊是為了方便。
+但如果這張小抄的內容可以被使用者改掉，而且程式又很相信它，那就會出事。
+
+所以整個章節的核心其實是：
+
+**environment variable 是一種隱藏版輸入。**
+
+它不是你在畫面上打進去的東西，
+但它還是會影響程式怎麼做事。
+
+---
 
 ## 一、什麼是 environment variable？
 
-課程裡把它定義成：**一組動態命名值**，屬於 process 執行時的 operating environment，會影響 running process 的行為。它最早在 Unix 引入，後來 Windows 也採用。最典型的例子就是 `PATH`：當你執行一個命令卻沒寫完整路徑時，shell 會根據 `PATH` 去找那個程式在哪裡。
+environment variable 是一組「名稱 = 值」的資料，
+屬於某個 process 執行時的環境設定。
 
-這裡最重要的，不是背「它是一組字串」，而是理解它的**角色**：
-它不是程式的顯式參數，不在 `argv` 裡，不一定出現在 UI，也不一定出現在 config file。它常常是**看不見的輸入**。也就是說，一個程式表面上看起來沒有接收使用者輸入，實際上卻可能早就在吃使用者控制的 environment。這就是為什麼投影片特別強調 **Hidden usage of environment variables is dangerous**。
+例如：
+
+- `PATH`
+- `HOME`
+- `LANG`
+- `PWD`
+
+### 白話理解
+
+把一個 process 想成一個剛到新學校的轉學生。
+他要做事以前，學校會先發一張說明卡給他，上面寫：
+
+- 教務處在哪裡
+- 要用中文還英文
+- 去哪裡找工具
+- 目前在哪一間教室
+
+這張說明卡，就是 environment variable 的感覺。
+
+### 真實世界例子
+
+假設你在終端機輸入：
+
+```bash
+python
+```
+
+你沒有打 `/usr/bin/python`，
+但系統還是找到 Python。
+
+原因通常就是 shell 去看 `PATH`，
+然後沿著 `PATH` 裡面列出的資料夾，一個一個找有沒有 `python` 這個程式。
+
+也就是說，
+**你雖然只打了 `python`，但實際上 `PATH` 在背後偷偷幫忙決定「要執行哪一個 python」。**
+
+### 這裡真正危險的點
+
+environment variable 很容易讓人忘記它也是輸入。
+
+因為它不是：
+
+- 表單輸入
+- command line argument
+- 設定檔
+
+它像是藏在背景裡的影響因素。
+所以很多程式設計者會不小心把它當成理所當然、可信任的資訊。
+
+這就是為什麼投影片說：
+
+**Hidden usage of environment variables is dangerous.**
 
 ---
 
 ## 二、程式怎麼拿到 environment variables？
 
-在 C 程式裡，常見有兩種方式：
+在 C 裡，常見有兩種方式：
 
-第一種，是從 `main()` 的參數取得，也就是常見的 `envp`。
-第二種，是用全域變數 `environ`。課程特別說 `environ` 比較可靠，因為 `envp` 只在 `main()` 裡可見，而且一開始 `envp` 跟 `environ` 雖然指向同一塊資料，但如果之後有新增或修改 environment variable，系統可能把 environment storage 搬到 heap，這時 `environ` 會更新，`envp` 不會。也就是說，**`envp` 更像初始快照，`environ` 才是當前狀態**。
+- `main()` 的第三個參數 `envp`
+- 全域變數 `environ`
 
-這個細節很容易被忽略，但它很重要。因為它告訴你：
-environment 不是一個抽象的「名字對值的映射」而已，它有**實際的記憶體位置與生命周期**。一旦程式中途更動 environment，原本你以為穩定的 pointer 可能就不再代表當前真相。
+### 1. `envp`
 
----
+你可以把 `envp` 想成：
 
-## 三、environment 是怎麼傳下去的？
+**程式剛開機那一瞬間，系統交給它的環境清單快照。**
 
-這是整段最關鍵的機制。
+### 2. `environ`
 
-一個 process 取得 environment，主要有兩種路徑：
+你可以把 `environ` 想成：
 
-**第一條：`fork()`**
-如果用 `fork()` 建立 child process，child 會**繼承 parent 的 environment variables**。也就是說，environment 會隨著 process tree 往下傳。
+**程式現在這一刻真正持有的環境清單。**
 
-**第二條：`execve()`**
-如果一個 process 在自己身上跑新程式，通常會用 `execve()`。這時原本的 address space 會被新程式覆蓋，所以舊的 environment 也會消失；但 `execve()` 可以用第三個參數，把一組新的 environment 明確傳給新程式。課程用 `/usr/bin/env` 當例子，說明可以刻意建構一個新 environment 並傳給被執行的程式。
+### 為什麼課程說 `environ` 比較可靠？
 
-所以 environment 不是系統全域狀態，它其實是：
+因為如果程式後來改了 environment variable，
+系統可能會把那塊資料搬到別的記憶體位置。
 
-**每個 process 自己帶著的一包環境資料，透過 inheritance 或 explicit passing 傳遞。** 
+這時：
 
-把它畫成流程就是：
+- `envp` 可能還指著舊地方
+- `environ` 會更新到新地方
 
-使用者 shell
-→ export 成 environment
-→ `fork()` 時 child 繼承
-→ `execve()` 時可丟掉舊環境並傳入新環境
-→ 新程式、dynamic linker、libraries 再根據這份 environment 決定行為。 
+### 白話理解
 
----
+這很像你剛開學拿到一張紙本課表，那就是 `envp`。
+但後來學校臨時調課，真正最新的課表是在學校網站上，那比較像 `environ`。
 
-## 四、shell variable 跟 environment variable 不是同一件事
+所以：
 
-很多人這裡直接混掉，然後整題就死。
+- `envp` 比較像「一開始的版本」
+- `environ` 比較像「目前最新版本」
 
-**shell variable** 是 shell 自己內部用的變數。
-**environment variable** 是 shell 會帶給 child process 的那部分變數。
+### 你該記住的重點
 
-課程強調：當 shell 啟動時，它會把 environment variables 複製成自己的 shell variables。但反過來不成立——你在 shell 裡改一個 shell variable，**不代表 child process 看得到**。只有被 export 的變數，才會進入 child process 的 environment。投影片用例子指出：某些變數會進 child process，某些不會，原因不是名字不同，而是 **有沒有被 export**。
+這裡不是要你背 pointer 細節，
+而是要知道：
 
-這件事的本質是：
-
-**child process 看見的是 environment，不是整個 shell state。** 
-
-這也是為什麼 `env` 命令常讓人誤判。課程補充說，在 bash 裡執行 `env` 時，shell 其實是啟動一個 child process 來跑它，所以它印出的是 child 的 environment；而 `/proc/<pid>/environ` 這個虛擬檔案則能直接看到某個 process 的 environment。像 `strings /proc/$$/environ` 會顯示當前 shell process 的 environment。
+**environment variable 不只是抽象概念，它在記憶體裡真的有位置，還可能在執行途中被改掉。**
 
 ---
 
-## 五、為什麼它會變成 attack surface？
+## 三、environment variable 是怎麼傳下去的？
 
-因為**使用者可以在程式啟動前先設定 environment variables**。
-如果這些值會影響程式行為，那它們本質上就是 untrusted input。投影片直接講得很白：隱性使用 environment variables 是危險的；因為使用者能設定它們，所以它們會成為 **Set-UID programs 的 attack surface**。
+這一段很重要，因為很多攻擊就是靠這個傳遞機制擴散。
 
-這裡一定要搭配 Set-UID 才看得出危險。
-Set-UID 的意思是：使用者執行程式時，程式可以暫時用**程式擁有者**的權限跑。Linux 中每個 process 有 `RUID` 與 `EUID`；`RUID` 是真正執行者，`EUID` 是 access control 用的有效身分。一般程式執行時兩者相同；Set-UID 程式執行時，`RUID` 還是一般使用者，但 `EUID` 可能變成 root。也就是說，**使用者提供 environment，卻讓高權限程式來消費它**。這就是 privilege boundary。
+主要有兩種路：
 
-一句話總結：
+- `fork()`
+- `execve()`
 
-**不可信的 environment + 被提升的權限 = 系統級攻擊面。**
+### 1. `fork()`
 
----
+`fork()` 會建立 child process。
+child process 會繼承 parent process 的 environment variables。
 
-## 六、第一大攻擊面：dynamic linker
+### 白話理解
 
-這是整段最核心的攻擊來源之一。
+像一間飲料店老闆把店複製出一個分店，
+分店剛開始會把總店的：
 
-課程先對比 **static linking** 與 **dynamic linking**。
-static linking 在編譯時就把需要的 library code 合進可執行檔，所以檔案會大很多。dynamic linking 則把連結延到 runtime；程式先載入 executable，之後再由 shared library 與 dynamic linker 完成解析。課程還提到可以用 `ldd` 看一個程式依賴哪些 shared libraries，並指出 **dynamic linker 自己也是 shared library，而且它在 `main()` 執行之前就先跑了**。
+- 菜單
+- 規則
+- 店內設定
 
-這個設計很省記憶體、很彈性，但代價很直接：
+全部一起帶過去。
 
-**程式有一部分行為，在 compile time 其實還沒決定。**
-如果使用者能影響這個 runtime linking 的結果，就有機會破壞程式完整性。投影片原句就是：dynamic linking saves memory，但也意味著 part of the program’s code is undecided during compilation time；若使用者能 influence the missing code，就能 compromise integrity。
+這就是「繼承 environment」的感覺。
 
-### `LD_PRELOAD` / `LD_LIBRARY_PATH` 為什麼危險？
+### 2. `execve()`
 
-課程的 case study 1 直接點名兩個環境變數：
+`execve()` 是把目前這個 process 的程式內容換掉，改跑另一個新程式。
 
-* `LD_PRELOAD`：指定一組 shared libraries，讓 linker 優先搜尋
-* `LD_LIBRARY_PATH`：指定額外 library 搜尋路徑 
+這時可以做兩件事：
 
-對普通程式來說，這等於把某些函式的實作權交給使用者。如果程式是動態連結的，使用者可以讓 linker 先載入他指定的 library，於是某個原本來自 libc 的函式，可能先被別的版本攔截。課程用 `sleep()` 當例子，就是在說：**你以為你呼叫的是系統函式，實際上 linker 可能先幫你接到別的實作去。** 
+- 沿用某組 environment
+- 明確指定新的 environment 給新程式
 
-這件事對 normal programs 已經足夠危險；對 Set-UID programs 就更危險。
-所以 dynamic linker 有防禦：當 `EUID` 與 `RUID` 不同時，會忽略 `LD_PRELOAD` 與 `LD_LIBRARY_PATH`。也就是進入 secure execution context 時，這兩個變數不再可信。
+### 白話理解
 
-但不要犯低級錯誤：
-**忽略兩個變數，不代表 environment variable 攻擊整體被解決。**
-它只代表這兩個最明顯的 linker-based 向量被封了一部分。
+像同一間店面本來賣便當，
+結果今天整個換成早餐店。
 
----
+店面地址沒變，
+但裡面的人、菜單、設備都換了。
 
-## 七、為什麼課程還要講 OS X 的 `DYLD_PRINT_TO_FILE`？
+如果新老闆要自己帶一份全新規則進來，
+那就有點像 `execve()` 第三個參數傳入新的 environment。
 
-因為這個案例在告訴你：
-**問題不只是“能不能換 library”，而是“environment 能不能驅動 privileged runtime 做額外事情”。** 
+### 這段的真正重點
 
-課程 case study 2 說，OS X 10.10 在 dynamic linker `dyld` 加入了 `DYLD_PRINT_TO_FILE` 這個 environment variable，允許使用者指定輸出檔名。表面看只是 debug 功能；但如果目標是 Set-UID 程式，`dyld` 會在 elevated privilege 下開那個檔案。更糟的是，投影片指出這裡出現 **capability leak**：檔案 descriptor 沒有被關閉。這表示即使後面的程式把 privilege 降下來，**已經拿到的特權資源仍然留著**。
+environment variable 不是作業系統全域只有一份的大設定。
+它比較像是：
 
-這個案例要你學到的，不是某個 OS X 細節，而是兩個更深的原理：
+**每個 process 自己帶著的一包環境資料。**
 
-第一，**privilege 不只存在於 UID/GID，也存在於已經開啟的資源與 descriptor。**
-第二，**只要 privileged runtime 受到 environment 驅動，就可能做出超出你原本設計預期的事。** 
+它可以：
 
----
-
-## 八、第二大攻擊面：外部程式呼叫與 `PATH`
-
-很多程式自己不直接用 environment variable，但它會去呼叫別的程式。這時 environment 仍然會咬你。
-
-課程指出，應用程式常透過兩類方式叫外部程式：
-
-* `exec()` family
-* `system()` 
-
-這裡差很多。
-`system()` 不是直接執行你的目標程式，而是先呼叫 shell，再由 shell 去執行命令。投影片明講：`system()` 會透過 `execl()`，最後走到 `execve()` 去執行 `/bin/sh`；而 shell 的行為會受很多 environment variables 影響，其中最重要的就是 `PATH`。當命令沒有給完整路徑時，shell 會依 `PATH` 找它。
-
-所以只要 privileged program 做了這種事：
-
-* 叫 shell
-* 命令沒寫絕對路徑
-* 使用者可控制 `PATH`
-
-那使用者就能影響「到底哪個程式被執行」。這不是表面上的使用者輸入問題，而是 **command resolution 被 environment 接管**。
-
-課程對這段的結論非常明確：
-**`execve()` 的 attack surface 比 `system()` 小，因為 `execve()` 不會叫 shell，因此不會被 shell 的 environment variables 影響。** 在 privileged program 裡呼叫外部程式時，應該用 `execve()`。
-
-更深一層地說，這其實是在實踐同一個原則：
-
-**不要把 code 跟 data 混在一起。**
-命令名稱應由程式自己固定；使用者資料只能作為 argument。當 shell 參與解析時，資料與執行邏輯的邊界就變鬆了。
+- 被父程序傳給子程序
+- 被新程式接手時重新指定
 
 ---
 
-## 九、第三大攻擊面：library 本身也會讀 environment
+## 四、shell variable 跟 environment variable 不一樣
 
-這裡很多人完全沒想到。
+這是超容易考、也超容易混掉的地方。
 
-程式可能沒有呼叫 `getenv()`，但它用到的 library 會。
-課程的 case study 是 UNIX locale subsystem。當程式需要輸出翻譯訊息時，常透過 libc 裡的 `gettext()`、`catopen()` 等函式來取對應語系資源；而這整套機制依賴多個 environment variables，例如 `LANG`、`LANGUAGE`、`NLSPATH`、`LOCPATH`、`LC_ALL`、`LC_MESSAGES`。
+### shell variable
 
-這代表什麼？
+shell 自己內部用的變數。
 
-代表**訊息內容本身，可能已經被使用者控制**。
-如果程式後面又把這些訊息以不安全方式丟給 `printf()` 類函式，那就可能把 environment-controlled string 轉成 format string 攻擊入口。投影片講得很直：attacker can use format string vulnerability to format the `printf()` function。這不是說 environment variable 本身直接等於 format string 漏洞，而是它提供了**可控內容來源**，再搭配不安全程式碼，就變成 exploit chain。
+### environment variable
 
-課程也給出 countermeasure：某些 libc 版本在 Set-UID context 下，會顯式忽略 `NLSPATH` 這類變數。這是同一個邏輯——**進入 privilege boundary 後，原本方便的環境參數必須視為不可信。** 
+會被 shell 傳給 child process 的那部分變數。
+
+### 差別在哪？
+
+不是你在 shell 裡宣告的每個變數，
+都會自動變成 child process 看得到的 environment。
+
+**只有被 `export` 的變數，才會真正進入 environment。**
+
+### 白話理解
+
+你可以把 shell 想成班導師。
+
+班導自己記事本上記很多東西，
+例如：
+
+- 明天要開會
+- 下節課要換教室
+- 哪個同學要補交作業
+
+但班導不會把所有筆記都告訴每個學生。
+只有「有正式公告出去」的內容，學生才會知道。
+
+這個「正式公告出去」的動作，
+就很像 `export`。
+
+### 真實世界例子
+
+如果你在 shell 裡做：
+
+```bash
+MYVAR=hello
+```
+
+這只是 shell 自己知道。
+
+如果你做：
+
+```bash
+export MYVAR=hello
+```
+
+那之後 shell 啟動的 child process 才看得到它。
+
+### 這裡真正要懂的是
+
+**child process 看到的是 environment，不是整個 shell 腦中的全部狀態。**
+
+所以 shell variable 和 environment variable 不能畫上等號。
 
 ---
 
-## 十、第四大攻擊面：application code 自己直接讀 environment
+## 五、為什麼 environment variable 會變成 attack surface？
 
-這是最直白，也最常被低估的一種。
+因為：
 
-投影片的 case 是：程式用 `getenv("PWD")` 來知道目前目錄，然後把這個值複製到固定大小的陣列 `arr`，卻沒有檢查長度，結果變成 buffer overflow。重點不是 overflow 本身，而是 **`PWD` 並不是可信的系統真相，它只是 shell 提供的一個字串**。使用者可以改 shell variable，於是程式就把攻擊者提供的內容當成 metadata 在用。
+**使用者可以在程式啟動前先改 environment variable。**
 
-這裡你一定要理解一個工程原則：
+而且程式常常會照單全收。
+
+### 白話理解
+
+這很像你要去辦重要手續，
+櫃台人員不是看系統資料，
+而是直接看你自己帶來的一張便利貼。
+
+如果這張便利貼可以自己亂寫，
+那當然很危險。
+
+### 為什麼在安全課特別強調？
+
+因為有些程式是普通權限執行，
+有些程式卻是高權限執行。
+
+如果低權限的使用者可以控制 environment，
+而高權限的程式又去相信它，
+就變成：
+
+**低權限的人，間接影響高權限程式的行為。**
+
+這就跨過了 privilege boundary。
+
+---
+
+## 六、什麼是 Set-UID？為什麼它讓問題變嚴重？
+
+這裡一定要懂，因為 environment variable 的危險常常是跟 Set-UID 綁在一起。
+
+### 基本概念
+
+Linux 裡常看到兩個身分：
+
+- `RUID`：真正執行這個程式的人
+- `EUID`：系統拿來做權限判斷的人
+
+一般情況下，兩者一樣。
+
+但如果程式是 Set-UID，
+那就可能出現：
+
+- 你本人不是 root
+- 但程式執行時的 `EUID` 卻是 root
+
+### 白話理解
+
+像你是一般學生，
+但老師暫時借你教務主任的通行證，
+讓你幫忙去開某些只有主任能開的門。
+
+這時：
+
+- 你本人還是你
+- 但系統把你當成擁有更高權限的人
+
+### 危險在哪？
+
+如果「你手上帶進去的資料」也是你能控制的，
+例如 environment variable，
+那就等於：
+
+**普通使用者自帶一包可操控資料，卻讓高權限程式幫他處理。**
+
+這當然很危險。
+
+### 一句話記憶
+
+**不可信的 environment + 被提升的權限 = 很大的攻擊面。**
+
+---
+
+## 七、第一大攻擊面：dynamic linker
+
+這是最重要的攻擊面之一。
+
+### 先懂 static linking 跟 dynamic linking
+
+#### static linking
+
+編譯時就把要用的 library 程式碼直接包進可執行檔。
+
+好處：
+
+- 執行時比較單純
+
+缺點：
+
+- 檔案比較大
+
+#### dynamic linking
+
+執行時才去載入 shared library。
+
+好處：
+
+- 省空間
+- 多個程式可以共用同一份 library
+
+缺點：
+
+- 執行前後還要做額外的載入與解析
+- 如果有人能影響載入過程，就可能動手腳
+
+### 白話理解
+
+static linking 像是你買的是一台功能全都焊死在裡面的機器。
+
+dynamic linking 像是你買一台主機，
+真正的模組是開機時再去倉庫拿來裝。
+
+平常這樣很省資源。
+但如果有人可以偷改「你從哪個倉庫拿模組」，
+問題就大了。
+
+### 為什麼 dynamic linker 會成為攻擊面？
+
+因為 dynamic linker 在 `main()` 執行前就先工作了。
+
+也就是說，
+**有些事情在你的主程式還沒開始前，就已經被 environment 影響。**
+
+這很可怕，因為你主程式甚至還來不及做防禦。
+
+---
+
+## 八、`LD_PRELOAD` 跟 `LD_LIBRARY_PATH` 為什麼危險？
+
+這兩個都是經典例子。
+
+### `LD_PRELOAD`
+
+可以要求 dynamic linker 先載入某些 shared library。
+
+### `LD_LIBRARY_PATH`
+
+可以改變 linker 搜尋 library 的路徑。
+
+### 白話理解
+
+你本來叫學校工讀生去教具室拿「原廠工具箱」。
+
+結果有人偷偷把便條紙改成：
+
+- 先去拿我指定的這一箱
+- 或是先去另一個房間找
+
+那你最後拿到的，可能就不是原本預期的工具。
+
+### 真實世界感的技術例子
+
+假設某個程式會呼叫 `sleep()`。
+理論上它應該用系統本來的函式。
+
+但如果攻擊者用 `LD_PRELOAD` 先塞進自己做的 library，
+就有可能讓程式實際上先用到攻擊者版本的函式。
+
+也就是說：
+
+**看起來你呼叫的是合法函式，實際上背後可能早就被攔截了。**
+
+### 那 Set-UID 程式不是直接爆掉？
+
+所以作業系統和 linker 也不是完全沒防禦。
+在 `EUID != RUID` 這種敏感情況下，
+通常會忽略像 `LD_PRELOAD`、`LD_LIBRARY_PATH` 這類變數。
+
+### 但要注意
+
+這不代表問題全部解決。
+
+它只是表示：
+
+**最明顯、最危險的幾個 linker 入口被特別封掉。**
+
+其他 environment-based 攻擊，還是可能存在。
+
+---
+
+## 九、為什麼課堂還要講 OS X 的 `DYLD_PRINT_TO_FILE`？
+
+因為這個案例在提醒你：
+
+**危險不只來自「換掉 library」，也可能來自「叫高權限元件幫你做額外的事」。**
+
+### 這個案例在說什麼？
+
+OS X 10.10 的 dynamic linker `dyld`
+有一個 environment variable 叫 `DYLD_PRINT_TO_FILE`，
+可以指定 debug 輸出要寫到哪個檔案。
+
+表面上看起來只是方便除錯。
+
+但如果這件事發生在高權限情境，
+就可能變成：
+
+**使用者透過 environment，叫高權限的 linker 幫忙開某個檔案。**
+
+### 真實世界白話類比
+
+像學校警衛室有總鑰匙，
+只有警衛能開某些門。
+
+結果你不能自己開，
+但你偷偷在便條紙上寫：
+
+「等等請幫我去開這間教室，順便把門留著。」
+
+如果警衛真的照做，
+那你雖然沒有總鑰匙，
+卻藉由警衛替你完成了高權限動作。
+
+### 課程提到的 capability leak 是什麼？
+
+這裡的重點是：
+就算後來程式把權限降回來，
+前面已經打開的檔案描述子可能還留著。
+
+也就是：
+
+- 身分看起來降回去了
+- 但資源其實已經拿到手了
+
+### 白話理解
+
+像你本來只有在老師陪同下才能進器材室。
+後來老師走了，
+可是門已經打開，而且鑰匙還在你手上。
+
+這就是 capability leak 的味道。
+
+### 這個案例真正想教你的事
+
+- 權限不只存在於 UID
+- 權限也存在於「已經打開的資源」
+
+所以不要只看「目前是不是 root」，
+還要看「之前有沒有已經拿到不該拿到的東西」。
+
+---
+
+## 十、第二大攻擊面：外部程式呼叫和 `PATH`
+
+很多程式自己沒有直接讀 environment variable，
+但它會去呼叫別的程式。
+
+這時 environment 一樣可能搞事。
+
+課堂常講兩種方式：
+
+- `exec()` family
+- `system()`
+
+### `system()` 為什麼比較危險？
+
+因為 `system()` 不是直接幫你執行目標程式，
+而是先叫 shell 來幫你處理。
+
+而 shell 會受到 environment variable 影響，
+尤其是 `PATH`。
+
+### `PATH` 是什麼？
+
+當你只打一個指令名稱，
+沒有寫完整路徑時，
+shell 會照 `PATH` 裡列的資料夾順序去找。
+
+### 真實世界例子
+
+你跟助理說：
+
+「幫我拿計算機。」
+
+但你沒有說是哪一間教室、哪個櫃子。
+
+助理就照你平常給的「搜尋順序」去找。
+如果有人把搜尋順序偷偷改掉，
+助理就可能先拿到假的、壞的、被動過手腳的計算機。
+
+這就是 `PATH` 攻擊的感覺。
+
+### 在 privileged program 裡怎麼出事？
+
+如果一個高權限程式做了這些事：
+
+- 使用 `system()`
+- 命令沒寫絕對路徑
+- 使用者可以控制 `PATH`
+
+那攻擊者就有機會讓高權限程式執行到他準備的假程式。
+
+### 為什麼 `execve()` 比較安全？
+
+因為 `execve()` 可以直接指定你要執行哪個檔案。
+它不需要先叫 shell 來幫忙猜。
+
+所以：
+
+- `system()` 像是請一個會參考很多背景設定的助理去做事
+- `execve()` 像是你直接寫完整地址，叫人送到精確位置
+
+### 這段最該記住的結論
+
+在高權限程式裡：
+
+- 不要亂用 `system()`
+- 盡量用 `execve()`
+- 盡量寫絕對路徑
+
+---
+
+## 十一、第三大攻擊面：library 自己也會讀 environment
+
+很多人以為：
+
+「只要我的程式沒有寫 `getenv()`，就沒事。」
+
+這是不對的。
+
+因為你用到的 library 可能自己會去讀 environment。
+
+### 課堂案例：locale subsystem
+
+像 `gettext()`、`catopen()` 這些函式，
+會根據語系設定載入不同的訊息資源。
+
+它們可能會看：
+
+- `LANG`
+- `LANGUAGE`
+- `NLSPATH`
+- `LOCPATH`
+- `LC_ALL`
+- `LC_MESSAGES`
+
+### 白話理解
+
+這就像學校廣播系統會依照設定，
+決定今天是用中文廣播、英文廣播，還是去讀哪一本公告稿。
+
+如果這些設定來源可以被使用者影響，
+那廣播內容也就可能被影響。
+
+### 為什麼這會變成漏洞？
+
+如果程式後面又很不小心，
+把這些可能被控制的字串當成 `printf()` 的格式字串去用，
+就可能導致 format string 問題。
+
+### 白話理解
+
+像教官本來只想「把公告內容念出來」。
+但他拿到的不是普通文字，
+而是一份裡面藏有特殊控制指令的稿子。
+
+結果他一照著念，整個系統就被亂操作。
+
+### 這段最重要的觀念
+
+**你沒有直接讀 environment，不代表你的程式就沒有被 environment 影響。**
+
+只要你依賴的函式庫會讀，它還是會繞路影響你。
+
+---
+
+## 十二、第四大攻擊面：應用程式自己直接讀 environment
+
+這是最直觀的一種。
+
+例如程式直接做：
+
+```c
+getenv("PWD")
+```
+
+然後把這個值複製到固定大小陣列裡，
+卻沒有檢查長度。
+
+這就可能造成 buffer overflow。
+
+### 白話理解
+
+程式像是在問：
+
+「你現在在哪裡？」
+
+然後使用者回一個超長、超奇怪的答案。
+
+程式又完全不檢查，就硬塞進小盒子裡，
+結果盒子爆掉。
+
+### 真實世界例子
+
+像老師要你寫班級座號，
+格子只留 10 個字。
+
+正常人會寫：
+
+`31205`
+
+但有人故意寫一整段 500 字的垃圾內容，
+如果系統完全沒檢查長度就塞進去，
+整個表單都可能壞掉。
+
+### 更深一點的重點
+
+`PWD` 這類東西看起來像「現在目錄」，
+好像很像系統真相。
+
+但實際上，
+它可能只是 shell 傳來的一段字串。
+
+所以：
 
 **environment variable 是輸入，不是事實。**
-它頂多是「某個先前程式宣稱的環境資訊」，不是 kernel guarantee。凡是 privileged program 直接拿 `getenv()` 的輸出當可信設定、可信路徑、可信目錄、可信模式，再做記憶體操作、字串拼接、檔案開啟、命令執行，都在把隱性輸入當權威。這很蠢。
+
+這句話非常重要。
+
+不要因為名字看起來像系統資訊，
+就以為它一定是真的。
 
 ---
 
-## 十一、`secure_getenv()` 到底在解決什麼？
+## 十三、`secure_getenv()` 在解決什麼？
 
-課程在 countermeasure 那一段點出一個很重要的 API：`secure_getenv()`。
-它跟 `getenv()` 幾乎一樣，差別在於：當系統認為目前屬於 **secure execution** 時，它直接回傳 `NULL`。投影片舉的 secure execution 條件之一，就是 process 的 `EUID` 與 `RUID` 不匹配，也就是典型的 Set-UID 情境。
+`secure_getenv()` 跟 `getenv()` 很像，
+但它多了一層安全判斷。
 
-這個 API 的思想很乾淨：
+如果現在屬於敏感執行環境，
+例如：
 
-* 普通程式：可以方便讀 environment
-* 特權程式：預設 fail closed，不要碰不可信環境 
+- `EUID != RUID`
 
-這不是萬靈丹，但它把責任方向擺對了。
-因為真正正確的問題不是「我要不要讀這個 env？」
-而是「**在這個 privilege context 下，我有沒有資格相信它？**」
+它就直接回傳 `NULL`，
+也就是不讓你拿到那些 environment variable。
 
----
+### 白話理解
 
-## 十二、架構層面的結論：Set-UID approach 為什麼比 service approach 危險？
+像平常你可以自由問櫃台：
 
-這是整份講義最後真正該抓住的設計結論。
+「系統設定是什麼？」
 
-課程把 privileged operation 拆成兩種做法：
+但如果現在是在考卷保管室、成績系統、或主任權限模式下，
+櫃台就會回你：
 
-**Set-UID approach**：一般使用者直接執行一個特殊程式，暫時拿到高權限。
-**Service approach**：高權限服務自己常駐執行，使用者只是發 request 給它處理。
+「這時候不提供這種資料。」
 
-為什麼 Set-UID 的 environment attack surface 特別大？
-因為在 Set-UID 模型裡，**高權限程式是從使用者的 process context 啟動的**。使用者控制 command line、working directory、file descriptor、以及 environment。權限提升發生在這些輸入已經被包進啟動上下文之後。
+### 為什麼這個想法好？
 
-而 service approach 比較安全，原因不是服務 magically 安全，而是 privilege boundary 放得比較對：
-高權限服務通常以自己的乾淨環境啟動，使用者只能透過定義好的 request interface 送資料，而不是把整包 process execution context 一起塞給 privileged code。課程甚至直接寫：Set-UID approach 的 environment variables **cannot be trusted**；而 service approach 的 environment variables **can be trusted**。也因此 Android 乾脆移除了 Set-UID / Set-GID 機制。
+因為它不是問：
 
-這個設計結論，比單一漏洞重要得多：
+「這個 environment 好像看起來正常嗎？」
 
-**最好的防禦不是一直補 env var 黑名單，而是把 privilege boundary 從 user-launched program 改成 controlled service boundary。** 
+而是先問：
 
----
+**「在這種高風險情境下，我根本該不該相信 environment？」**
 
-## 十三、把整段壓成一個你考試能寫的模型
-
-你可以把整個 environment variable 單元壓成下面這個流程：
-
-1. Environment variables 是 process 的動態環境參數，會影響程式行為。
-2. 它們會透過 `fork()` 繼承，或由 `execve()` 顯式傳遞。
-3. Shell variables 不等於 environment variables；只有 export 的部分才會進 child process。
-4. 危險在於 environment 是**隱性輸入**，而且很多元件會讀它：dynamic linker、shell、library、application code。
-5. 在 privileged context，尤其 Set-UID，這些值來自低權限使用者，卻會影響高權限行為。
-6. 典型風險包括：
-
-   * dynamic linker search path / preload 類影響
-   * shell 的 `PATH` resolution
-   * locale / library 行為被控制
-   * `getenv()` 直接成為 untrusted input
-   * capability leak 與 privilege downgrade 交錯造成更深問題
-7. 典型防禦包括：
-
-   * 不信任 privileged program 的 environment
-   * 必要時用 `secure_getenv()`
-   * 不用 `system()`，改用 `execve()`
-   * 絕對路徑
-   * sanitize / whitelist environment
-   * 能用 service approach 就不要用 Set-UID approach。
+這種做法叫比較偏向 fail closed，
+也就是寧可不給，也不要亂信。
 
 ---
 
-## 十四、最短背誦版
+## 十四、Set-UID approach 為什麼比 service approach 危險？
 
-**Environment variable 本質上是 process 的隱性輸入。**
-**危險不是它本身，而是它能在 `main()` 之前、shell 之內、library 之內、以及 privileged boundary 上改變程式行為。**
-**Set-UID 最大問題，就是把使用者可控 environment 帶進高權限執行環境。**
-**最常見攻擊面是 dynamic linker、`PATH`、locale library、以及直接 `getenv()`。**
-**最可靠的防禦不是補洞，而是縮小 attack surface：`secure_getenv()`、`execve()`、絕對路徑、sanitize environment、改用 service model。**
+這是整個單元最後最有架構觀念的一題。
 
-接下來最合理的是把這份講義壓成 **考試標準答案版**，也就是：「老師會怎麼問、你要怎麼寫才拿分」。
+### Set-UID approach
+
+使用者直接啟動一個特殊程式，
+程式在執行時暫時拿到較高權限。
+
+### Service approach
+
+高權限服務平常就自己在那裡跑，
+使用者只是透過明確的介面送 request 給它。
+
+### 為什麼 Set-UID 比較危險？
+
+因為高權限程式是從「使用者的執行環境」啟動的。
+
+使用者可以一起帶進去很多東西：
+
+- command line arguments
+- working directory
+- file descriptors
+- environment variables
+
+也就是說，
+**權限雖然變高了，但整個起跑點還是很受使用者控制。**
+
+### 白話理解
+
+Set-UID approach 很像：
+
+讓學生自己帶著書包、紙條、工具、朋友準備的東西，
+然後直接走進主任室幫忙辦事。
+
+這當然風險很大，
+因為他帶進去的每樣東西都可能有問題。
+
+### service approach 為什麼相對安全？
+
+因為高權限服務通常是在比較乾淨、可控的環境裡自己啟動的。
+
+使用者不能把整包私人物品一起帶進去，
+只能透過既定的規則提出需求。
+
+### 白話理解
+
+像你不能直接走進資料室亂碰系統，
+你只能到櫃台填申請單。
+
+櫃台只接受：
+
+- 固定欄位
+- 固定格式
+- 固定流程
+
+這樣 attack surface 就小很多。
+
+### 這題最終結論
+
+**比起一直補環境變數黑名單，更好的做法是從架構上減少高權限程式直接吃使用者環境的機會。**
+
+這也是為什麼像 Android 這類系統會盡量少用 Set-UID / Set-GID。
+
+---
+
+## 十五、整份內容壓成考試能寫的理解模型
+
+你可以把這章記成下面這條邏輯線：
+
+1. Environment variable 是 process 執行前就帶著的一組環境設定。
+2. 它雖然很方便，但本質上仍然是輸入。
+3. 它可以透過 `fork()` 繼承，也可以透過 `execve()` 傳給新程式。
+4. 不只是主程式，shell、dynamic linker、library 都可能去讀它。
+5. 如果程式是高權限程式，像 Set-UID，問題會特別嚴重。
+6. 常見攻擊面包含：
+   - linker 載入路徑與 preload
+   - shell 的 `PATH`
+   - locale / library 行為
+   - 程式自己用 `getenv()`
+   - 先取得特權資源再降權的 capability leak
+7. 常見防禦包含：
+   - 不信任 privileged context 下的 environment
+   - 使用 `secure_getenv()`
+   - 避免 `system()`
+   - 用 `execve()` 和絕對路徑
+   - 對 environment 做 sanitize / whitelist
+   - 從架構上改用 service approach
+
+---
+
+## 十六、最短背誦版
+
+**Environment variable 是程式的隱性輸入。**
+
+**危險在於它不只影響主程式，還會影響 dynamic linker、shell、library，甚至在 `main()` 執行前就先發生作用。**
+
+**當低權限使用者可控制 environment，而高權限程式又去相信它時，就會形成系統層級的攻擊面。**
+
+**最典型的風險包含 `LD_PRELOAD`、`LD_LIBRARY_PATH`、`PATH`、locale 相關變數，以及程式直接 `getenv()`。**
+
+**防禦重點不是只補黑名單，而是減少高權限程式直接吃使用者環境，例如 `secure_getenv()`、`execve()`、絕對路徑、sanitize environment，和改用 service model。**
+
+---
+
+## 十七、如果你想用一句超白話記住這章
+
+**environment variable 就像使用者偷偷塞給程式的一張背景小抄。**
+
+**普通程式看錯小抄，可能只是做錯事。**
+
+**高權限程式看錯小抄，就可能變成安全漏洞。**
