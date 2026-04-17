@@ -9,6 +9,7 @@ ehthumbs.db
 *.tmp
 *.temp
 *.log
+!homeworks/hw02-tls-bidirectional-certificates/lab/logs/*.log
 
 # IDE files
 .vscode/

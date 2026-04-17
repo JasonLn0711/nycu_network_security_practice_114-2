@@ -1,0 +1,8 @@
+# LaTeX build artifacts for the generated homework PDF.
+*.aux
+*.log
+*.out
+
+# Generated proof PDF; keep the canonical source plus submitted artifact.
+final-report.pdf
+!513559004_report.pdf

@@ -1,0 +1,57 @@
+[
+    {
+        "Name": "hw2-mtls-net",
+        "Id": "399f3105045618eeafd098d27936f2c95509cdf83d88966f16587ff2d5ded0d6",
+        "Created": "2026-04-17T10:05:54.600182188+08:00",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "IPRange": "",
+                    "Gateway": "172.18.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {},
+        "Labels": {},
+        "Containers": {
+            "98a08107e4a5ffd97bb5cecf0009e760aa9fb26c018b39a25815f469df25052b": {
+                "Name": "hw2-mtls-server",
+                "EndpointID": "a39d0183eba367607766e7d1ea34ac844abd3653e618b6b1d8d3b34420b90692",
+                "MacAddress": "52:81:a4:99:7e:0e",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            },
+            "f5556200b138d0fdc0113c0665af98e37c13b60e1dbdd65ae6fa634c1f5d66f6": {
+                "Name": "hw2-mtls-client",
+                "EndpointID": "f1e10587a2d95cd7c1230669672f689a185e4fc3b63a479b3c719a2147222929",
+                "MacAddress": "2a:08:2c:42:4d:49",
+                "IPv4Address": "172.18.0.3/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.18.0.0/16": {
+                        "IPsInUse": 5,
+                        "DynamicIPsAvailable": 65531
+                    }
+                }
+            }
+        }
+    }
+]

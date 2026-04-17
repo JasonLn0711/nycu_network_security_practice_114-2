@@ -1,0 +1,16 @@
+# Keep generated certificate material and packet captures out of Git by default.
+certs/
+captures/
+*.crt
+*.csr
+*.key
+*.pem
+*.srl
+*.pcap
+*.pcapng
+
+# Keep configs and text logs searchable as homework evidence.
+!config/
+!config/**
+!logs/
+!logs/**

@@ -1,0 +1,23 @@
+2026.04.17 02:13:33 LOG6[ui]: Initializing inetd mode configuration
+2026.04.17 02:13:33 LOG5[ui]: stunnel 5.72 on x86_64-pc-linux-gnu platform
+2026.04.17 02:13:33 LOG5[ui]: Compiled/running with OpenSSL 3.0.13 30 Jan 2024
+2026.04.17 02:13:33 LOG5[ui]: Threading:PTHREAD Sockets:POLL,IPv6,SYSTEMD TLS:ENGINE,OCSP,PSK,SNI Auth:LIBWRAP
+2026.04.17 02:13:33 LOG6[ui]: Initializing inetd mode configuration
+2026.04.17 02:13:33 LOG5[ui]: Reading configuration from file /hw2/stunnel.conf
+2026.04.17 02:13:33 LOG5[ui]: UTF-8 byte order mark not detected
+2026.04.17 02:13:33 LOG5[ui]: FIPS mode disabled
+2026.04.17 02:13:33 LOG6[ui]: Compression disabled
+2026.04.17 02:13:33 LOG6[ui]: Initializing service [mtls-http]
+2026.04.17 02:13:33 LOG6[ui]: OpenSSL security level is used: 2
+2026.04.17 02:13:33 LOG6[ui]: Session resumption enabled
+2026.04.17 02:13:33 LOG6[ui]: Loading certificate from file: /hw2/certs/server.crt
+2026.04.17 02:13:33 LOG6[ui]: Certificate loaded from file: /hw2/certs/server.crt
+2026.04.17 02:13:33 LOG6[ui]: Loading private key from file: /hw2/certs/server.key
+2026.04.17 02:13:33 LOG6[ui]: Private key loaded from file: /hw2/certs/server.key
+2026.04.17 02:13:33 LOG6[ui]: Configured trusted client CA: C=TW, ST=Taiwan, L=Hsinchu, O=NYCU Network Security HW2, OU=Root CA, CN=HW2 Root CA
+2026.04.17 02:13:33 LOG6[ui]: DH initialization skipped: no DH ciphersuites
+2026.04.17 02:13:33 LOG5[ui]: Configuration successful
+2026.04.17 02:13:33 LOG6[ui]: Service [mtls-http] (FD=8) bound to 0.0.0.0:4433
+2026.04.17 02:13:33 LOG6[ui]: Accepting new connections
+2026.04.17 02:13:33 LOG6[per-day]: Executing per-day jobs
+2026.04.17 02:13:33 LOG6[per-day]: Per-day jobs completed in 0 seconds

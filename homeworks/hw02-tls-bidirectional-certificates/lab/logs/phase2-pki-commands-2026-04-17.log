@@ -1,0 +1,30 @@
++ openssl genrsa -out ca.key 4096
++ openssl req -x509 -new -nodes -key ca.key -sha256 -days 365 -out ca.crt -subj '/C=TW/ST=Taiwan/L=Hsinchu/O=NYCU Network Security HW2/OU=Root CA/CN=HW2 Root CA'
++ openssl genrsa -out server.key 2048
++ openssl req -new -key server.key -out server.csr -subj '/C=TW/ST=Taiwan/L=Hsinchu/O=NYCU Network Security HW2/OU=Server/CN=hw2-mtls-server'
++ openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 365 -sha256 -extfile ../config/server-ext.cnf
+Certificate request self-signature ok
+subject=C = TW, ST = Taiwan, L = Hsinchu, O = NYCU Network Security HW2, OU = Server, CN = hw2-mtls-server
++ openssl genrsa -out client.key 2048
++ openssl req -new -key client.key -out client.csr -subj '/C=TW/ST=Taiwan/L=Hsinchu/O=NYCU Network Security HW2/OU=Client/CN=hw2-mtls-client'
++ openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 365 -sha256 -extfile ../config/client-ext.cnf
+Certificate request self-signature ok
+subject=C = TW, ST = Taiwan, L = Hsinchu, O = NYCU Network Security HW2, OU = Client, CN = hw2-mtls-client
++ openssl genrsa -out fake-ca.key 4096
++ openssl req -x509 -new -nodes -key fake-ca.key -sha256 -days 365 -out fake-ca.crt -subj '/C=TW/ST=Taiwan/L=Hsinchu/O=NYCU Network Security HW2/OU=Fake Root CA/CN=HW2 Fake Root CA'
++ openssl genrsa -out fake-client.key 2048
++ openssl req -new -key fake-client.key -out fake-client.csr -subj '/C=TW/ST=Taiwan/L=Hsinchu/O=NYCU Network Security HW2/OU=Fake Client/CN=hw2-fake-client'
++ openssl x509 -req -in fake-client.csr -CA fake-ca.crt -CAkey fake-ca.key -CAcreateserial -out fake-client.crt -days 365 -sha256 -extfile ../config/client-ext.cnf
+Certificate request self-signature ok
+subject=C = TW, ST = Taiwan, L = Hsinchu, O = NYCU Network Security HW2, OU = Fake Client, CN = hw2-fake-client
++ openssl verify -CAfile ca.crt server.crt
+server.crt: OK
++ openssl verify -CAfile ca.crt client.crt
+client.crt: OK
++ openssl verify -CAfile ca.crt fake-client.crt
+C = TW, ST = Taiwan, L = Hsinchu, O = NYCU Network Security HW2, OU = Fake Client, CN = hw2-fake-client
+error 20 at 0 depth lookup: unable to get local issuer certificate
+error fake-client.crt: verification failed
++ true
++ openssl verify -CAfile fake-ca.crt fake-client.crt
+fake-client.crt: OK

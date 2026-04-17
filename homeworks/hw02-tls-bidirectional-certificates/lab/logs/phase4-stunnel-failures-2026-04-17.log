@@ -1,0 +1,51 @@
+2026.04.17 02:13:33 LOG6[ui]: Initializing inetd mode configuration
+2026.04.17 02:13:33 LOG5[ui]: stunnel 5.72 on x86_64-pc-linux-gnu platform
+2026.04.17 02:13:33 LOG5[ui]: Compiled/running with OpenSSL 3.0.13 30 Jan 2024
+2026.04.17 02:13:33 LOG5[ui]: Threading:PTHREAD Sockets:POLL,IPv6,SYSTEMD TLS:ENGINE,OCSP,PSK,SNI Auth:LIBWRAP
+2026.04.17 02:13:33 LOG6[ui]: Initializing inetd mode configuration
+2026.04.17 02:13:33 LOG5[ui]: Reading configuration from file /hw2/stunnel.conf
+2026.04.17 02:13:33 LOG5[ui]: UTF-8 byte order mark not detected
+2026.04.17 02:13:33 LOG5[ui]: FIPS mode disabled
+2026.04.17 02:13:33 LOG6[ui]: Compression disabled
+2026.04.17 02:13:33 LOG6[ui]: Initializing service [mtls-http]
+2026.04.17 02:13:33 LOG6[ui]: OpenSSL security level is used: 2
+2026.04.17 02:13:33 LOG6[ui]: Session resumption enabled
+2026.04.17 02:13:33 LOG6[ui]: Loading certificate from file: /hw2/certs/server.crt
+2026.04.17 02:13:33 LOG6[ui]: Certificate loaded from file: /hw2/certs/server.crt
+2026.04.17 02:13:33 LOG6[ui]: Loading private key from file: /hw2/certs/server.key
+2026.04.17 02:13:33 LOG6[ui]: Private key loaded from file: /hw2/certs/server.key
+2026.04.17 02:13:33 LOG6[ui]: Configured trusted client CA: C=TW, ST=Taiwan, L=Hsinchu, O=NYCU Network Security HW2, OU=Root CA, CN=HW2 Root CA
+2026.04.17 02:13:33 LOG6[ui]: DH initialization skipped: no DH ciphersuites
+2026.04.17 02:13:33 LOG5[ui]: Configuration successful
+2026.04.17 02:13:33 LOG6[ui]: Service [mtls-http] (FD=8) bound to 0.0.0.0:4433
+2026.04.17 02:13:33 LOG6[ui]: Accepting new connections
+2026.04.17 02:13:33 LOG6[per-day]: Executing per-day jobs
+2026.04.17 02:13:33 LOG6[per-day]: Per-day jobs completed in 0 seconds
+2026.04.17 02:13:35 LOG5[0]: Service [mtls-http] accepted connection from 172.18.0.3:58822
+2026.04.17 02:13:35 LOG6[0]: Peer certificate required
+2026.04.17 02:13:35 LOG6[0]: Certificate accepted at depth=1: C=TW, ST=Taiwan, L=Hsinchu, O=NYCU Network Security HW2, OU=Root CA, CN=HW2 Root CA
+2026.04.17 02:13:35 LOG6[0]: CERT: No subject checks configured
+2026.04.17 02:13:35 LOG5[0]: Certificate accepted at depth=0: C=TW, ST=Taiwan, L=Hsinchu, O=NYCU Network Security HW2, OU=Client, CN=hw2-mtls-client
+2026.04.17 02:13:35 LOG6[0]: Session id: 80DA4C6905B40E99082A5EE5D6D111482A5A08B43028B88158877A75222893AF
+2026.04.17 02:13:35 LOG6[0]: Session id: CCFFB5D1120BF338E9D1A0F79449C40E1E88ED51A7B22CAFB0B8A2F7394FBF90
+2026.04.17 02:13:35 LOG6[0]: TLS accepted: new session negotiated
+2026.04.17 02:13:35 LOG6[0]: TLSv1.3 ciphersuite: TLS_AES_256_GCM_SHA384 (256-bit encryption)
+2026.04.17 02:13:35 LOG6[0]: Peer temporary key: X25519, 253 bits
+2026.04.17 02:13:35 LOG6[0]: s_connect: connecting 127.0.0.1:8000
+2026.04.17 02:13:35 LOG5[0]: s_connect: connected 127.0.0.1:8000
+2026.04.17 02:13:35 LOG6[0]: persistence: 127.0.0.1:8000 cached
+2026.04.17 02:13:35 LOG5[0]: Service [mtls-http] connected remote server from 127.0.0.1:40162
+2026.04.17 02:13:35 LOG6[0]: Read socket closed (readsocket)
+2026.04.17 02:13:35 LOG6[0]: SSL_shutdown successfully sent close_notify alert
+2026.04.17 02:13:35 LOG6[0]: TLS closed (SSL_read)
+2026.04.17 02:13:35 LOG5[0]: Connection closed: 232 byte(s) sent to TLS, 83 byte(s) sent to socket
+2026.04.17 02:13:35 LOG5[1]: Service [mtls-http] accepted connection from 172.18.0.3:58824
+2026.04.17 02:13:35 LOG6[1]: Peer certificate required
+2026.04.17 02:13:35 LOG3[1]: SSL_accept: ../ssl/statem/statem_srvr.c:3509: error:0A0000C7:SSL routines::peer did not return a certificate
+2026.04.17 02:13:35 LOG5[1]: Connection reset/closed: 0 byte(s) sent to TLS, 0 byte(s) sent to socket
+2026.04.17 02:13:35 LOG5[2]: Service [mtls-http] accepted connection from 172.18.0.3:58834
+2026.04.17 02:13:35 LOG6[2]: Peer certificate required
+2026.04.17 02:13:35 LOG4[2]: CERT: Pre-verification error: unable to get local issuer certificate
+2026.04.17 02:13:35 LOG4[2]: Rejected by CERT at depth=0: C=TW, ST=Taiwan, L=Hsinchu, O=NYCU Network Security HW2, OU=Fake Client, CN=hw2-fake-client
+2026.04.17 02:13:35 LOG3[2]: SSL_accept: ../ssl/statem/statem_srvr.c:3522: error:0A000086:SSL routines::certificate verify failed
+2026.04.17 02:13:35 LOG5[2]: Connection reset/closed: 0 byte(s) sent to TLS, 0 byte(s) sent to socket

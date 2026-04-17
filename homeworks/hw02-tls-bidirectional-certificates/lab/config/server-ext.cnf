@@ -1,0 +1,3 @@
+subjectAltName = DNS:hw2-mtls-server
+extendedKeyUsage = serverAuth
+keyUsage = digitalSignature,keyEncipherment

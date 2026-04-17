@@ -1,0 +1,308 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=0.75in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{array}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue
+}
+
+\definecolor{codebg}{HTML}{F7F7F7}
+\definecolor{codeframe}{HTML}{CCCCCC}
+
+\lstdefinestyle{evidence}{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{codeframe},
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  upquote=true
+}
+
+\lstset{style=evidence}
+\setlist[itemize]{leftmargin=*,itemsep=2pt,topsep=3pt}
+\setlist[enumerate]{leftmargin=*,itemsep=2pt,topsep=3pt}
+
+\title{\textbf{HW2: TLS Connection with Bidirectional Certificates}}
+\author{
+Jason Chia-Sheng Lin\\
+Student ID: 513559004\\
+Institute of Biophotonics, NYCU
+}
+\date{2026-04-17}
+
+\begin{document}
+\maketitle
+
+\section*{Executive Summary}
+
+This experiment implements mutual TLS (mTLS) for a plaintext HTTP backend by placing \texttt{stunnel4} in front of the service. The security objective is to prove that only a client holding a certificate signed by the trusted Root CA can reach the backend through the TLS proxy. The test environment uses two Docker containers on a dedicated bridge network:
+
+\begin{itemize}
+  \item Server container: \texttt{hw2-mtls-server}, IP \texttt{172.18.0.2}
+  \item Client container: \texttt{hw2-mtls-client}, IP \texttt{172.18.0.3}
+  \item Protected endpoint: \texttt{hw2-mtls-server:4433}
+  \item Plaintext backend: \texttt{127.0.0.1:8000} inside the server container
+\end{itemize}
+
+The validation results match the expected security behavior:
+
+\begin{itemize}
+  \item A valid client certificate receives \texttt{HTTP/1.0 200 OK}.
+  \item A client without a certificate fails with \texttt{tlsv13 alert certificate required}.
+  \item A client certificate signed by an untrusted fake CA fails with \texttt{tlsv1 alert unknown ca}.
+  \item Packet capture confirms successful traffic on port \texttt{4433}; \texttt{tcpdump} captured 22 packets with 0 kernel drops.
+\end{itemize}
+
+Private keys are not included in this report. Only commands, configuration, verification output, and selected evidence excerpts are shown.
+
+\section{Environment And Topology}
+
+The assignment requires two separate VMs or containers. This implementation uses two Docker containers on the custom Docker network \texttt{hw2-mtls-net}. The client connects to the server on port \texttt{4433}. \texttt{stunnel4} terminates TLS, validates the client certificate against the trusted Root CA, and forwards accepted requests to the plaintext Python backend on \texttt{127.0.0.1:8000}.
+
+\begin{lstlisting}
+Docker network: hw2-mtls-net
+Server container: hw2-mtls-server 172.18.0.2
+Client container: hw2-mtls-client 172.18.0.3
+Traffic path:
+  hw2-mtls-client
+    -> hw2-mtls-server:4433
+    -> stunnel4 mTLS proxy
+    -> 127.0.0.1:8000 Python backend
+\end{lstlisting}
+
+Topology verification from the client container:
+
+\begin{lstlisting}
+172.18.0.2      hw2-mtls-server
+\end{lstlisting}
+
+\section{Part 1: PKI Construction}
+
+\subsection*{PKI Design}
+
+The trusted PKI contains one self-signed Root CA, one server certificate, and one valid client certificate. The fake-client test uses a separate fake CA to sign an unauthorized client certificate. This creates a clear negative test: the fake client certificate is structurally valid, but it is not trusted by the server because \texttt{stunnel4} verifies client certificates against the trusted Root CA only.
+
+\subsection*{OpenSSL Commands}
+
+\begin{lstlisting}[language=bash]
+openssl genrsa -out ca.key 4096
+openssl req -x509 -new -nodes -key ca.key -sha256 -days 365 \
+  -out ca.crt \
+  -subj '/C=TW/ST=Taiwan/L=Hsinchu/O=NYCU Network Security HW2/OU=Root CA/CN=HW2 Root CA'
+
+openssl genrsa -out server.key 2048
+openssl req -new -key server.key -out server.csr \
+  -subj '/C=TW/ST=Taiwan/L=Hsinchu/O=NYCU Network Security HW2/OU=Server/CN=hw2-mtls-server'
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key \
+  -CAcreateserial -out server.crt -days 365 -sha256 \
+  -extfile ../config/server-ext.cnf
+
+openssl genrsa -out client.key 2048
+openssl req -new -key client.key -out client.csr \
+  -subj '/C=TW/ST=Taiwan/L=Hsinchu/O=NYCU Network Security HW2/OU=Client/CN=hw2-mtls-client'
+openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key \
+  -CAcreateserial -out client.crt -days 365 -sha256 \
+  -extfile ../config/client-ext.cnf
+
+openssl genrsa -out fake-ca.key 4096
+openssl req -x509 -new -nodes -key fake-ca.key -sha256 -days 365 \
+  -out fake-ca.crt \
+  -subj '/C=TW/ST=Taiwan/L=Hsinchu/O=NYCU Network Security HW2/OU=Fake Root CA/CN=HW2 Fake Root CA'
+
+openssl genrsa -out fake-client.key 2048
+openssl req -new -key fake-client.key -out fake-client.csr \
+  -subj '/C=TW/ST=Taiwan/L=Hsinchu/O=NYCU Network Security HW2/OU=Fake Client/CN=hw2-fake-client'
+openssl x509 -req -in fake-client.csr -CA fake-ca.crt -CAkey fake-ca.key \
+  -CAcreateserial -out fake-client.crt -days 365 -sha256 \
+  -extfile ../config/client-ext.cnf
+\end{lstlisting}
+
+Certificate extension files:
+
+\begin{lstlisting}
+# server-ext.cnf
+subjectAltName = DNS:hw2-mtls-server
+extendedKeyUsage = serverAuth
+keyUsage = digitalSignature,keyEncipherment
+
+# client-ext.cnf
+extendedKeyUsage = clientAuth
+keyUsage = digitalSignature,keyEncipherment
+\end{lstlisting}
+
+\subsection*{Certificate Verification}
+
+\begin{lstlisting}
+server.crt: OK
+client.crt: OK
+error fake-client.crt: verification failed
+fake-client.crt: OK
+\end{lstlisting}
+
+Security interpretation: \texttt{server.crt} and \texttt{client.crt} chain to the trusted Root CA. The fake client certificate fails against the trusted Root CA and succeeds only against \texttt{fake-ca.crt}, which proves it is suitable for the unauthorized-client negative test.
+
+\section{Part 2: Service Configuration}
+
+The backend service is intentionally plaintext:
+
+\begin{lstlisting}[language=bash]
+python3 -m http.server 8000
+\end{lstlisting}
+
+\texttt{stunnel4} provides the TLS and client-authentication layer. The proxy listens on all server interfaces at port \texttt{4433}, presents the server certificate, trusts only the configured Root CA, and requires client certificate verification.
+
+\begin{lstlisting}
+foreground = yes
+debug = info
+output = /hw2/logs/stunnel.log
+pid = /hw2/logs/stunnel.pid
+
+[mtls-http]
+accept = 0.0.0.0:4433
+connect = 127.0.0.1:8000
+cert = /hw2/certs/server.crt
+key = /hw2/certs/server.key
+CAfile = /hw2/certs/ca.crt
+verify = 2
+\end{lstlisting}
+
+Security interpretation: the decisive control is \texttt{verify = 2}. This setting requires the client to present a certificate and verifies that certificate against \texttt{CAfile}. Without this setting, the proxy could protect confidentiality but would not enforce bidirectional certificate authentication.
+
+\section{Part 3: Connection Testing}
+
+\subsection{Scenario 1: Valid Client Certificate}
+
+Command:
+
+\begin{lstlisting}[language=bash]
+curl -v --cacert /hw2/certs/ca.crt \
+  --cert /hw2/certs/client.crt \
+  --key /hw2/certs/client.key \
+  https://hw2-mtls-server:4433/
+\end{lstlisting}
+
+Selected output:
+
+\begin{lstlisting}
+TLSv1.3 (IN), TLS handshake, Request CERT (13)
+subjectAltName: host "hw2-mtls-server" matched cert's "hw2-mtls-server"
+SSL certificate verify ok.
+HTTP/1.0 200 OK
+HW2 mTLS backend is reachable through stunnel.
+docker/curl exit code: 0
+\end{lstlisting}
+
+Security interpretation: the server requested a client certificate, the client validated the server identity, the client sent a valid certificate, and the backend returned HTTP 200. This confirms the authorized mTLS path works end to end.
+
+\subsection{Scenario 2: No Client Certificate}
+
+Command:
+
+\begin{lstlisting}[language=bash]
+curl -v --cacert /hw2/certs/ca.crt \
+  https://hw2-mtls-server:4433/
+\end{lstlisting}
+
+Selected client-side output:
+
+\begin{lstlisting}
+TLSv1.3 (IN), TLS handshake, Request CERT (13)
+TLS alert, unknown (628)
+tlsv13 alert certificate required
+curl: (56) OpenSSL SSL_read
+docker/curl exit code: 56
+\end{lstlisting}
+
+Selected server-side output:
+
+\begin{lstlisting}
+Peer certificate required
+peer did not return a certificate
+\end{lstlisting}
+
+Security interpretation: the client trusted the server certificate, but failed authorization because it did not present a client certificate. This proves \texttt{stunnel4} is enforcing client authentication, not merely encrypting traffic.
+
+\subsection{Scenario 3: Unauthorized Client Certificate}
+
+Command:
+
+\begin{lstlisting}[language=bash]
+curl -v --cacert /hw2/certs/ca.crt \
+  --cert /hw2/certs/fake-client.crt \
+  --key /hw2/certs/fake-client.key \
+  https://hw2-mtls-server:4433/
+\end{lstlisting}
+
+Selected client-side output:
+
+\begin{lstlisting}
+TLSv1.3 (IN), TLS handshake, Request CERT (13)
+TLS alert, unknown CA (560)
+tlsv1 alert unknown ca
+curl: (56) OpenSSL SSL_read
+docker/curl exit code: 56
+\end{lstlisting}
+
+Selected server-side output:
+
+\begin{lstlisting}
+CERT: Pre-verification error: unable to get local issuer certificate
+Rejected by CERT at depth=0: C=TW, ST=Taiwan, L=Hsinchu, O=NYCU Network Security HW2, OU=Fake Client, CN=hw2-fake-client
+certificate verify failed
+\end{lstlisting}
+
+Security interpretation: the unauthorized client presented a certificate, but the certificate chained to the fake CA instead of the trusted Root CA. The rejection demonstrates that the access decision depends on the configured trust anchor, not simply on the presence of any certificate.
+
+\section{Part 4: Packet Analysis}
+
+Packet capture was collected inside the server container during the successful valid-client scenario. The capture shows traffic between the client container and the server container on port \texttt{4433}, the \texttt{stunnel4} mTLS proxy port.
+
+\begin{lstlisting}
+172.18.0.3.58836 > 172.18.0.2.4433: Flags [S]
+172.18.0.2.4433 > 172.18.0.3.58836: Flags [S.]
+172.18.0.3.58836 > 172.18.0.2.4433: Flags [P.], length 517
+172.18.0.2.4433 > 172.18.0.3.58836: Flags [P.], length 3561
+172.18.0.3.58836 > 172.18.0.2.4433: Flags [P.], length 3172
+\end{lstlisting}
+
+Capture health:
+
+\begin{lstlisting}
+22 packets captured
+22 packets received by filter
+0 packets dropped by kernel
+\end{lstlisting}
+
+Security interpretation: the traffic is visible at the network layer on the TLS proxy port, while the plaintext service remains behind \texttt{stunnel4} on loopback. The packet count and zero-drop status indicate the successful connection was captured cleanly.
+
+\section{Evidence Inventory}
+
+\begin{itemize}
+  \item PKI construction: \texttt{lab/logs/phase2-pki-commands-2026-04-17.log}
+  \item Exact stunnel config: \texttt{lab/config/stunnel.conf}
+  \item Valid-client success: \texttt{lab/logs/phase5-success-curl-2026-04-17.log}
+  \item No-client-cert failure: \texttt{lab/logs/phase4-failure-no-client-cert-2026-04-17.log}
+  \item Fake-client-cert failure: \texttt{lab/logs/phase4-failure-fake-client-cert-2026-04-17.log}
+  \item Server-side rejection logs: \texttt{lab/logs/phase4-stunnel-failures-2026-04-17.log}
+  \item Packet capture: \texttt{lab/captures/success-mtls-2026-04-17.pcap}
+  \item Readable packet summary: \texttt{lab/logs/phase5-success-pcap-summary-2026-04-17.log}
+\end{itemize}
+
+\section{Conclusion}
+
+The implementation successfully protects a plaintext Python HTTP backend with mutual TLS through \texttt{stunnel4}. The valid client certificate completes the handshake and reaches the backend. A client without a certificate is rejected because client authentication is mandatory. A client with a certificate signed by an untrusted fake CA is also rejected because it does not chain to the trusted Root CA. Packet capture confirms that the successful connection uses the TLS proxy port \texttt{4433}. Together, these tests demonstrate correct certificate-based access control for the mTLS service.
+
+\end{document}

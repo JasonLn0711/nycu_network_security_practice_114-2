@@ -1,0 +1,24 @@
+reading from file /hw2/captures/success-mtls-2026-04-17.pcap, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
+Warning: interface names might be incorrect
+02:13:37.867210 eth0  In  IP 172.18.0.3.58836 > 172.18.0.2.4433: Flags [S], seq 679923825, win 64240, options [mss 1460,sackOK,TS val 769754407 ecr 0,nop,wscale 10], length 0
+02:13:37.867228 eth0  Out IP 172.18.0.2.4433 > 172.18.0.3.58836: Flags [S.], seq 3750547536, ack 679923826, win 65160, options [mss 1460,sackOK,TS val 2285374659 ecr 769754407,nop,wscale 10], length 0
+02:13:37.867240 eth0  In  IP 172.18.0.3.58836 > 172.18.0.2.4433: Flags [.], ack 1, win 63, options [nop,nop,TS val 769754407 ecr 2285374659], length 0
+02:13:37.869240 eth0  In  IP 172.18.0.3.58836 > 172.18.0.2.4433: Flags [P.], seq 1:518, ack 1, win 63, options [nop,nop,TS val 769754409 ecr 2285374659], length 517
+02:13:37.869248 eth0  Out IP 172.18.0.2.4433 > 172.18.0.3.58836: Flags [.], ack 518, win 64, options [nop,nop,TS val 2285374661 ecr 769754409], length 0
+02:13:37.871003 eth0  Out IP 172.18.0.2.4433 > 172.18.0.3.58836: Flags [P.], seq 1:3562, ack 518, win 64, options [nop,nop,TS val 2285374663 ecr 769754409], length 3561
+02:13:37.871013 eth0  In  IP 172.18.0.3.58836 > 172.18.0.2.4433: Flags [.], ack 3562, win 70, options [nop,nop,TS val 769754411 ecr 2285374663], length 0
+02:13:37.872643 eth0  In  IP 172.18.0.3.58836 > 172.18.0.2.4433: Flags [P.], seq 518:3690, ack 3562, win 70, options [nop,nop,TS val 769754412 ecr 2285374663], length 3172
+02:13:37.872654 eth0  Out IP 172.18.0.2.4433 > 172.18.0.3.58836: Flags [.], ack 3690, win 71, options [nop,nop,TS val 2285374664 ecr 769754412], length 0
+02:13:37.872723 eth0  In  IP 172.18.0.3.58836 > 172.18.0.2.4433: Flags [P.], seq 3690:3795, ack 3562, win 70, options [nop,nop,TS val 769754412 ecr 2285374664], length 105
+02:13:37.873440 eth0  Out IP 172.18.0.2.4433 > 172.18.0.3.58836: Flags [P.], seq 3562:5113, ack 3795, win 71, options [nop,nop,TS val 2285374665 ecr 769754412], length 1551
+02:13:37.873449 eth0  In  IP 172.18.0.3.58836 > 172.18.0.2.4433: Flags [.], ack 5113, win 73, options [nop,nop,TS val 769754413 ecr 2285374665], length 0
+02:13:37.873616 eth0  Out IP 172.18.0.2.4433 > 172.18.0.3.58836: Flags [P.], seq 5113:6680, ack 3795, win 71, options [nop,nop,TS val 2285374665 ecr 769754413], length 1567
+02:13:37.873621 eth0  In  IP 172.18.0.3.58836 > 172.18.0.2.4433: Flags [.], ack 6680, win 77, options [nop,nop,TS val 769754413 ecr 2285374665], length 0
+02:13:37.874198 eth0  Out IP 172.18.0.2.4433 > 172.18.0.3.58836: Flags [P.], seq 6680:6887, ack 3795, win 71, options [nop,nop,TS val 2285374666 ecr 769754413], length 207
+02:13:37.874220 eth0  Out IP 172.18.0.2.4433 > 172.18.0.3.58836: Flags [P.], seq 6887:6956, ack 3795, win 71, options [nop,nop,TS val 2285374666 ecr 769754413], length 69
+02:13:37.874269 eth0  Out IP 172.18.0.2.4433 > 172.18.0.3.58836: Flags [P.], seq 6956:6980, ack 3795, win 71, options [nop,nop,TS val 2285374666 ecr 769754413], length 24
+02:13:37.874352 eth0  In  IP 172.18.0.3.58836 > 172.18.0.2.4433: Flags [.], ack 6980, win 79, options [nop,nop,TS val 769754414 ecr 2285374666], length 0
+02:13:37.874375 eth0  In  IP 172.18.0.3.58836 > 172.18.0.2.4433: Flags [P.], seq 3795:3819, ack 6980, win 79, options [nop,nop,TS val 769754414 ecr 2285374666], length 24
+02:13:37.874424 eth0  In  IP 172.18.0.3.58836 > 172.18.0.2.4433: Flags [F.], seq 3819, ack 6980, win 79, options [nop,nop,TS val 769754414 ecr 2285374666], length 0
+02:13:37.874490 eth0  Out IP 172.18.0.2.4433 > 172.18.0.3.58836: Flags [F.], seq 6980, ack 3820, win 71, options [nop,nop,TS val 2285374666 ecr 769754414], length 0
+02:13:37.874498 eth0  In  IP 172.18.0.3.58836 > 172.18.0.2.4433: Flags [.], ack 6981, win 79, options [nop,nop,TS val 769754414 ecr 2285374666], length 0
