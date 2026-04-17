@@ -713,7 +713,7 @@ SetUID 就會從：
 
 ## 九、第三類風險：Environment Variables
 
-這一類你在 `note_2.md` 已經看過，
+這一類你在 `environment-variable-attacks.md` 已經看過，
 但放到 SetUID 情境下會更危險。
 
 ### 為什麼？

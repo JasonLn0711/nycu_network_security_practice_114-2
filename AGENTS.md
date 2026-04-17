@@ -29,7 +29,8 @@ Do not turn this repository into:
 - `handouts/`: raw official or third-party course materials. Use normalized lowercase kebab-case filenames, such as `d5-dns-security.pdf`.
 - `notes/`: personal lecture notes and expanded explanations.
 - `notes/handouts/`: one handout-aligned Markdown note when there is real study content to preserve.
-- `midterm_notes/`: exam-oriented explanations, recall notes, and practice-question material.
+- `midterm_notes/`: exam-oriented explanations, recall notes, and practice-question material. Use descriptive lowercase kebab-case filenames.
+- `slide_notes/`: long-form slide deep dives or research extensions that are too large for the short handout notes.
 - `hwN/`: assignment-specific plans, walkthrough notes, and evidence.
 - `data/capacity/` and `data/goals/`: lightweight local planning inputs only.
 - `scripts/`: small standard-library Python 3 helpers.
@@ -45,9 +46,13 @@ The planning repository may link to these files, promote distilled concepts into
 - When adding a new handout, put it in `handouts/`, rename it to lowercase kebab-case, and update both `README.md` and `notes/handouts/index.md`.
 - Keep original course titles visible in index tables even when filenames are normalized.
 - Do not create empty note files just because a handout exists. Create a `notes/handouts/*.md` file only when it contains useful study content.
+- Put short handout-aligned summaries in `notes/handouts/`; put longer research-style expansions in `slide_notes/`.
+- Put exam-friendly plain-language notes in `midterm_notes/`, named by topic rather than by sequence number.
 - Preserve Markdown notes as readable learning assets: plain definitions, intuition, real-world examples, workflows, and exam cues are welcome.
 - Keep official handouts separate from personal notes because the repository license does not cover third-party course materials.
 - Prefer small indexes and explicit links over nested folder complexity.
+- Keep the root `README.md` as a routing map. Put detailed per-folder indexes in the nearest `README.md` or `index.md`.
+- When adding lecture or homework notes, update `notes/README.md` or the matching `hwN/README.md`.
 
 ## Python Rule
 

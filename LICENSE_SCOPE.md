@@ -8,14 +8,17 @@ Unless a file says otherwise, the `CC BY-NC 4.0` license in [LICENSE](LICENSE) a
 
 - Markdown notes in `notes/`
 - Markdown notes in `hw1/notes/`
+- Markdown notes in `midterm_notes/`
+- Markdown notes in `slide_notes/`
 - Top-level repository documentation such as `README.md`
+- Folder-level index files such as `handouts/README.md`, `notes/README.md`, `hw1/README.md`, `midterm_notes/README.md`, and `slide_notes/README.md`
 - Other original documentation added by repository contributors
 
 ## Not Covered By The Repository License
 
 The repository license does not apply to:
 
-- Files under `handouts/`
+- Raw course-material files under `handouts/`, such as PDFs and PowerPoint files
 - Instructor-provided slides, PDFs, or publisher materials
 - Quoted excerpts that remain under third-party copyright
 - Screenshots, diagrams, figures, or externally hosted images from third-party sources
