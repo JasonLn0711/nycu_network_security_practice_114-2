@@ -1,6 +1,6 @@
-# CSIC30094 Syllabus
+# Course Overview
 
-Source file: [csic30094-syllabus.docx](../../handouts/csic30094-syllabus.docx)
+Source file: [csic30094-syllabus.docx](../handouts/raw/csic30094-syllabus.docx)
 
 This note keeps the course-level facts from the official syllabus easy to find in plain text. Treat the `.docx` file as the raw source of truth.
 
@@ -69,7 +69,7 @@ The official syllabus lists the following Wednesday class dates:
 
 ## Routing Notes
 
-- Keep the raw syllabus in `handouts/`.
-- Keep lecture-specific notes in `notes/nsp_YYMMDD_wN.md`.
-- Keep exam recall material in `midterm_notes/`.
-- Keep assignment-specific material under `hwN/`.
+- Keep the raw syllabus in `handouts/raw/`.
+- Keep lecture-specific notes in `lectures/weekXX-*/`.
+- Keep exam recall material in the matching lecture folder.
+- Keep assignment-specific material under `homeworks/`.
