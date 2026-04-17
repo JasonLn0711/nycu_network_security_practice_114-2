@@ -43,7 +43,8 @@ The planning repository may link to these files, promote distilled concepts into
 
 ## Material Routing Rules
 
-- When adding a new handout, put it in `handouts/`, rename it to lowercase kebab-case, and update both `README.md` and `notes/handouts/index.md`.
+- When adding a new handout, put it in `handouts/`, rename it to lowercase kebab-case, and update both `handouts/README.md` and `notes/handouts/index.md`.
+- Update the root `README.md` only when the repository routing map itself changes.
 - Keep original course titles visible in index tables even when filenames are normalized.
 - Do not create empty note files just because a handout exists. Create a `notes/handouts/*.md` file only when it contains useful study content.
 - Put short handout-aligned summaries in `notes/handouts/`; put longer research-style expansions in `slide_notes/`.

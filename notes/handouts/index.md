@@ -2,7 +2,7 @@
 
 This directory contains compact study notes for bundled handouts. A raw handout can be indexed here before a matching note exists; do not create empty placeholder notes just to make the table symmetrical.
 
-## Recommended Study Order
+## Compact Notes Ready
 
 1. [csic30094_syllabus.md](csic30094_syllabus.md)
 2. [a_introduction.md](a_introduction.md)
@@ -14,12 +14,15 @@ This directory contains compact study notes for bundled handouts. A raw handout 
 8. [c4_bell_lapadula.md](c4_bell_lapadula.md)
 9. [c5_selinux.md](c5_selinux.md)
 10. [c6_windows_access_control.md](c6_windows_access_control.md)
-11. [d1-tcpip.pdf](../../handouts/d1-tcpip.pdf)
-12. [d2-end-to-end-encryption.pdf](../../handouts/d2-end-to-end-encryption.pdf)
-13. [d3-crypto-primitives.pdf](../../handouts/d3-crypto-primitives.pdf)
-14. [d4-hash-and-message-authentication-code.pdf](../../handouts/d4-hash-and-message-authentication-code.pdf)
-15. [d5-dns-security.pdf](../../handouts/d5-dns-security.pdf)
-16. [d6-reconnaissance-vulnerability-scanning.pdf](../../handouts/d6-reconnaissance-vulnerability-scanning.pdf)
+
+## Archived Handouts Waiting For Compact Notes
+
+- [d1-tcpip.pdf](../../handouts/d1-tcpip.pdf)
+- [d2-end-to-end-encryption.pdf](../../handouts/d2-end-to-end-encryption.pdf)
+- [d3-crypto-primitives.pdf](../../handouts/d3-crypto-primitives.pdf)
+- [d4-hash-and-message-authentication-code.pdf](../../handouts/d4-hash-and-message-authentication-code.pdf)
+- [d5-dns-security.pdf](../../handouts/d5-dns-security.pdf)
+- [d6-reconnaissance-vulnerability-scanning.pdf](../../handouts/d6-reconnaissance-vulnerability-scanning.pdf)
 
 ## Mapping
 
@@ -35,12 +38,12 @@ This directory contains compact study notes for bundled handouts. A raw handout 
 | `C4. Bell-LaPadula.pdf` | [c4-bell-lapadula.pdf](../../handouts/c4-bell-lapadula.pdf) | [c4_bell_lapadula.md](c4_bell_lapadula.md) | Confidentiality lattice model, rules, theorem, and limitations |
 | `C5. SELinux.pdf` | [c5-selinux.pdf](../../handouts/c5-selinux.pdf) | [c5_selinux.md](c5_selinux.md) | SELinux contexts, type enforcement, transitions, and policy workflow |
 | `C6. Windows Access Control.pdf` | [c6-windows-access-control.pdf](../../handouts/c6-windows-access-control.pdf) | [c6_windows_access_control.md](c6_windows_access_control.md) | Windows authorization, tokens, descriptors, integrity, and UAC |
-| `D1. TCPIP.pdf` | [d1-tcpip.pdf](../../handouts/d1-tcpip.pdf) | Not yet created | TCP/IP foundations |
-| `D2. End-to-End Encryption.pdf` | [d2-end-to-end-encryption.pdf](../../handouts/d2-end-to-end-encryption.pdf) | Not yet created | End-to-end encryption |
-| `D3. Crypto Primitives.pdf` | [d3-crypto-primitives.pdf](../../handouts/d3-crypto-primitives.pdf) | Not yet created | Crypto primitives |
-| `D4. Hash and Message Authentication Code.pdf` | [d4-hash-and-message-authentication-code.pdf](../../handouts/d4-hash-and-message-authentication-code.pdf) | Not yet created | Hashes and message authentication codes |
-| `D5. DNS Security.pdf` | [d5-dns-security.pdf](../../handouts/d5-dns-security.pdf) | Not yet created | DNS security |
-| `D6. Reconnaissance - Vulnerability Scanning.pdf` | [d6-reconnaissance-vulnerability-scanning.pdf](../../handouts/d6-reconnaissance-vulnerability-scanning.pdf) | Not yet created | Reconnaissance and vulnerability scanning |
+| `D1. TCPIP.pdf` | [d1-tcpip.pdf](../../handouts/d1-tcpip.pdf) | No compact note yet | TCP/IP foundations |
+| `D2. End-to-End Encryption.pdf` | [d2-end-to-end-encryption.pdf](../../handouts/d2-end-to-end-encryption.pdf) | No compact note yet | End-to-end encryption |
+| `D3. Crypto Primitives.pdf` | [d3-crypto-primitives.pdf](../../handouts/d3-crypto-primitives.pdf) | No compact note yet | Crypto primitives |
+| `D4. Hash and Message Authentication Code.pdf` | [d4-hash-and-message-authentication-code.pdf](../../handouts/d4-hash-and-message-authentication-code.pdf) | No compact note yet | Hashes and message authentication codes |
+| `D5. DNS Security.pdf` | [d5-dns-security.pdf](../../handouts/d5-dns-security.pdf) | No compact note yet | DNS security |
+| `D6. Reconnaissance - Vulnerability Scanning.pdf` | [d6-reconnaissance-vulnerability-scanning.pdf](../../handouts/d6-reconnaissance-vulnerability-scanning.pdf) | No compact note yet | Reconnaissance and vulnerability scanning |
 
 ## How To Use These Notes
 
