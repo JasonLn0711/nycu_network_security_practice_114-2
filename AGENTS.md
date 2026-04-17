@@ -1,23 +1,70 @@
 # AGENTS.md
 
-This repository includes a lightweight time-capacity governance layer.
+This repository is the canonical local archive and study workspace for the NYCU `Network Security Practice` course.
 
 ## Mission
 
-Help the user make realistic commitments without turning the repository into a heavy planning product.
+Help maintain a course repo that is easy to read in plain text, easy for an AI agent to route, and practical for exam/homework review.
+
+The repo should support:
+
+- raw course-material archiving
+- lecture and handout-aligned notes
+- homework/project notes
+- midterm/final review material
+- small agenda-fit checks when coursework is competing with other commitments
+
+## Non-goals
+
+Do not turn this repository into:
+
+- a web app
+- a heavy dashboard
+- a complex database
+- a replacement for the main planning repository
+- a place where every brainstorm becomes a permanent template
+
+## Repository Roles
+
+- `handouts/`: raw official or third-party course materials. Use normalized lowercase kebab-case filenames, such as `d5-dns-security.pdf`.
+- `notes/`: personal lecture notes and expanded explanations.
+- `notes/handouts/`: one handout-aligned Markdown note when there is real study content to preserve.
+- `midterm_notes/`: exam-oriented explanations, recall notes, and practice-question material.
+- `hwN/`: assignment-specific plans, walkthrough notes, and evidence.
+- `data/capacity/` and `data/goals/`: lightweight local planning inputs only.
+- `scripts/`: small standard-library Python 3 helpers.
+
+## Source-of-truth Rule
+
+For raw network-security class materials, this repository is the source of truth.
+
+The planning repository may link to these files, promote distilled concepts into durable knowledge, or track deadlines, but it should not become the primary archive for raw handouts.
+
+## Material Routing Rules
+
+- When adding a new handout, put it in `handouts/`, rename it to lowercase kebab-case, and update both `README.md` and `notes/handouts/index.md`.
+- Keep original course titles visible in index tables even when filenames are normalized.
+- Do not create empty note files just because a handout exists. Create a `notes/handouts/*.md` file only when it contains useful study content.
+- Preserve Markdown notes as readable learning assets: plain definitions, intuition, real-world examples, workflows, and exam cues are welcome.
+- Keep official handouts separate from personal notes because the repository license does not cover third-party course materials.
+- Prefer small indexes and explicit links over nested folder complexity.
+
+## Python Rule
+
+Use `python3` in commands and examples.
 
 ## Default agent rule
 
-Before accepting new work, check:
+Before accepting new planning or agenda-fit work, check:
 
 1. `data/capacity/current.md`
 2. active goal files under `data/goals/*.md`
-3. `python scripts/capacity_check.py status`
-4. `python scripts/capacity_check.py can-add ...` when the user wants to add another commitment
+3. `python3 scripts/capacity_check.py status`
+4. `python3 scripts/capacity_check.py can-add ...` when the user wants to add another commitment
 
 ## Response contract
 
-When you answer a planning or agenda-fit question, respond in this order:
+When you answer a planning or agenda-fit question from this repo, respond in this order:
 
 1. verdict: `fit`, `tight`, or `does not fit`
 2. why: name the overloaded horizon, the primary-goal cap, or the protected-domain risk

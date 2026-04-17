@@ -1,6 +1,8 @@
 # NYCU Network Security Practice 114-2
 
-Study repository for the NYCU `Network Security Practice` course. This repository primarily serves as a course-material archive and note-taking workspace: it contains lecture notes, homework-prep notes, bundled handouts/slides used for study, and a lightweight planning/governance slice for agenda-fit checks.
+Study repository for the NYCU `Network Security Practice` course. This repository is the canonical local home for raw class handouts, lecture notes, homework-prep notes, exam-review notes, and a lightweight planning/governance slice for agenda-fit checks.
+
+The companion planning repository may track deadlines or promote durable concepts, but raw network-security course materials should live here first.
 
 ## Author
 
@@ -11,13 +13,16 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 
 - `notes/`
   - Weekly lecture notes and expanded summaries tied to class dates.
-  - Handout-aligned study notes under `notes/handouts/`, with one Markdown note per bundled slide deck.
-  - Focus areas currently include introduction, malware, environment variables, access control, Linux security basics, and Set-UID / privileged programs.
+  - Handout-aligned study notes under `notes/handouts/`, with one Markdown note only when there is real study content to preserve.
+  - Focus areas currently include system security, access control, network foundations, DNS, crypto, reconnaissance, and vulnerability scanning.
+- `midterm_notes/`
+  - Exam-oriented plain-language explanations and recall material.
 - `hw1/notes/`
   - A structured five-week self-study track for Homework 1.
   - The sequence starts from fundamentals and gradually moves toward Linux command-line usage, basic C reading, executable structure, and beginner Ghidra workflows.
 - `handouts/`
-  - Bundled reference material such as PDFs and slides related to the course topics.
+  - Raw reference material such as PDFs and slides related to the course topics.
+  - Filenames are normalized to lowercase kebab-case for stable links and easy shell use.
   - These appear to be official course or third-party teaching materials and are not covered by the repository's documentation license.
 - `data/capacity/` and `data/goals/`
   - Structured Markdown inputs for near-term capacity and active goals.
@@ -31,15 +36,21 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 ```text
 .
 ├── handouts/
-│   ├── A. Introduction.pdf
-│   ├── B1. Malware.pdf
-│   ├── B2. Environment_Variables.pptx
-│   ├── C1. Linux_Security_Basics.pdf
-│   ├── C2. SetUID.pdf
-│   ├── C3. Access Control Models.pdf
-│   ├── C4. Bell-LaPadula.pdf
-│   ├── C5. SELinux.pdf
-│   └── C6. Windows Access Control.pdf
+│   ├── a-introduction.pdf
+│   ├── b1-malware.pdf
+│   ├── b2-environment-variables.pptx
+│   ├── c1-linux-security-basics.pdf
+│   ├── c2-setuid.pdf
+│   ├── c3-access-control-models.pdf
+│   ├── c4-bell-lapadula.pdf
+│   ├── c5-selinux.pdf
+│   ├── c6-windows-access-control.pdf
+│   ├── d1-tcpip.pdf
+│   ├── d2-end-to-end-encryption.pdf
+│   ├── d3-crypto-primitives.pdf
+│   ├── d4-hash-and-message-authentication-code.pdf
+│   ├── d5-dns-security.pdf
+│   └── d6-reconnaissance-vulnerability-scanning.pdf
 ├── data/
 │   ├── capacity/
 │   │   └── current.md
@@ -52,8 +63,15 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 │       ├── notes_week_3.md
 │       ├── notes_week_4.md
 │       └── notes_week_5.md
+├── midterm_notes/
+│   ├── note_1.md
+│   ├── note_2.md
+│   ├── note_3.md
+│   └── note_4.md
 ├── scripts/
 │   └── capacity_check.py
+├── slide_notes/
+│   └── B1_malware.md
 └── notes/
     ├── handouts/
     │   ├── a_introduction.md
@@ -85,17 +103,23 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 
 ### Handout Notes
 
-| File | Tied Handout | Main Coverage |
+| File | Tied Handout | Status / Coverage |
 | --- | --- | --- |
-| `notes/handouts/a_introduction.md` | `handouts/A. Introduction.pdf` | Course structure, prerequisites, grading, and topic map |
-| `notes/handouts/b1_malware.md` | `handouts/B1. Malware.pdf` | Malware history, taxonomy, propagation, concealment, and detection mindset |
-| `notes/handouts/b2_environment_variables.md` | `handouts/B2. Environment_Variables.pptx` | Process environments, inheritance, attack surfaces, and safer invocation patterns |
-| `notes/handouts/c1_linux_security_basics.md` | `handouts/C1. Linux_Security_Basics.pdf` | Linux identities, permissions, ACLs, privilege mechanisms, and authentication basics |
-| `notes/handouts/c2_setuid.md` | `handouts/C2. SetUID.pdf` | Set-UID mechanics, attack surfaces, capability leaks, and least-privilege design |
-| `notes/handouts/c3_access_control_models.md` | `handouts/C3. Access Control Models.pdf` | Policy vs model, access matrix, ACLs vs capabilities, DAC/MAC, and later models |
-| `notes/handouts/c4_bell_lapadula.md` | `handouts/C4. Bell-LaPadula.pdf` | Confidentiality lattice, simple security condition, `*-property`, and model limitations |
-| `notes/handouts/c5_selinux.md` | `handouts/C5. SELinux.pdf` | SELinux contexts, type enforcement, transitions, policy modules, and audit-driven debugging |
-| `notes/handouts/c6_windows_access_control.md` | `handouts/C6. Windows Access Control.pdf` | Windows tokens, descriptors, integrity levels, UI isolation, and UAC |
+| `notes/handouts/a_introduction.md` | `handouts/a-introduction.pdf` | Course structure, prerequisites, grading, and topic map |
+| `notes/handouts/b1_malware.md` | `handouts/b1-malware.pdf` | Malware history, taxonomy, propagation, concealment, and detection mindset |
+| `notes/handouts/b2_environment_variables.md` | `handouts/b2-environment-variables.pptx` | Process environments, inheritance, attack surfaces, and safer invocation patterns |
+| `notes/handouts/c1_linux_security_basics.md` | `handouts/c1-linux-security-basics.pdf` | Linux identities, permissions, ACLs, privilege mechanisms, and authentication basics |
+| `notes/handouts/c2_setuid.md` | `handouts/c2-setuid.pdf` | Set-UID mechanics, attack surfaces, capability leaks, and least-privilege design |
+| `notes/handouts/c3_access_control_models.md` | `handouts/c3-access-control-models.pdf` | Policy vs model, access matrix, ACLs vs capabilities, DAC/MAC, and later models |
+| `notes/handouts/c4_bell_lapadula.md` | `handouts/c4-bell-lapadula.pdf` | Confidentiality lattice, simple security condition, `*-property`, and model limitations |
+| `notes/handouts/c5_selinux.md` | `handouts/c5-selinux.pdf` | SELinux contexts, type enforcement, transitions, policy modules, and audit-driven debugging |
+| `notes/handouts/c6_windows_access_control.md` | `handouts/c6-windows-access-control.pdf` | Windows tokens, descriptors, integrity levels, UI isolation, and UAC |
+| Not yet created | `handouts/d1-tcpip.pdf` | Pending handout note |
+| Not yet created | `handouts/d2-end-to-end-encryption.pdf` | Pending handout note |
+| Not yet created | `handouts/d3-crypto-primitives.pdf` | Pending handout note |
+| Not yet created | `handouts/d4-hash-and-message-authentication-code.pdf` | Pending handout note |
+| Not yet created | `handouts/d5-dns-security.pdf` | Pending handout note |
+| Not yet created | `handouts/d6-reconnaissance-vulnerability-scanning.pdf` | Pending handout note |
 | `notes/handouts/index.md` | All handouts | Directory index and recommended reading order |
 
 ### Homework 1 Study Track
@@ -112,15 +136,21 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
 
 | File | Topic |
 | --- | --- |
-| `handouts/A. Introduction.pdf` | Course introduction |
-| `handouts/B1. Malware.pdf` | Malware |
-| `handouts/B2. Environment_Variables.pptx` | Environment variables and related attacks |
-| `handouts/C1. Linux_Security_Basics.pdf` | Linux security basics |
-| `handouts/C2. SetUID.pdf` | Set-UID / privileged programs |
-| `handouts/C3. Access Control Models.pdf` | Access control models |
-| `handouts/C4. Bell-LaPadula.pdf` | Bell-LaPadula model |
-| `handouts/C5. SELinux.pdf` | SELinux |
-| `handouts/C6. Windows Access Control.pdf` | Windows access control |
+| `handouts/a-introduction.pdf` | Course introduction |
+| `handouts/b1-malware.pdf` | Malware |
+| `handouts/b2-environment-variables.pptx` | Environment variables and related attacks |
+| `handouts/c1-linux-security-basics.pdf` | Linux security basics |
+| `handouts/c2-setuid.pdf` | Set-UID / privileged programs |
+| `handouts/c3-access-control-models.pdf` | Access control models |
+| `handouts/c4-bell-lapadula.pdf` | Bell-LaPadula model |
+| `handouts/c5-selinux.pdf` | SELinux |
+| `handouts/c6-windows-access-control.pdf` | Windows access control |
+| `handouts/d1-tcpip.pdf` | TCP/IP |
+| `handouts/d2-end-to-end-encryption.pdf` | End-to-end encryption |
+| `handouts/d3-crypto-primitives.pdf` | Crypto primitives |
+| `handouts/d4-hash-and-message-authentication-code.pdf` | Hash and message authentication code |
+| `handouts/d5-dns-security.pdf` | DNS security |
+| `handouts/d6-reconnaissance-vulnerability-scanning.pdf` | Reconnaissance and vulnerability scanning |
 
 ## Naming Conventions
 
@@ -129,7 +159,10 @@ PhD Student, Institute of Biophotonics, National Yang Ming Chiao Tung University
   - Example: `nsp_260311_w3.md` corresponds to a note associated with `2026-03-11`, week 3.
 - `notes/handouts/<code>_<topic>.md`
   - Handout-aligned summary note keyed to the bundled slide filename.
-  - Example: `c2_setuid.md` matches `handouts/C2. SetUID.pdf`.
+  - Example: `c2_setuid.md` matches `handouts/c2-setuid.pdf`.
+- `handouts/<code>-<topic>.<ext>`
+  - Raw course material with normalized lowercase kebab-case names.
+  - Keep the course code prefix, such as `d6`, so ordering remains obvious.
 - `hw1/notes/notes_week_N.md`
   - Homework-preparation note grouped by study week rather than lecture date.
 
@@ -157,16 +190,20 @@ That sequence moves from basic computing concepts to beginner reverse-engineerin
 ### For Repository Maintenance
 
 - Keep official handouts in `handouts/`.
+- Rename handouts to lowercase kebab-case and keep the original course title visible in index tables.
 - Keep your own lecture summaries in `notes/`.
+- Keep exam-specific explanations in `midterm_notes/`.
 - Keep assignment-specific study plans and walkthrough notes under `hw1/`, `hw2/`, and so on as the course progresses.
 - Prefer Markdown for personal notes so diffs stay readable in Git.
+- When adding or renaming a handout, update both this README and `notes/handouts/index.md`.
+- Create a handout note only when it contains useful study content; do not add empty placeholder notes.
 
 ### For Agenda And Capacity Checks
 
 1. Update [data/capacity/current.md](data/capacity/current.md) when your real `7`-day or `14`-day sustainable block budget changes.
 2. Copy [data/goals/_template.md](data/goals/_template.md) into a new goal file under `data/goals/` and fill its machine-readable metadata.
-3. Run `python scripts/capacity_check.py status` to diagnose the current agenda.
-4. Run `python scripts/capacity_check.py can-add --title ... --domain ... --priority ... --deadline ... --blocks-7d ... --blocks-14d ... --flexibility ...` before accepting a new commitment.
+3. Run `python3 scripts/capacity_check.py status` to diagnose the current agenda.
+4. Run `python3 scripts/capacity_check.py can-add --title ... --domain ... --priority ... --deadline ... --blocks-7d ... --blocks-14d ... --flexibility ...` before accepting a new commitment.
 5. Let an agent use the checker result as the first response layer: verdict first, reason second, recommendations third.
 
 Example supportive rejection:
@@ -198,10 +235,12 @@ Recommendations:
 - Some notes mix direct course topics with broader study guidance, supplementary examples, and outside references.
 - The Markdown files are study notes, not official transcripts; they may simplify, reorganize, or expand on lecture content for learning purposes.
 - Several notes reference external images, books, slides, or online materials. Those references do not imply those assets are relicensed here.
+- Handout notes for D1 through D6 have not been expanded yet; the raw handouts are archived and indexed.
 
 ## Suggested Next Improvements
 
 - Add a top-level `syllabus/` or `schedule.md` if you want a semester timeline.
+- Expand handout notes for D1 through D6 when those topics become active study targets.
 - Add `labs/` if later assignments include commands, exploits, packet captures, or demo code.
 - Add per-topic index pages such as `topics/setuid.md` or `topics/access-control.md` if the note set grows.
 - Add `REFERENCES.md` if you want one place to collect textbooks, papers, slide decks, and URLs cited across the notes.
