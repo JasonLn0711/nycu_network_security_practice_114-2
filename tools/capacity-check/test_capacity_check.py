@@ -7,8 +7,8 @@ import textwrap
 import unittest
 
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "scripts"))
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
 
 import capacity_check  # noqa: E402
 
@@ -77,8 +77,8 @@ class CapacityCheckTests(unittest.TestCase):
     def make_repo(self) -> tuple[tempfile.TemporaryDirectory[str], Path]:
         temp_dir = tempfile.TemporaryDirectory()
         root = Path(temp_dir.name)
-        (root / "data" / "capacity").mkdir(parents=True, exist_ok=True)
-        (root / "data" / "goals").mkdir(parents=True, exist_ok=True)
+        (root / "capacity").mkdir(parents=True, exist_ok=True)
+        (root / "goals").mkdir(parents=True, exist_ok=True)
         return temp_dir, root
 
     def write(self, path: Path, content: str) -> None:
@@ -87,7 +87,7 @@ class CapacityCheckTests(unittest.TestCase):
     def test_missing_goal_field_raises(self) -> None:
         temp_dir, root = self.make_repo()
         with temp_dir:
-            goal_path = root / "data" / "goals" / "broken.md"
+            goal_path = root / "goals" / "broken.md"
             self.write(goal_path, build_goal_file(why_now=""))
             with self.assertRaises(capacity_check.ValidationError):
                 capacity_check.parse_goal_file(goal_path)
@@ -95,7 +95,7 @@ class CapacityCheckTests(unittest.TestCase):
     def test_invalid_enum_raises(self) -> None:
         temp_dir, root = self.make_repo()
         with temp_dir:
-            goal_path = root / "data" / "goals" / "broken.md"
+            goal_path = root / "goals" / "broken.md"
             self.write(goal_path, build_goal_file(priority="urgent"))
             with self.assertRaises(capacity_check.ValidationError):
                 capacity_check.parse_goal_file(goal_path)
@@ -103,7 +103,7 @@ class CapacityCheckTests(unittest.TestCase):
     def test_invalid_numeric_and_date_raise(self) -> None:
         temp_dir, root = self.make_repo()
         with temp_dir:
-            goal_path = root / "data" / "goals" / "broken.md"
+            goal_path = root / "goals" / "broken.md"
             self.write(goal_path, build_goal_file(start_date="2026/04/14", required_blocks_7d="abc"))
             with self.assertRaises(capacity_check.ValidationError):
                 capacity_check.parse_goal_file(goal_path)
@@ -111,13 +111,13 @@ class CapacityCheckTests(unittest.TestCase):
     def test_status_returns_fit_below_threshold(self) -> None:
         temp_dir, root = self.make_repo()
         with temp_dir:
-            self.write(root / "data" / "capacity" / "current.md", build_capacity_file())
+            self.write(root / "capacity" / "current.md", build_capacity_file())
             self.write(
-                root / "data" / "goals" / "exam.md",
+                root / "goals" / "exam.md",
                 build_goal_file(goal_name="Exam prep", priority="primary", required_blocks_7d=4, required_blocks_14d=8),
             )
             self.write(
-                root / "data" / "goals" / "notes.md",
+                root / "goals" / "notes.md",
                 build_goal_file(goal_name="Note cleanup", required_blocks_7d=2, required_blocks_14d=4),
             )
 
@@ -129,9 +129,9 @@ class CapacityCheckTests(unittest.TestCase):
     def test_status_returns_tight_at_threshold(self) -> None:
         temp_dir, root = self.make_repo()
         with temp_dir:
-            self.write(root / "data" / "capacity" / "current.md", build_capacity_file())
+            self.write(root / "capacity" / "current.md", build_capacity_file())
             self.write(
-                root / "data" / "goals" / "journal.md",
+                root / "goals" / "journal.md",
                 build_goal_file(goal_name="Journal", priority="primary", required_blocks_7d=7.2, required_blocks_14d=14.4),
             )
 
@@ -143,9 +143,9 @@ class CapacityCheckTests(unittest.TestCase):
     def test_can_add_returns_does_not_fit_when_capacity_is_exceeded(self) -> None:
         temp_dir, root = self.make_repo()
         with temp_dir:
-            self.write(root / "data" / "capacity" / "current.md", build_capacity_file())
+            self.write(root / "capacity" / "current.md", build_capacity_file())
             self.write(
-                root / "data" / "goals" / "midterm.md",
+                root / "goals" / "midterm.md",
                 build_goal_file(goal_name="Midterm", priority="primary", required_blocks_7d=7.5, required_blocks_14d=12),
             )
 
@@ -166,13 +166,13 @@ class CapacityCheckTests(unittest.TestCase):
     def test_can_add_returns_does_not_fit_when_primary_cap_is_exceeded(self) -> None:
         temp_dir, root = self.make_repo()
         with temp_dir:
-            self.write(root / "data" / "capacity" / "current.md", build_capacity_file())
+            self.write(root / "capacity" / "current.md", build_capacity_file())
             self.write(
-                root / "data" / "goals" / "goal-1.md",
+                root / "goals" / "goal-1.md",
                 build_goal_file(goal_name="Goal 1", priority="primary", required_blocks_7d=2, required_blocks_14d=4),
             )
             self.write(
-                root / "data" / "goals" / "goal-2.md",
+                root / "goals" / "goal-2.md",
                 build_goal_file(goal_name="Goal 2", priority="primary", required_blocks_7d=2, required_blocks_14d=4),
             )
 
@@ -193,13 +193,13 @@ class CapacityCheckTests(unittest.TestCase):
     def test_recommendations_do_not_tell_user_to_work_harder(self) -> None:
         temp_dir, root = self.make_repo()
         with temp_dir:
-            self.write(root / "data" / "capacity" / "current.md", build_capacity_file())
+            self.write(root / "capacity" / "current.md", build_capacity_file())
             self.write(
-                root / "data" / "goals" / "mvp.md",
+                root / "goals" / "mvp.md",
                 build_goal_file(goal_name="MVP", priority="primary", required_blocks_7d=7.5, required_blocks_14d=14),
             )
             self.write(
-                root / "data" / "goals" / "admin.md",
+                root / "goals" / "admin.md",
                 build_goal_file(
                     goal_name="Admin cleanup",
                     priority="secondary",
@@ -220,9 +220,9 @@ class CapacityCheckTests(unittest.TestCase):
     def test_balance_warning_when_dream_project_crowds_out_protected_domains(self) -> None:
         temp_dir, root = self.make_repo()
         with temp_dir:
-            self.write(root / "data" / "capacity" / "current.md", build_capacity_file())
+            self.write(root / "capacity" / "current.md", build_capacity_file())
             self.write(
-                root / "data" / "goals" / "family.md",
+                root / "goals" / "family.md",
                 build_goal_file(
                     goal_name="Family dinner",
                     domain="family",
@@ -234,7 +234,7 @@ class CapacityCheckTests(unittest.TestCase):
                 ),
             )
             self.write(
-                root / "data" / "goals" / "health.md",
+                root / "goals" / "health.md",
                 build_goal_file(
                     goal_name="Exercise",
                     domain="health",
@@ -246,7 +246,7 @@ class CapacityCheckTests(unittest.TestCase):
                 ),
             )
             self.write(
-                root / "data" / "goals" / "study.md",
+                root / "goals" / "study.md",
                 build_goal_file(goal_name="Midterm", domain="coursework", priority="primary", required_blocks_7d=3.5, required_blocks_14d=7),
             )
 

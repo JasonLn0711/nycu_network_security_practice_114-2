@@ -10,7 +10,7 @@ from pathlib import Path
 import sys
 
 
-DEFAULT_REPO_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_TOOL_ROOT = Path(__file__).resolve().parent
 METADATA_SECTION = "machine-readable metadata"
 GOAL_REQUIRED_FIELDS = {
     "goal_name",
@@ -96,7 +96,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--repo-root",
-        default=str(DEFAULT_REPO_ROOT),
+        default=str(DEFAULT_TOOL_ROOT),
         help=argparse.SUPPRESS,
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -319,14 +319,14 @@ def parse_capacity_file(path: Path) -> CapacityConfig:
 
 
 def load_capacity(repo_root: Path) -> CapacityConfig:
-    capacity_path = repo_root / "data" / "capacity" / "current.md"
+    capacity_path = repo_root / "capacity" / "current.md"
     if not capacity_path.exists():
         raise FileNotFoundError(f"Missing capacity file: {capacity_path}")
     return parse_capacity_file(capacity_path)
 
 
 def load_active_goals(repo_root: Path) -> list[GoalRecord]:
-    goals_dir = repo_root / "data" / "goals"
+    goals_dir = repo_root / "goals"
     if not goals_dir.exists():
         return []
 

@@ -1,6 +1,6 @@
-# Capacity And Goal Data
+# Capacity Check Tool
 
-This folder contains lightweight planning inputs for course commitments. It exists only to answer small agenda-fit questions inside this course repo; the main planning repository remains the place for whole-system planning.
+This tool answers small agenda-fit questions for course commitments. It is intentionally lightweight and is not a replacement for the main planning repository.
 
 ## Files
 
@@ -8,29 +8,31 @@ This folder contains lightweight planning inputs for course commitments. It exis
 | --- | --- |
 | [capacity/current.md](capacity/current.md) | Current sustainable focus-block budget, warning threshold, primary-goal cap, and protected domains |
 | [goals/_template.md](goals/_template.md) | Template for active course goals that should be checked against capacity |
+| [capacity_check.py](capacity_check.py) | Command-line checker |
+| [test_capacity_check.py](test_capacity_check.py) | Unit tests |
 
 One focus block currently means `90` minutes. Treat the number as a calibration baseline, not a reason to erase recovery time.
 
 ## How To Use
 
 1. Update [capacity/current.md](capacity/current.md) when your real `7`-day or `14`-day course capacity changes.
-2. Copy [goals/_template.md](goals/_template.md) into a new file under `data/goals/` when a course goal becomes active.
+2. Copy [goals/_template.md](goals/_template.md) into a new file under `goals/` when a course goal becomes active.
 3. Fill the machine-readable metadata first. The checker depends on those fields.
-4. Run `python3 scripts/capacity_check.py status` before accepting more work.
-5. Run `python3 scripts/capacity_check.py can-add ...` when deciding whether a new commitment fits.
+4. Run `python3 tools/capacity-check/capacity_check.py status` before accepting more work.
+5. Run `python3 tools/capacity-check/capacity_check.py can-add ...` when deciding whether a new commitment fits.
 
 ## Commands
 
 Current status:
 
 ```bash
-python3 scripts/capacity_check.py status
+python3 tools/capacity-check/capacity_check.py status
 ```
 
 Candidate commitment:
 
 ```bash
-python3 scripts/capacity_check.py can-add \
+python3 tools/capacity-check/capacity_check.py can-add \
   --title "Security midterm review" \
   --domain course \
   --priority secondary \
