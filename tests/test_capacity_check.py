@@ -140,7 +140,7 @@ class CapacityCheckTests(unittest.TestCase):
             assessment = capacity_check.assess_goals(capacity, goals)
             self.assertEqual(assessment.verdict, "tight")
 
-    def test_can_add_rejects_when_capacity_is_exceeded(self) -> None:
+    def test_can_add_returns_does_not_fit_when_capacity_is_exceeded(self) -> None:
         temp_dir, root = self.make_repo()
         with temp_dir:
             self.write(root / "data" / "capacity" / "current.md", build_capacity_file())
@@ -161,9 +161,9 @@ class CapacityCheckTests(unittest.TestCase):
                 flexibility="movable",
             )
             assessment = capacity_check.assess_goals(capacity, goals, candidate=candidate)
-            self.assertEqual(assessment.verdict, "reject")
+            self.assertEqual(assessment.verdict, "does not fit")
 
-    def test_can_add_rejects_when_primary_cap_is_exceeded(self) -> None:
+    def test_can_add_returns_does_not_fit_when_primary_cap_is_exceeded(self) -> None:
         temp_dir, root = self.make_repo()
         with temp_dir:
             self.write(root / "data" / "capacity" / "current.md", build_capacity_file())
@@ -188,7 +188,7 @@ class CapacityCheckTests(unittest.TestCase):
                 flexibility="deferrable",
             )
             assessment = capacity_check.assess_goals(capacity, goals, candidate=candidate)
-            self.assertEqual(assessment.verdict, "reject")
+            self.assertEqual(assessment.verdict, "does not fit")
 
     def test_recommendations_do_not_tell_user_to_work_harder(self) -> None:
         temp_dir, root = self.make_repo()
@@ -214,7 +214,7 @@ class CapacityCheckTests(unittest.TestCase):
             goals = capacity_check.load_active_goals(root)
             assessment = capacity_check.assess_goals(capacity, goals)
             joined = " ".join(assessment.recommendations).lower()
-            self.assertEqual(assessment.verdict, "overloaded")
+            self.assertEqual(assessment.verdict, "does not fit")
             self.assertNotIn("work harder", joined)
 
     def test_balance_warning_when_dream_project_crowds_out_protected_domains(self) -> None:

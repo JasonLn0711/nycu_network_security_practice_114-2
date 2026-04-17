@@ -449,14 +449,14 @@ def build_recommendations(
     exclude_name = candidate.goal_name if candidate else None
 
     shrinkable = pick_shrinkable_goal(goals, exclude_name=exclude_name)
-    if shrinkable is not None and verdict in {"tight", "overloaded", "reject"}:
+    if shrinkable is not None and verdict in {"tight", "does not fit"}:
         recommendations.append(
             f"Shrink `{shrinkable.goal_name}` from {format_blocks(shrinkable.required_blocks_7d)} to "
             f"{format_blocks(shrinkable.minimum_viable_blocks_7d)} blocks in the next 7 days.",
         )
 
     deferrable = pick_deferrable_goal(goals, exclude_name=exclude_name)
-    if deferrable is not None and verdict in {"tight", "overloaded", "reject"}:
+    if deferrable is not None and verdict in {"tight", "does not fit"}:
         recommendations.append(
             f"Defer `{deferrable.goal_name}` to its next checkpoint instead of stacking more work into this horizon.",
         )
@@ -479,7 +479,7 @@ def build_recommendations(
             "Set a later checkpoint or explicit defer date instead of forcing this into the next 7 to 14 days.",
         )
 
-    if candidate is not None and verdict in {"tight", "reject"}:
+    if candidate is not None and verdict in {"tight", "does not fit"}:
         recommendations.append(
             f"Consider shrinking `{candidate.goal_name}` to a smaller first milestone before you try to fit the full request.",
         )
@@ -522,7 +522,7 @@ def assess_goals(
 
     if candidate is None:
         if reasons:
-            verdict = "overloaded"
+            verdict = "does not fit"
         elif ratio_7d >= capacity.warning_threshold or ratio_14d >= capacity.warning_threshold:
             verdict = "tight"
             reasons.append(
@@ -533,7 +533,7 @@ def assess_goals(
             reasons.append("the active goals still fit inside the near-term block budget")
     else:
         if reasons:
-            verdict = "reject"
+            verdict = "does not fit"
         elif ratio_7d >= capacity.warning_threshold or ratio_14d >= capacity.warning_threshold:
             verdict = "tight"
             reasons.append(
@@ -556,7 +556,7 @@ def assess_goals(
         balance_warning = (
             f"Protected domains at risk: {protected_list}. Do not fund this plan by cutting those blocks first."
         )
-        if verdict == "reject" and candidate is not None:
+        if verdict == "does not fit" and candidate is not None:
             reasons.append(
                 f"making it fit would pressure protected domains such as {protected_list}",
             )
