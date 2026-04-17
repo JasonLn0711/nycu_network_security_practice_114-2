@@ -13,6 +13,7 @@ ehthumbs.db
 # IDE files
 .vscode/
 .idea/
+.codex
 
 # Build artifacts (if any)
 build/
