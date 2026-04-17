@@ -1,4 +1,6 @@
-Absolutely — based on your situation, I’m treating you as **a beginner student preparing for a Ghidra-based crackme / binary-analysis assignment**, not as someone trying to become a professional reverser in one week. So Week 5 is about **tool literacy**: learning how to open a program, let Ghidra analyze it, and move around the result without getting lost.
+# Homework 1 Week 5: Ghidra Tool Literacy
+
+Week 5 is for a beginner student preparing for a Ghidra-based crackme or binary-analysis assignment. It focuses on tool literacy: opening a program, letting Ghidra analyze it, and moving around the result without getting lost.
 
 That matches the official beginner Ghidra course very closely. Its stated goals are to teach you how to create and customize projects, perform code analysis, markup, navigation, searching, and basic data creation, and use the decompiler, program tree, symbol table/tree, function graph, and function call tree in reverse engineering. ([Ghidra][1])
 

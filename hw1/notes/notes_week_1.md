@@ -1,4 +1,6 @@
-Absolutely. I’m going to tailor this for **a beginner student starting from zero and preparing for a binary-analysis assignment**, so the handout will stay concrete, use school-style examples, and keep connecting each idea to the kind of work you’ll later do with executables, Ghidra, and the command line. For level-setting, Harvard’s CS50 is explicitly described as an **entry-level** course for learners “with or without prior programming experience,” which is roughly the level I’m aiming at here. ([Harvard University][1])
+# Homework 1 Week 1: Computing Foundations
+
+This handout is for a beginner student starting from zero and preparing for a binary-analysis assignment. It keeps the examples concrete and connects each concept to later work with executables, Ghidra, and the command line. For level-setting, Harvard’s CS50 is explicitly described as an **entry-level** course for learners “with or without prior programming experience,” which is roughly the level used here. ([Harvard University][1])
 
 ## Week 1 mission
 

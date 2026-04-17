@@ -1,4 +1,6 @@
-Absolutely. For **your situation—a beginner student learning this specifically to handle a later binary-analysis / Ghidra assignment**—Week 4 is the week where everything starts to “click.”
+# Homework 1 Week 4: From C To Executables
+
+Week 4 is the bridge between beginner C reading and the binary-analysis or Ghidra workflow needed later in the assignment.
 
 Up to now, you have learned:
 

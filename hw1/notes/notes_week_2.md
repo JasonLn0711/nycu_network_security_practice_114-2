@@ -1,4 +1,6 @@
-Based on what you’ve told me, I’m treating you as **a beginner student learning from zero for a binary-analysis / reverse-engineering assignment**, not someone trying to become a Linux system administrator overnight. So this handout is built around the subset of Linux that will actually help you finish coursework: **not getting lost in folders, reading text output, fixing execute permissions, and running programs correctly**.
+# Homework 1 Week 2: Linux Command-Line Basics
+
+This handout is for a beginner student learning from zero for a binary-analysis or reverse-engineering assignment. It focuses on the subset of Linux needed for coursework: not getting lost in folders, reading text output, fixing execute permissions, and running programs correctly.
 
 ## Week 2 purpose
 
@@ -8,15 +10,15 @@ Ubuntu’s official beginner materials are a good fit for your stage: they expli
 
 ## Week 2 overview
 
-| Day | Theme            | By the end of the day, you should be able to…            | Main commands                      |         |
-| --- | ---------------- | -------------------------------------------------------- | ---------------------------------- | ------- |
-| 8   | Linux basics     | explain root `/`, home `~`, and why the terminal matters | terminal, shell, `/`, `~`          |         |
-| 9   | Navigation       | know where you are and move around confidently           | `pwd`, `ls`, `cd`                  |         |
-| 10  | File operations  | create, copy, move, rename, and delete safely            | `mkdir`, `touch`, `cp`, `mv`, `rm` |         |
-| 11  | Reading output   | inspect text files and command output without panic      | `cat`, `less`, `head`, `tail`      |         |
-| 12  | Permissions      | understand why a file won’t run and how to fix it        | `chmod`, `ls -l`                   |         |
-| 13  | Running programs | tell arguments apart from standard input/output          | `./program`, `>`, `<`, `           | `, `$?` |
-| 14  | Integration      | do a mini lab without notes                              | all of the above                   |         |
+| Day | Theme | By the end of the day, you should be able to... | Main commands |
+| --- | --- | --- | --- |
+| 8 | Linux basics | explain root `/`, home `~`, and why the terminal matters | terminal, shell, `/`, `~` |
+| 9 | Navigation | know where you are and move around confidently | `pwd`, `ls`, `cd` |
+| 10 | File operations | create, copy, move, rename, and delete safely | `mkdir`, `touch`, `cp`, `mv`, `rm` |
+| 11 | Reading output | inspect text files and command output without panic | `cat`, `less`, `head`, `tail` |
+| 12 | Permissions | understand why a file will not run and how to fix it | `chmod`, `ls -l` |
+| 13 | Running programs | tell arguments apart from standard input/output | `./program`, `>`, `<`, pipe, `$?` |
+| 14 | Integration | do a mini lab without notes | all of the above |
 
 ---
 

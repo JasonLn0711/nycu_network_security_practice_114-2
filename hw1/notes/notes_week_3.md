@@ -1,4 +1,6 @@
-For you, Week 3 is **not** about becoming a full C programmer. It is about learning enough **C-shaped thinking** that later, when Ghidra shows you C-like decompiler output, you can read it without freezing. Ghidra’s own beginner guide says the decompiler goes from **assembly to p-code to C code**, and the GNU C manual describes C as a relatively simple language that gives close access to hardware. That is exactly why this week matters for reverse engineering. ([Ghidra][1])
+# Homework 1 Week 3: C Reading Foundations
+
+Week 3 is not about becoming a full C programmer. It is about learning enough C-shaped thinking that later, when Ghidra shows C-like decompiler output, you can read it without freezing. Ghidra’s own beginner guide says the decompiler goes from **assembly to p-code to C code**, and the GNU C manual describes C as a relatively simple language that gives close access to hardware. That is why this week matters for reverse engineering. ([Ghidra][1])
 
 ---
 
