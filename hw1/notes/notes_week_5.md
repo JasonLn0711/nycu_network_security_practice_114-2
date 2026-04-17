@@ -4,7 +4,7 @@ Week 5 is for a beginner student preparing for a Ghidra-based crackme or binary-
 
 That matches the official beginner Ghidra course very closely. Its stated goals are to teach you how to create and customize projects, perform code analysis, markup, navigation, searching, and basic data creation, and use the decompiler, program tree, symbol table/tree, function graph, and function call tree in reverse engineering. ([Ghidra][1])
 
-# Week 5 mission
+## Week 5 mission
 
 By the end of this week, you should be able to:
 
@@ -16,7 +16,7 @@ By the end of this week, you should be able to:
 * use the Function Graph to understand branch structure,
 * and read the decompiler as a **helpful reconstruction**, not as perfect original source. ([Ghidra][1])
 
-# One running example for the week
+## One running example for the week
 
 Use one tiny toy program all week if possible. If you do not have one yet, a harmless self-made checker program is ideal:
 
@@ -54,7 +54,7 @@ If you do not have your own toy binary, the official beginner guide explicitly s
 
 ---
 
-# Week 5 overview
+## Week 5 overview
 
 | Day    | Theme                                          | Main question                                                |
 | ------ | ---------------------------------------------- | ------------------------------------------------------------ |
@@ -68,7 +68,7 @@ If you do not have your own toy binary, the official beginner guide explicitly s
 
 ---
 
-# Day 29 — What reverse engineering with Ghidra really is
+## Day 29 — What reverse engineering with Ghidra really is
 
 ## Goal
 
@@ -163,7 +163,7 @@ A strong answer:
 
 ---
 
-# Day 30 — Projects, importing, and Auto-Analysis
+## Day 30 — Projects, importing, and Auto-Analysis
 
 ## Goal
 
@@ -245,7 +245,7 @@ A strong answer:
 
 ---
 
-# Day 31 — CodeBrowser layout: learning what each pane is for
+## Day 31 — CodeBrowser layout: learning what each pane is for
 
 ## Goal
 
@@ -349,7 +349,7 @@ A strong answer:
 
 ---
 
-# Day 32 — Program Tree, Symbol Tree, and the Defined Functions / Strings tables
+## Day 32 — Program Tree, Symbol Tree, and the Defined Functions / Strings tables
 
 ## Goal
 
@@ -443,7 +443,7 @@ A strong answer:
 
 ---
 
-# Day 33 — Listing and searching: finding clues without guessing
+## Day 33 — Listing and searching: finding clues without guessing
 
 ## Goal
 
@@ -533,7 +533,7 @@ A strong answer:
 
 ---
 
-# Day 34 — References, xrefs, and Function Graph
+## Day 34 — References, xrefs, and Function Graph
 
 ## Goal
 
@@ -654,7 +654,7 @@ A strong answer:
 
 ---
 
-# Day 35 — Decompiler day and the first real mini-lab
+## Day 35 — Decompiler day and the first real mini-lab
 
 ## Goal
 
@@ -748,7 +748,7 @@ A strong ending is:
 
 ---
 
-# End-of-week self-test
+## End-of-week self-test
 
 Try answering these without notes:
 
@@ -769,7 +769,7 @@ If you can answer 9 or more cleanly, you are in a very good place for a beginner
 
 ---
 
-# Further reading, chosen for you
+## Further reading, chosen for you
 
 For **your** situation, I would keep the reading stack very focused.
 
@@ -785,7 +785,7 @@ If you are still installing or checking environment compatibility, the same begi
 
 ---
 
-# What success looks like at the end of Week 5
+## What success looks like at the end of Week 5
 
 Week 5 has succeeded if you can now say:
 

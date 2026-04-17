@@ -12,7 +12,7 @@ This week is the bridge between **human-written C** and **machine-executed binar
 
 ---
 
-# Week 4 mission
+## Week 4 mission
 
 By the end of this week, you should be able to:
 
@@ -25,7 +25,7 @@ By the end of this week, you should be able to:
 
 ---
 
-# Week 4 overview
+## Week 4 overview
 
 | Day    | Theme                              | Main outcome                                                |
 | ------ | ---------------------------------- | ----------------------------------------------------------- |
@@ -39,7 +39,7 @@ By the end of this week, you should be able to:
 
 ---
 
-# Day 22 — From C source to executable
+## Day 22 — From C source to executable
 
 ## Goal
 
@@ -167,7 +167,7 @@ A strong answer is:
 
 ---
 
-# Day 23 — Object files, executables, and ELF
+## Day 23 — Object files, executables, and ELF
 
 ## Goal
 
@@ -333,7 +333,7 @@ Because it is compiled code that has not necessarily been fully linked into a co
 
 ---
 
-# Day 24 — Assembly as “many tiny steps”
+## Day 24 — Assembly as “many tiny steps”
 
 ## Goal
 
@@ -431,7 +431,7 @@ Because C groups ideas into larger human-friendly statements, while assembly exp
 
 ---
 
-# Day 25 — Registers and low-level program state
+## Day 25 — Registers and low-level program state
 
 ## Goal
 
@@ -509,7 +509,7 @@ Because `%rsp` is tied to the stack, and the stack is central to understanding f
 
 ---
 
-# Day 26 — Function calls, returns, and the stack
+## Day 26 — Function calls, returns, and the stack
 
 ## Goal
 
@@ -638,7 +638,7 @@ A strong answer is:
 
 ---
 
-# Day 27 — Why decompiled C is useful, but never perfect
+## Day 27 — Why decompiled C is useful, but never perfect
 
 ## Goal
 
@@ -718,7 +718,7 @@ A strong ending is:
 
 ---
 
-# Day 28 — Review and mini-lab
+## Day 28 — Review and mini-lab
 
 ## Goal
 
@@ -788,7 +788,7 @@ If you can answer 7 or more cleanly, Week 4 is working.
 
 ---
 
-# Further reading, chosen for you
+## Further reading, chosen for you
 
 Since you are learning this **for a reverse-engineering assignment**, your reading should be focused and practical.
 
@@ -809,7 +809,7 @@ For Day 27, read only the relevant slice of **GCC’s optimization options**: `-
 
 ---
 
-# What success looks like at the end of Week 4
+## What success looks like at the end of Week 4
 
 Week 4 has succeeded if you can now say:
 

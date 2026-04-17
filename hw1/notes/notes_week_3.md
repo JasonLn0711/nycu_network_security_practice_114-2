@@ -4,7 +4,7 @@ Week 3 is not about becoming a full C programmer. It is about learning enough C-
 
 ---
 
-# Week 3 mission
+## Week 3 mission
 
 By the end of this week, you should be able to:
 
@@ -18,7 +18,7 @@ By the end of this week, you should be able to:
 
 ---
 
-# Week 3 overview
+## Week 3 overview
 
 | Day    | Theme                                 | Main outcome                                                            |
 | ------ | ------------------------------------- | ----------------------------------------------------------------------- |
@@ -32,7 +32,7 @@ By the end of this week, you should be able to:
 
 ---
 
-# Day 15 — Variables and program state
+## Day 15 — Variables and program state
 
 ## Goal
 
@@ -117,7 +117,7 @@ Because an uninitialized local variable does not start with a guaranteed meaning
 
 ---
 
-# Day 16 — Conditions and branching
+## Day 16 — Conditions and branching
 
 ## Goal
 
@@ -240,7 +240,7 @@ The second has both a “true” and a “false” action. ([gnu.org][4])
 
 ---
 
-# Day 17 — Loops
+## Day 17 — Loops
 
 ## Goal
 
@@ -351,7 +351,7 @@ What are the three jobs inside a `for` loop header?
 
 ---
 
-# Day 18 — Functions
+## Day 18 — Functions
 
 ## Goal
 
@@ -443,7 +443,7 @@ What is the difference between a **function definition** and a **function call**
 
 ---
 
-# Day 19 — Input, output, and `main`
+## Day 19 — Input, output, and `main`
 
 ## Goal
 
@@ -558,7 +558,7 @@ One is a command-line argument already given when the program starts; the other 
 
 ---
 
-# Day 20 — Strings, arrays, and memory intuition
+## Day 20 — Strings, arrays, and memory intuition
 
 ## Goal
 
@@ -681,7 +681,7 @@ Because `"ABCD"` needs room for four letters **plus** the null terminator. ([gnu
 
 ---
 
-# Day 21 — Read a tiny verifier program line by line
+## Day 21 — Read a tiny verifier program line by line
 
 ## Goal
 
@@ -790,7 +790,7 @@ Then write a 6-sentence explanation of the whole program in plain English.
 
 ---
 
-# What you should be able to do at the end of Week 3
+## What you should be able to do at the end of Week 3
 
 By the end of the week, success looks like this:
 
@@ -804,7 +804,7 @@ By the end of the week, success looks like this:
 
 ---
 
-# Further reading, chosen for you
+## Further reading, chosen for you
 
 Because you are learning this for **a reverse-engineering assignment**, I would keep your reading **narrow and surgical**, not broad and intimidating.
 
@@ -820,7 +820,7 @@ As an optional bonus for curiosity, the `gcc` manual page is worth skimming just
 
 ---
 
-# My advice for how to study this week
+## My advice for how to study this week
 
 For you, the winning strategy is:
 

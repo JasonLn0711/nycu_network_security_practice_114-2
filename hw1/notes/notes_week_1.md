@@ -49,7 +49,7 @@ I’ll keep reusing these so the ideas feel connected instead of random:
 
 ---
 
-# Day 1 — What is a program?
+## Day 1 — What is a program?
 
 ### Goal
 
@@ -144,7 +144,7 @@ An app icon is just one way your system lets you launch it.
 
 ---
 
-# Day 2 — Source code vs binary
+## Day 2 — Source code vs binary
 
 ### Goal
 
@@ -205,7 +205,7 @@ It means the file is in a low-level machine-oriented format, not meant for easy 
 
 ---
 
-# Day 3 — What does an operating system do?
+## Day 3 — What does an operating system do?
 
 ### Goal
 
@@ -319,7 +319,7 @@ These are different layers.
 
 ---
 
-# Day 4 — Files, folders, and paths
+## Day 4 — Files, folders, and paths
 
 ### Goal
 
@@ -415,7 +415,7 @@ A file name is not the same as a path.
 
 ---
 
-# Day 5 — What is an executable?
+## Day 5 — What is an executable?
 
 ### Goal
 
@@ -477,7 +477,7 @@ On Linux especially, file behavior is not determined only by the file name. Perm
 
 ---
 
-# Day 6 — GUI vs command line
+## Day 6 — GUI vs command line
 
 ### Goal
 
@@ -591,7 +591,7 @@ It is just another way of interacting with the same system.
 
 ---
 
-# Day 7 — Review, connect, and test yourself
+## Day 7 — Review, connect, and test yourself
 
 ### Goal
 
@@ -677,7 +677,7 @@ Then answer this in 5–8 sentences:
 
 ---
 
-# Week 1 glossary
+## Week 1 glossary
 
 | Term               | Plain-English definition                                    |
 | ------------------ | ----------------------------------------------------------- |
@@ -700,7 +700,7 @@ Then answer this in 5–8 sentences:
 
 ---
 
-# Further reading, chosen for you
+## Further reading, chosen for you
 
 Because you seem to be learning this **from scratch for a class assignment**, I would keep the reading stack small and deliberate.
 
@@ -716,7 +716,7 @@ For a curiosity-only preview, skim the **ELF** and **PE/COFF** documentation jus
 
 ---
 
-# What success looks like at the end of Week 1
+## What success looks like at the end of Week 1
 
 If you can do these three things, Week 1 worked:
 

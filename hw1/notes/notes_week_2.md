@@ -22,7 +22,7 @@ Ubuntu’s official beginner materials are a good fit for your stage: they expli
 
 ---
 
-# Day 8 — Linux basics and the terminal mindset
+## Day 8 — Linux basics and the terminal mindset
 
 **Goal.** Build the right mental picture of Linux before touching too many commands.
 
@@ -110,7 +110,7 @@ flowchart TD
 
 ---
 
-# Day 9 — `pwd`, `ls`, and `cd`
+## Day 9 — `pwd`, `ls`, and `cd`
 
 **Goal.** Stop getting lost.
 
@@ -232,7 +232,7 @@ Explain the difference between:
 
 ---
 
-# Day 10 — `mkdir`, `touch`, `cp`, `mv`, `rm`
+## Day 10 — `mkdir`, `touch`, `cp`, `mv`, `rm`
 
 **Goal.** Learn the core verbs for file and folder handling.
 
@@ -326,7 +326,7 @@ Then explain why `touch` is useful even though it does not put text into a file.
 
 ---
 
-# Day 11 — `cat`, `less`, `head`, `tail`
+## Day 11 — `cat`, `less`, `head`, `tail`
 
 **Goal.** Learn to inspect text output without drowning in it.
 
@@ -412,7 +412,7 @@ When would `less` be better than `cat`?
 
 ---
 
-# Day 12 — `chmod`, execute permission, and `ls -l`
+## Day 12 — `chmod`, execute permission, and `ls -l`
 
 **Goal.** Understand why “the file exists” does not automatically mean “I can run it.”
 
@@ -558,7 +558,7 @@ Explain:
 
 ---
 
-# Day 13 — Running programs, arguments, standard input/output, and exit status
+## Day 13 — Running programs, arguments, standard input/output, and exit status
 
 **Goal.** Understand what a command line is *actually doing* when you run a program.
 
@@ -759,7 +759,7 @@ If you can explain those three in plain English, you are doing very well.
 
 ---
 
-# Day 14 — Review and integration lab
+## Day 14 — Review and integration lab
 
 **Goal.** Put the whole week together into one smooth workflow.
 
@@ -851,7 +851,7 @@ By the end of today, you should be able to explain all of these without freezing
 
 ---
 
-# Further reading, tailored for you
+## Further reading, tailored for you
 
 Since you are learning this as **a beginner student for an assignment**, here is the order I recommend.
 
@@ -900,7 +900,7 @@ Ubuntu’s tutorial makes a very good beginner point: man pages are invaluable, 
 
 ---
 
-# What success looks like at the end of Week 2
+## What success looks like at the end of Week 2
 
 If Week 2 worked, you should be able to do these without notes:
 
