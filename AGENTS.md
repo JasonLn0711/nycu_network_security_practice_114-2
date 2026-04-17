@@ -1,17 +1,18 @@
 # AGENTS.md
 
-This repository is the canonical local archive and study workspace for the NYCU `Network Security Practice` course.
+This repository is the canonical local archive and study workspace for NYCU `Network Security Practice`.
 
 ## Mission
 
-Help maintain a course repo that is easy to read in plain text, easy for an AI agent to route, and practical for exam/homework review.
+Help maintain a course repo that is easy to read in plain text, easy for an AI agent to route, and practical for exam, homework, lab, and final-demo review.
 
 The repo should support:
 
 - raw course-material archiving
-- lecture and handout-aligned notes
-- homework/project notes
-- midterm/final review material
+- student-facing lecture modules
+- curated handout notes
+- homework and lab practice material
+- security practice resources
 - small agenda-fit checks when coursework is competing with other commitments
 
 ## Non-goals
@@ -26,14 +27,15 @@ Do not turn this repository into:
 
 ## Repository Roles
 
-- `handouts/`: raw official or third-party course materials. Use normalized lowercase kebab-case filenames, such as `d5-dns-security.pdf`.
-- `notes/`: personal lecture notes and expanded explanations.
-- `notes/handouts/`: one handout-aligned Markdown note when there is real study content to preserve.
-- `midterm_notes/`: exam-oriented explanations, recall notes, and practice-question material. Use descriptive lowercase kebab-case filenames.
-- `slide_notes/`: long-form slide deep dives or research extensions that are too large for the short handout notes.
-- `hwN/`: assignment-specific plans, walkthrough notes, and evidence.
-- `data/capacity/` and `data/goals/`: lightweight local planning inputs only.
-- `scripts/`: small standard-library Python 3 helpers.
+- `syllabus/`: course overview, grading facts, weekly dates, and syllabus-derived routing.
+- `lectures/`: weekly topic modules. Each week should include `README.md`, `key-concepts.md`, and `examples.md`; add deeper notes only when they preserve real study value.
+- `handouts/`: curated Markdown handouts for students.
+- `handouts/raw/`: raw official or third-party course materials. Use normalized lowercase kebab-case filenames, such as `d5-dns-security.pdf`.
+- `labs/`: hands-on practice guides and expected evidence.
+- `homeworks/`: assignment-specific instructions, expected outputs, notes, and optional solutions when real solution material exists.
+- `datasets/`: packet captures, binaries, logs, and sample inputs.
+- `tools/`: small local helpers. The capacity checker lives in `tools/capacity-check/`.
+- `misc/`: temporary parking only when no better folder fits.
 
 ## Source-of-truth Rule
 
@@ -43,32 +45,32 @@ The planning repository may link to these files, promote distilled concepts into
 
 ## Material Routing Rules
 
-- When adding a new handout, put it in `handouts/`, rename it to lowercase kebab-case, and update both `handouts/README.md` and `notes/handouts/index.md`.
+- When adding a new official handout, put the raw file in `handouts/raw/`, rename it to lowercase kebab-case, and update `handouts/README.md`.
 - Update the root `README.md` only when the repository routing map itself changes.
 - Keep original course titles visible in index tables even when filenames are normalized.
-- Do not create empty note files just because a handout exists. Create a `notes/handouts/*.md` file only when it contains useful study content.
-- Put short handout-aligned summaries in `notes/handouts/`; put longer research-style expansions in `slide_notes/`.
-- Put exam-friendly plain-language notes in `midterm_notes/`, named by topic rather than by sequence number.
+- Do not create empty note files just because a handout exists. Create curated Markdown only when it contains useful study content.
+- Put short handout-aligned summaries in `handouts/`.
+- Put lecture notes, exam-review notes, and long-form deep dives under the most relevant `lectures/weekXX-*` folder.
+- Put assignment-specific plans, walkthrough notes, and evidence under `homeworks/`.
 - Preserve Markdown notes as readable learning assets: plain definitions, intuition, real-world examples, workflows, and exam cues are welcome.
 - Keep official handouts separate from personal notes because the repository license does not cover third-party course materials.
 - Prefer small indexes and explicit links over nested folder complexity.
-- Keep the root `README.md` as a routing map. Put detailed per-folder indexes in the nearest `README.md` or `index.md`.
-- When adding lecture or homework notes, update `notes/README.md` or the matching `hwN/README.md`.
+- Keep folder depth to three levels for student-facing material.
 
 ## Python Rule
 
 Use `python3` in commands and examples.
 
-## Default agent rule
+## Default Agent Rule
 
 Before accepting new planning or agenda-fit work, check:
 
-1. `data/capacity/current.md`
-2. active goal files under `data/goals/*.md`
-3. `python3 scripts/capacity_check.py status`
-4. `python3 scripts/capacity_check.py can-add ...` when the user wants to add another commitment
+1. `tools/capacity-check/capacity/current.md`
+2. active goal files under `tools/capacity-check/goals/*.md`
+3. `python3 tools/capacity-check/capacity_check.py status`
+4. `python3 tools/capacity-check/capacity_check.py can-add ...` when the user wants to add another commitment
 
-## Response contract
+## Response Contract
 
 When you answer a planning or agenda-fit question from this repo, respond in this order:
 
@@ -76,7 +78,7 @@ When you answer a planning or agenda-fit question from this repo, respond in thi
 2. why: name the overloaded horizon, the primary-goal cap, or the protected-domain risk
 3. recommendations: give 1 to 3 concrete next moves
 
-## Required behavior
+## Required Behavior
 
 - If the next `7` or `14` days are overloaded, say so explicitly.
 - If the agenda is only barely possible, label it `tight` rather than pretending it is fine.

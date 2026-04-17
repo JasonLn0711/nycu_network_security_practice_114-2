@@ -6,19 +6,20 @@ This repository contains both original notes and third-party course materials.
 
 Unless a file says otherwise, the `CC BY-NC 4.0` license in [LICENSE](LICENSE) applies to original written content created for this repository, including:
 
-- Markdown notes in `notes/`
-- Markdown notes in `hw1/notes/`
-- Markdown notes in `midterm_notes/`
-- Markdown notes in `slide_notes/`
+- Markdown documentation in `syllabus/`
+- Curated Markdown handouts in `handouts/`
+- Lecture notes, examples, and review material in `lectures/`
+- Homework notes and original instructions in `homeworks/`
+- Lab guides in `labs/`
+- Dataset and tool documentation
 - Top-level repository documentation such as `README.md`
-- Folder-level index files such as `data/README.md`, `handouts/README.md`, `notes/README.md`, `hw1/README.md`, `midterm_notes/README.md`, and `slide_notes/README.md`
 - Other original documentation added by repository contributors
 
 ## Not Covered By The Repository License
 
 The repository license does not apply to:
 
-- Raw course-material files under `handouts/`, such as PDFs and PowerPoint files
+- Raw course-material files under `handouts/raw/`, such as PDFs, PowerPoint files, and Word documents
 - Instructor-provided slides, PDFs, or publisher materials
 - Quoted excerpts that remain under third-party copyright
 - Screenshots, diagrams, figures, or externally hosted images from third-party sources
@@ -28,4 +29,4 @@ Those materials remain under their original terms and may require separate permi
 
 ## Practical Note
 
-If you publish or redistribute this repository, review the contents of `handouts/` and any other third-party material first to make sure you have permission to share them.
+If you publish or redistribute this repository, review the contents of `handouts/raw/` and any other third-party material first to make sure you have permission to share them.
