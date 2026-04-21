@@ -23,10 +23,11 @@ The repository license does not apply to:
 - Instructor-provided slides, PDFs, or publisher materials
 - Quoted excerpts that remain under third-party copyright
 - Screenshots, diagrams, figures, or externally hosted images from third-party sources
+- Peer or classmate submissions stored for private study, including homework reports under `homeworks/*/peer-references/`
 - Names, logos, and trademarks of institutions, instructors, products, or publishers
 
 Those materials remain under their original terms and may require separate permission for redistribution or reuse.
 
 ## Practical Note
 
-If you publish or redistribute this repository, review the contents of `handouts/raw/` and any other third-party material first to make sure you have permission to share them.
+If you publish or redistribute this repository, review the contents of `handouts/raw/`, `homeworks/*/peer-references/`, and any other third-party material first to make sure you have permission to share them.

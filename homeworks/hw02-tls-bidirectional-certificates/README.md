@@ -41,6 +41,7 @@ Verified results:
 | `report/513559004_report.pdf` | Official submitted PDF artifact | tracked |
 | `report/evidence-map.md` | Map from rubric requirements to evidence files | tracked |
 | `report/README.md` | Report build and submission instructions | tracked |
+| `peer-references/` | Permissioned classmate report reference and rubric comparison checklist | tracked third-party/reference material |
 
 ## Canonical Build Command
 
@@ -58,6 +59,7 @@ cp final-report.pdf 513559004_report.pdf
 - Keep text logs and configs because they make the homework auditable without rerunning the lab.
 - Do not rerun the lab unless the final PDF proofread reveals a concrete evidence gap.
 - Keep canonical homework archive material here in `homeworks/`; keep reusable mTLS concepts in the planning repo knowledge system.
+- Treat peer-reference submissions as private third-party material for comparison only, not reusable solution text.
 - If the TA requires literal screenshots, use the existing logs/pcap to generate screenshots instead of changing the experiment.
 
 ## Next Action
