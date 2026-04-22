@@ -25,6 +25,9 @@ class SignatureDatabaseTests(unittest.TestCase):
 
         self.assertEqual(database.schema_version, "1.0")
         self.assertIn("a" * 64, database.hash_index["sha256"])
+        self.assertTrue(database.hash_filter.might_contain("sha256", "a" * 64))
+        self.assertFalse(database.hash_filter.might_contain("sha256", "b" * 64))
+        self.assertEqual(database.hash_filter.metadata()["hash_filter"], "bloom-filter")
         self.assertEqual(database.patterns[0].pattern, b"SAFE")
 
     def test_invalid_hash_is_rejected(self):

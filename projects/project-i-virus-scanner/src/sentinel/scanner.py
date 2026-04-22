@@ -18,6 +18,7 @@ def scan_directory(target: str | Path, database: SignatureDatabase) -> dict:
     results: list[FileResult] = []
     pattern_engine = PatternScanEngine(database.patterns)
     scan_metadata = {
+        **database.hash_filter.metadata(),
         **pattern_engine.metadata(),
         "traversal_policy": "deterministic-rglob-files",
         "symlink_policy": "skip",

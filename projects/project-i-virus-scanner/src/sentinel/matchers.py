@@ -134,6 +134,8 @@ def compute_hashes(data: bytes) -> dict[str, str]:
 def find_hash_matches(hashes: dict[str, str], database: SignatureDatabase) -> list[HashMatcher]:
     matches: list[HashMatcher] = []
     for algorithm, digest in hashes.items():
+        if not database.hash_filter.might_contain(algorithm, digest):
+            continue
         matches.extend(database.hash_index.get(algorithm, {}).get(digest, ()))
     return matches
 

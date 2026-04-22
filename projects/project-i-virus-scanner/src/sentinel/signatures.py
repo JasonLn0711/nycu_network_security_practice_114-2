@@ -6,6 +6,8 @@ from pathlib import Path
 import re
 from typing import Any
 
+from .bloom import HashBloomFilter
+
 
 SUPPORTED_HASH_TYPES = {"md5": 32, "sha256": 64}
 SUPPORTED_MATCHER_TYPES = {*SUPPORTED_HASH_TYPES, "hex_pattern"}
@@ -51,6 +53,7 @@ class SignatureDatabase:
     schema_version: str
     signatures: tuple[Signature, ...]
     hash_index: dict[str, dict[str, tuple[HashMatcher, ...]]]
+    hash_filter: HashBloomFilter
     patterns: tuple[PatternMatcher, ...]
 
 
@@ -104,11 +107,17 @@ def parse_signature_database(payload: dict[str, Any]) -> SignatureDatabase:
         algorithm: {digest: tuple(matchers) for digest, matchers in digest_map.items()}
         for algorithm, digest_map in hash_index.items()
     }
+    hash_filter = HashBloomFilter.from_matchers(
+        (algorithm, digest)
+        for algorithm, digest_map in frozen_hash_index.items()
+        for digest in digest_map
+    )
 
     return SignatureDatabase(
         schema_version=schema_version,
         signatures=tuple(signatures),
         hash_index=frozen_hash_index,
+        hash_filter=hash_filter,
         patterns=tuple(patterns),
     )
 

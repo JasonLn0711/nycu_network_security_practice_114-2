@@ -2,7 +2,13 @@ import unittest
 import tempfile
 from pathlib import Path
 
-from sentinel.matchers import PatternScanEngine, compute_hashes, find_pattern_matches, scan_file_content
+from sentinel.matchers import (
+    PatternScanEngine,
+    compute_hashes,
+    find_hash_matches,
+    find_pattern_matches,
+    scan_file_content,
+)
 from sentinel.signatures import parse_signature_database
 
 
@@ -12,6 +18,29 @@ class MatcherTests(unittest.TestCase):
 
         self.assertEqual(hashes["md5"], "00ed24f2abe0d1fc23ba8a7abaca7eeb")
         self.assertEqual(hashes["sha256"], "45e777cc8b81bfb652f2f1f3d46dd1b1c70caf720f61eba585af451b31d27afd")
+
+    def test_hash_matches_use_bloom_precheck_then_exact_index(self):
+        digest = "45e777cc8b81bfb652f2f1f3d46dd1b1c70caf720f61eba585af451b31d27afd"
+        database = parse_signature_database(
+            {
+                "schema_version": "1.0",
+                "signatures": [
+                    {
+                        "id": "sig-hash",
+                        "name": "Hash Marker",
+                        "category": "safe-mock-virus",
+                        "severity": "critical",
+                        "matchers": [{"type": "sha256", "value": digest}],
+                    }
+                ],
+            }
+        )
+
+        matches = find_hash_matches({"sha256": digest}, database)
+        misses = find_hash_matches({"sha256": "0" * 64}, database)
+
+        self.assertEqual([match.signature.id for match in matches], ["sig-hash"])
+        self.assertEqual(misses, [])
 
     def test_pattern_match_finds_hex_signature(self):
         database = parse_signature_database(
