@@ -26,11 +26,11 @@
       "size_bytes": 149
     }
   ],
-  "generated_at": "2026-04-22T04:29:46+00:00",
+  "generated_at": "2026-04-22T05:21:50+00:00",
   "inputs": {
     "signature_database": {
       "path": "signatures/malware-signatures.json",
-      "sha256": "909c5cb1e04c1b9bc0033d5f497d96601a8b40110329932c4138f33055ffabdb",
+      "sha256": "564b6a9f82cbf03089955b16a22a8cdee8e0979ce3be0597e078b80b4eddadfa",
       "size_bytes": 790
     },
     "target": {
@@ -42,8 +42,17 @@
   "reports": [
     {
       "path": "reports/demo-report.json",
-      "sha256": "58a3db8ea880783eea7934c1e414ca5d2e8465900b8971ef32d0c4024e669731",
-      "size_bytes": 3499,
+      "scan_metadata": {
+        "automaton_states": 30,
+        "chunk_size_bytes": 1048576,
+        "heuristic_sample_limit_bytes": 1048576,
+        "pattern_count": 1,
+        "pattern_engine": "aho-corasick-byte-automaton",
+        "symlink_policy": "skip",
+        "traversal_policy": "deterministic-rglob-files"
+      },
+      "sha256": "88134b2bc715118514399423db936585e8f3f9094fa60417d4f3cfbb3f4615f8",
+      "size_bytes": 4842,
       "summary": {
         "clean": 3,
         "error": 0,
@@ -58,8 +67,22 @@
     },
     {
       "path": "reports/demo-report.md",
-      "sha256": "37df79deafa35b7a86fdbae059179c285a0fb2d08be17706e792a6d645822b04",
-      "size_bytes": 1427
+      "sha256": "cb906f5f5d0794149aa147644f4ed531984b64ce1269258817e5039602b3e960",
+      "size_bytes": 1668
+    },
+    {
+      "path": "reports/pattern-benchmark.json",
+      "scan_metadata": {},
+      "sha256": "5291a7425a70ac3802eb6d1775f038fdf2db1f9383f32e9a87a801e29bb6a687",
+      "size_bytes": 967,
+      "summary": {},
+      "target": null,
+      "tool": "Sentinel"
+    },
+    {
+      "path": "reports/pattern-benchmark.md",
+      "sha256": "821dee1d44390d23db9aebbb4f14ae2ef08b5f7ef560c5703aaafb30b7e2364c",
+      "size_bytes": 801
     }
   ],
   "reproducibility": {

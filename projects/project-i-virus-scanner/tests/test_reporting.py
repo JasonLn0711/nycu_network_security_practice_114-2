@@ -29,6 +29,7 @@ class ReportingTests(unittest.TestCase):
 
         self.assertEqual(loaded["tool"], "Sentinel")
         self.assertEqual(loaded["summary"]["clean"], 1)
+        self.assertEqual(loaded["scan_metadata"], {})
 
     def test_markdown_report_renders_findings(self):
         report = build_report(
@@ -63,14 +64,23 @@ class ReportingTests(unittest.TestCase):
                         }
                     ],
                 ),
+                FileResult(
+                    path="outside-link.txt",
+                    status="skipped",
+                    severity="info",
+                    skip_reason="Symbolic link skipped to keep scans inside the explicit target tree.",
+                ),
             ],
         )
 
         markdown = render_markdown_report(report)
 
         self.assertIn("# Sentinel Scan Report", markdown)
+        self.assertIn("## Scan Engine", markdown)
         self.assertIn("sig-marker", markdown)
         self.assertIn("api-name-indicator", markdown)
+        self.assertIn("outside-link.txt", markdown)
+        self.assertIn("Symbolic link skipped", markdown)
 
         with tempfile.TemporaryDirectory() as tmp:
             destination = Path(tmp) / "report.md"

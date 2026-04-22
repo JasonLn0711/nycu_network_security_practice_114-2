@@ -28,8 +28,23 @@
       "matches": [
         {
           "category": "safe-mock-virus",
+          "matcher": "md5",
+          "severity": "critical",
+          "signature_id": "sig-sentinel-safe-mock-virus",
+          "signature_name": "Sentinel Safe Mock Virus Fixture"
+        },
+        {
+          "category": "safe-mock-virus",
+          "matcher": "sha256",
+          "severity": "critical",
+          "signature_id": "sig-sentinel-safe-mock-virus",
+          "signature_name": "Sentinel Safe Mock Virus Fixture"
+        },
+        {
+          "category": "safe-mock-virus",
           "matcher": "hex_pattern",
           "pattern_bytes": 29,
+          "pattern_offset": 109,
           "severity": "critical",
           "signature_id": "sig-sentinel-safe-mock-virus",
           "signature_name": "Sentinel Safe Mock Virus Fixture"
@@ -64,8 +79,23 @@
       "matches": [
         {
           "category": "safe-mock-virus",
+          "matcher": "md5",
+          "severity": "critical",
+          "signature_id": "sig-sentinel-safe-mock-virus",
+          "signature_name": "Sentinel Safe Mock Virus Fixture"
+        },
+        {
+          "category": "safe-mock-virus",
+          "matcher": "sha256",
+          "severity": "critical",
+          "signature_id": "sig-sentinel-safe-mock-virus",
+          "signature_name": "Sentinel Safe Mock Virus Fixture"
+        },
+        {
+          "category": "safe-mock-virus",
           "matcher": "hex_pattern",
           "pattern_bytes": 29,
+          "pattern_offset": 109,
           "severity": "critical",
           "signature_id": "sig-sentinel-safe-mock-virus",
           "signature_name": "Sentinel Safe Mock Virus Fixture"
@@ -95,9 +125,18 @@
       "status": "suspicious"
     }
   ],
-  "finished_at": "2026-04-22T04:29:46+00:00",
+  "finished_at": "2026-04-22T05:21:49+00:00",
+  "scan_metadata": {
+    "automaton_states": 30,
+    "chunk_size_bytes": 1048576,
+    "heuristic_sample_limit_bytes": 1048576,
+    "pattern_count": 1,
+    "pattern_engine": "aho-corasick-byte-automaton",
+    "symlink_policy": "skip",
+    "traversal_policy": "deterministic-rglob-files"
+  },
   "signature_schema_version": "1.0",
-  "started_at": "2026-04-22T04:29:46+00:00",
+  "started_at": "2026-04-22T05:21:49+00:00",
   "summary": {
     "clean": 3,
     "error": 0,

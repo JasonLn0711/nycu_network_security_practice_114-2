@@ -8,7 +8,7 @@ It can be used as the base for a live demo script or a short recorded video.
 ## Safety Note
 
 The current demo uses a local safe mock-virus fixture. It is not live malware and does not contain the literal EICAR string.
-The scanner is read-only: it does not execute, delete, quarantine, upload, or modify scanned files.
+The scanner is read-only: it does not execute, delete, quarantine, upload, or modify scanned files. It skips symbolic links by default so the demo scan stays inside the explicit target tree.
 
 ## Commands
 
@@ -21,7 +21,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -
 Observed result:
 
 ```text
-Ran 15 tests in 0.005s
+Ran 22 tests in 0.006s
 
 OK
 ```
@@ -30,6 +30,12 @@ Validate the signature database:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel validate-signatures signatures/malware-signatures.json
+```
+
+Validate the EICAR reference-hash profile:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel validate-signatures signatures/eicar-reference-signature.json
 ```
 
 Observed result:
@@ -90,30 +96,68 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel write-evidence \
   --signatures signatures/malware-signatures.json \
   --report reports/demo-report.json \
   --report reports/demo-report.md \
+  --report reports/pattern-benchmark.json \
+  --report reports/pattern-benchmark.md \
   --output reports/demo-evidence-manifest.json
 ```
 
 Observed result:
 
 ```text
-Evidence manifest written: files=5 reports=2 output=reports/demo-evidence-manifest.json
+Evidence manifest written: files=5 reports=4 output=reports/demo-evidence-manifest.json
+```
+
+Generate the safe synthetic pattern benchmark:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/benchmark_patterns.py
+```
+
+Observed result:
+
+```text
+Pattern benchmark complete: patterns=128 payload_size=524288
+```
+
+Run the release-readiness gate:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/check_release.py
+```
+
+Observed result:
+
+```text
+[ ok ] version files agree
+[ ok ] standards alignment is present
+[ ok ] EICAR reference hashes are consistent
+[ ok ] demo regeneration passes
+[ ok ] demo report is consistent
+[ ok ] benchmark evidence is consistent
+[ ok ] evidence manifest is consistent
+[ ok ] final report PDF exists
+
+Release check passed for Sentinel 0.2.0.
 ```
 
 ## Expected Demo Talking Points
 
 1. Show the signature database and explain that it has MD5, SHA-256, and hex-pattern matchers.
 2. Show the demo folder tree.
-3. Run the tests briefly or state that they passed.
+3. Run the tests briefly or state that the 22-test suite passed.
 4. Run the JSON or Markdown scan command.
 5. Explain the exit code: `1` means an infected file was intentionally detected.
 6. Open `reports/demo-report.md`.
-7. Open `reports/demo-evidence-manifest.json` and show that the demo tree, signature database, and reports have SHA-256 hashes.
-8. Point to the safe mock-virus fixture:
+7. Open `reports/pattern-benchmark.md` and explain that the Aho-Corasick matcher has the same match set as the naive baseline on safe synthetic data.
+8. Open `docs/standards-alignment.md` and explain that EICAR, NIST, OWASP, and MITRE were used as external calibration references.
+9. Run or show `scripts/check_release.py` as the final consistency gate.
+10. Open `reports/demo-evidence-manifest.json` and show that the demo tree, signature database, reports, and benchmark artifacts have SHA-256 hashes.
+10. Point to the safe mock-virus fixture:
    - path: `nested/level-1/level-2/sentinel-safe-mock-virus.txt`
    - status: `infected`
    - evidence: MD5, SHA-256, and hex-pattern match
-9. Point to the heuristic-only file:
+11. Point to the heuristic-only file:
    - path: `suspicious/api-names-fixture.txt`
    - status: `suspicious`
    - evidence: suspicious API-name strings
-10. Close by saying the scanner is educational and read-only, not production antivirus.
+12. Close by saying the scanner is educational and read-only, not production antivirus.

@@ -32,8 +32,9 @@
 Sentinel is a safe, read-only, signature-based virus scanner built for the
 Network Security Practice final project. It scans an explicit target directory,
 loads a structured malware-signature database, performs exact hash matching,
-performs byte-pattern matching, applies a small heuristic layer, and generates
-JSON and Markdown security reports. The current demonstration uses a local safe
+performs Aho-Corasick byte-pattern matching, skips symbolic links by default,
+applies a small heuristic layer, and generates JSON and Markdown security
+reports. The current demonstration uses a local safe
 mock-virus fixture rather than live malware. This report explains the design,
 data structures, scanner workflow, evidence artifacts, evaluation results, and
 limitations.
@@ -66,7 +67,7 @@ File traversal and comparison &
 and scans regular files. \\
 Bitwise or pattern comparison &
 \texttt{hex\_pattern} signatures are converted to bytes and searched during
-chunked file scans. \\
+chunked file scans using an Aho-Corasick byte-pattern automaton. \\
 Heuristic analysis &
 \texttt{sentinel.heuristics} flags low-confidence suspicious indicators without
 claiming confirmed infection. \\
@@ -111,8 +112,10 @@ Keeps the loaded database stable during a scan. \\
 \texttt{dict[str, dict[str, tuple[HashMatcher, ...]]]} & Hash lookup by
 algorithm and digest & Exact hash detection becomes a constant-time dictionary
 lookup. \\
-\texttt{tuple[PatternMatcher, ...]} & Validated byte patterns & Reused during
-chunked file scans. \\
+\texttt{PatternScanEngine} & Aho-Corasick byte-pattern automaton & Reused across
+files during a scan run. \\
+\texttt{PatternStreamScanner} & Per-file automaton state & Preserves pattern
+state across streamed chunks. \\
 \texttt{list[HeuristicFinding]} & Suspicious-rule output & Keeps heuristic
 signals separate from confirmed signature matches. \\
 \bottomrule
@@ -130,20 +133,39 @@ The scanner workflow is:
   \item Parse CLI arguments.
   \item Load and validate the signature database.
   \item Walk the explicit target directory in sorted order.
+  \item Report symbolic links as \texttt{skipped} rather than following them.
   \item Read each file in chunks.
   \item Compute MD5 and SHA-256 incrementally.
   \item Check exact hash signatures through lookup maps.
-  \item Search configured byte patterns while preserving chunk overlap.
+  \item Search configured byte patterns with an Aho-Corasick automaton.
   \item Run heuristic rules against a bounded sample.
   \item Assign status: \texttt{infected}, \texttt{suspicious}, \texttt{clean},
-        or \texttt{error}.
+        \texttt{skipped}, or \texttt{error}.
   \item Write JSON or Markdown report output.
 \end{enumerate}
 
 Chunked scanning avoids loading full files into memory for hash and pattern
-matching. For byte-pattern matching, Sentinel keeps a short tail from the
-previous chunk. This means a signature split across two chunks is still
-detectable. The chunk-boundary pattern unit test verifies this behavior.
+matching. For byte-pattern matching, Sentinel builds a trie with failure links
+from all configured patterns, then feeds file chunks through one automaton state
+machine. This means a signature split across two chunks is still detectable
+without manually searching each pattern against each chunk. The overlapping,
+stream-boundary, and chunk-boundary pattern tests verify this behavior.
+
+\subsection{Algorithmic Hardening}
+
+The pattern engine uses the Aho-Corasick idea: multiple patterns are compiled
+into one automaton, and each input byte advances one shared state machine. The
+JSON report records \texttt{pattern\_engine},
+\texttt{pattern\_count}, \texttt{automaton\_states}, chunk-size metadata, and
+\texttt{symlink\_policy} so the demo evidence shows which matching and traversal
+paths were used.
+
+The benchmark in \texttt{reports/pattern-benchmark.json} is safe and synthetic.
+It compares the automaton with a naive per-pattern \texttt{bytes} search. The
+current benchmark shows equal match sets. It does not claim production antivirus
+performance; in small Python-only demos, CPython's C-backed byte search can be
+faster than a pure-Python automaton. The professional value here is explainable
+multi-pattern behavior and scaling structure.
 
 The scanner returns exit code \texttt{1} when an infected file is found. In the
 demo this is expected because the safe mock-virus fixture is intentionally
@@ -176,12 +198,44 @@ Sentinel currently generates:
 \begin{itemize}[leftmargin=*]
   \item \texttt{reports/demo-report.json}: machine-readable scan report.
   \item \texttt{reports/demo-report.md}: instructor-friendly Markdown report.
+  \item \texttt{reports/pattern-benchmark.json}: safe synthetic benchmark data.
+  \item \texttt{reports/pattern-benchmark.md}: benchmark summary.
   \item \texttt{reports/demo-evidence-manifest.json}: reproducibility manifest.
 \end{itemize}
 
 The evidence manifest records SHA-256 hashes and sizes for every demo-tree file,
-the signature database, and the generated reports. It also records the safety
-flags and exact commands used to reproduce the evidence.
+the signature database, generated reports, and benchmark artifacts. It also
+records the safety flags and exact commands used to reproduce the evidence.
+
+\section{External Standards Alignment}
+
+The project was calibrated against a small set of recognized references:
+EICAR/CARO for safe anti-malware testing, NIST SP 800-83 Rev. 1 for malware
+prevention and handling, NIST Cybersecurity Framework 2.0 for risk-management
+framing, OWASP File Upload guidance for defense-in-depth around untrusted files,
+and MITRE ATT\&CK T1055.002 for process-injection API context. The mapping is
+recorded in \texttt{docs/standards-alignment.md}.
+
+Sentinel uses these references conservatively. The repository stores an EICAR
+reference signature file containing only the reference MD5 and SHA-256 hashes. It
+does not store the literal EICAR test file. The EICAR unit tests reconstruct the
+reference bytes in memory to verify the standard 68-byte length and expected
+hashes. MITRE API-name indicators are reported only as \texttt{suspicious}; they
+are not treated as confirmed malware without an exact signature match.
+
+\section{Release Readiness}
+
+Sentinel includes \texttt{VERSION}, \texttt{CHANGELOG.md}, \texttt{Makefile},
+and \texttt{scripts/check\_release.py}. The release check is intended to be run
+before moving the package into the required private repository and again after
+the move. It validates version consistency, standards alignment, EICAR reference
+hashes, full demo regeneration, expected demo counts, Aho-Corasick report
+metadata, symbolic-link policy, benchmark match-set equivalence,
+evidence-manifest safety flags, and final-report PDF presence.
+
+\begin{lstlisting}[style=sentinel]
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/check_release.py
+\end{lstlisting}
 
 \section{Current Evaluation}
 
@@ -206,12 +260,17 @@ MD5, SHA-256, and hex-pattern evidence. The suspicious file is the API-name
 fixture; it is marked suspicious because it contains API-name indicators, not
 because it matches a confirmed malware signature.
 
+The demo report records \texttt{aho-corasick-byte-automaton} as the pattern
+engine, with one configured pattern and 30 automaton states for the current
+signature database.
+
 \subsection{Test Result}
 
-The current standard-library test suite contains 15 tests. It covers signature
-validation, hash matching, byte-pattern matching, chunk-boundary pattern
-detection, scanner behavior, report generation, Markdown output, evidence
-manifest generation, and CLI paths.
+The current standard-library test suite contains 22 tests. It covers signature
+validation, hash matching, Aho-Corasick byte-pattern matching, overlapping
+pattern outputs, stream/chunk-boundary pattern detection, scanner behavior,
+symbolic-link skipping, EICAR reference hash validation, report generation,
+Markdown output, evidence manifest generation, CLI paths, and the version flag.
 
 \begin{lstlisting}[style=sentinel]
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -v
@@ -232,12 +291,16 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel scan demo/demo-tree
 \end{lstlisting}
 
 \begin{lstlisting}[style=sentinel]
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel write-evidence --target demo/demo-tree --signatures signatures/malware-signatures.json --report reports/demo-report.json --report reports/demo-report.md --output reports/demo-evidence-manifest.json
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/benchmark_patterns.py
+\end{lstlisting}
+
+\begin{lstlisting}[style=sentinel]
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel write-evidence --target demo/demo-tree --signatures signatures/malware-signatures.json --report reports/demo-report.json --report reports/demo-report.md --report reports/pattern-benchmark.json --report reports/pattern-benchmark.md --output reports/demo-evidence-manifest.json
 \end{lstlisting}
 
 For convenience, the project also includes \texttt{demo/run\_demo.py}, which runs
-the tests, validates signatures, regenerates both reports, and regenerates the
-evidence manifest.
+the tests, validates signatures, regenerates both scan reports, regenerates the
+benchmark artifacts, and regenerates the evidence manifest.
 
 The project includes \texttt{pyproject.toml}, so it can also be installed in
 editable mode with \texttt{python3 -m pip install -e .}. After installation, the
@@ -250,7 +313,10 @@ Sentinel is not production antivirus software. It detects only signatures and
 simple heuristic indicators included in the configured database and rules. It
 does not execute files, detonate samples, collect telemetry, or process live
 malware. The current mock-virus fixture demonstrates scanner mechanics rather
-than real-world malware coverage.
+than real-world malware coverage. The repository does not store the literal
+EICAR test file; it stores only reference hashes and in-memory tests. The
+benchmark is safe synthetic evidence for algorithm explanation, not a production
+antivirus performance claim.
 
 \section{Remaining Submission Work}
 

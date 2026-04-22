@@ -6,7 +6,7 @@ Show that Sentinel can scan a directory tree, detect a safe mock-virus file, pro
 
 The demo should be boring in the best way: deterministic, safe, repeatable, and easy for the instructor to understand.
 
-Current local checkpoint as of `2026-04-22`: `python3 demo/run_demo.py` passes `15` tests and regenerates the JSON report, Markdown report, and evidence manifest. The demo result is `5` files scanned, `1` infected safe mock fixture, `1` suspicious heuristic fixture, `3` clean files, and `0` errors.
+Current local checkpoint as of `2026-04-22`: `python3 demo/run_demo.py` passes `22` tests and regenerates the JSON report, Markdown report, pattern benchmark, and evidence manifest. The demo result is `5` files scanned, `1` infected safe mock fixture, `1` suspicious heuristic fixture, `3` clean files, `0` skipped files, and `0` errors.
 
 ## Demo Safety Rules
 
@@ -15,6 +15,7 @@ Current local checkpoint as of `2026-04-22`: `python3 demo/run_demo.py` passes `
 - Do not scan personal directories in the demo.
 - Keep the target folder small enough to explain on screen.
 - Make the scanner read-only: no deletion, quarantine, upload, or network action.
+- Keep symbolic links skipped by default so the scan does not silently leave the explicit demo tree.
 
 ## Demo Tree Shape
 
@@ -86,12 +87,14 @@ python3 -m sentinel scan demo/demo-tree \
 - [x] Scanner command recorded.
 - [x] JSON report saved under `reports/demo-report.json`.
 - [x] Markdown report saved under `reports/demo-report.md`.
+- [x] Pattern benchmark saved under `reports/pattern-benchmark.json` and `reports/pattern-benchmark.md`.
 - [x] Evidence manifest saved under `reports/demo-evidence-manifest.json`.
 - [x] Terminal transcript drafted under `demo/demo-transcript.md`.
 - [ ] Screenshot captured.
 - [ ] Short demo video or final live-demo script prepared.
 - [x] Report draft references the same evidence.
 - [x] Final report PDF references the same evidence.
+- [x] Release-readiness gate passes via `python3 scripts/check_release.py`.
 
 ## Report Outline
 
@@ -126,7 +129,7 @@ Explain:
 Data-structure paragraph:
 
 - Hash map for exact digest lookup.
-- List of byte patterns for pattern matching.
+- Aho-Corasick byte-pattern automaton for multi-pattern matching.
 - Optional Bloom filter only if implemented and measured.
 
 ### 4. Scanning Engine
@@ -134,9 +137,10 @@ Data-structure paragraph:
 Explain:
 
 - directory traversal
+- symbolic-link skipping and skipped-result reporting
 - file read error handling
 - MD5/SHA-256 computation
-- chunked pattern matching with overlap
+- Aho-Corasick chunked pattern matching with streamed automaton state
 - result aggregation
 - exit codes
 
@@ -147,7 +151,7 @@ Explain the difference between:
 - `infected`: confirmed signature match
 - `suspicious`: heuristic signal only
 - `clean`: no detection
-- `skipped`: unreadable or unsupported file
+- `skipped`: symbolic link or other unsupported file intentionally not scanned
 
 Example heuristic table:
 
@@ -177,7 +181,12 @@ Minimum evaluation table:
 | Empty file | clean | Pass in local demo report |
 | Nested Sentinel safe mock-virus fixture | infected | Pass in local demo report |
 | Suspicious API-name fixture | suspicious | Pass in local demo report |
+| Symbolic link inside target tree | skipped | Pass in unit tests |
+| EICAR reference bytes | MD5/SHA-256 match standard reference | Pass in unit tests without storing an EICAR file |
 | Malformed signature database | clear error | Pass in unit tests |
+| Overlapping byte patterns | all expected matches | Pass in unit tests |
+| Streamed pattern split across chunks | infected | Pass in unit tests |
+| Synthetic pattern benchmark | match sets equal to naive baseline | Pass in `reports/pattern-benchmark.json` |
 
 ### 8. Limitations And Ethics
 
@@ -201,5 +210,7 @@ Expected final package:
 - demo video or live-demo readiness: final capture still pending
 - generated report artifact: local draft exists at `reports/demo-report.json`
 - generated Markdown report artifact: local draft exists at `reports/demo-report.md`
+- generated benchmark artifacts: local drafts exist at `reports/pattern-benchmark.json` and `reports/pattern-benchmark.md`
 - generated evidence manifest: local draft exists at `reports/demo-evidence-manifest.json`
 - short README with install, run, test, and safety notes: local README exists; private-repo URL and commit hash still pending
+- release-readiness check: local `scripts/check_release.py` exists and passes; rerun after private-repo mirroring

@@ -77,12 +77,14 @@ def _target_metadata(path: Path) -> dict[str, Any]:
 
 
 def _tree_metadata(root: Path) -> list[dict[str, Any]]:
+    if root.is_symlink():
+        return []
     if root.is_file():
         metadata = _file_metadata(root)
         metadata["path"] = root.name
         return [metadata]
 
-    files = sorted(path for path in root.rglob("*") if path.is_file())
+    files = sorted(path for path in root.rglob("*") if path.is_file() and not path.is_symlink())
     tree = []
     for path in files:
         metadata = _file_metadata(path)
@@ -101,6 +103,7 @@ def _report_metadata(path: Path) -> dict[str, Any]:
             payload = {}
         if isinstance(payload, dict):
             metadata["summary"] = payload.get("summary", {})
+            metadata["scan_metadata"] = payload.get("scan_metadata", {})
             metadata["tool"] = payload.get("tool")
             metadata["target"] = payload.get("target")
     return metadata

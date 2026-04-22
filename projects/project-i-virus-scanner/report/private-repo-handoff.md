@@ -10,15 +10,24 @@ Copy these paths into the private source repository:
 
 | Path | Reason |
 | --- | --- |
+| `VERSION` | Plain-text release version |
+| `CHANGELOG.md` | Release history for reviewer/team handoff |
+| `Makefile` | Shortcuts for verification and cleanup |
 | `pyproject.toml` | Python package metadata and `sentinel` console entry point |
 | `README.md` | Setup, run, demo, and routing instructions |
+| `docs/standards-alignment.md` | EICAR, NIST, OWASP, and MITRE alignment notes |
 | `src/sentinel/` | Scanner implementation |
 | `tests/` | Standard-library test suite |
 | `signatures/malware-signatures.json` | Safe mock-virus signature database |
+| `signatures/eicar-reference-signature.json` | EICAR reference hash profile without storing an EICAR file |
 | `demo/` | Safe demo tree, transcript, and demo runner |
 | `reports/demo-report.json` | Machine-readable demo report |
 | `reports/demo-report.md` | Instructor-friendly demo report |
+| `reports/pattern-benchmark.json` | Safe synthetic benchmark evidence |
+| `reports/pattern-benchmark.md` | Instructor-friendly benchmark summary |
 | `reports/demo-evidence-manifest.json` | Reproducibility hashes and commands |
+| `scripts/benchmark_patterns.py` | Benchmark regeneration command |
+| `scripts/check_release.py` | Final local release-readiness gate |
 | `report/final-report.tex` | Final report source |
 | `report/final-report.pdf` | Compiled final report |
 | `report/submission-checklist.md` | Last-mile submission checklist |
@@ -45,10 +54,22 @@ Run the full demo:
 python3 demo/run_demo.py
 ```
 
+Run the release-readiness gate:
+
+```bash
+python3 scripts/check_release.py
+```
+
 Optional installed-command smoke test:
 
 ```bash
 sentinel validate-signatures signatures/malware-signatures.json
+```
+
+Optional benchmark regeneration:
+
+```bash
+PYTHONPATH=src python3 scripts/benchmark_patterns.py
 ```
 
 Expected demo result:
@@ -72,6 +93,8 @@ The scan command should return exit code `1` when the safe mock-virus fixture is
 - [ ] No live malware is stored in the repository.
 - [ ] The scanner does not execute scanned files.
 - [ ] The scanner does not delete, quarantine, upload, or mutate scanned files.
+- [ ] Symbolic links remain skipped by default unless the team deliberately changes and documents the policy.
 - [ ] The demo target is `demo/demo-tree/`, not a personal home directory.
-- [ ] The final report clearly states the mock-virus limitation.
+- [ ] The final report clearly states the mock-virus and EICAR-reference limitations.
+- [ ] The benchmark is described as safe synthetic evidence, not production antivirus performance.
 - [ ] The evidence manifest was regenerated after the final demo reports.

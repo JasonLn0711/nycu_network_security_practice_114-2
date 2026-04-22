@@ -78,6 +78,14 @@ class CliTests(unittest.TestCase):
 
         self.assertEqual(exit_code, 0)
 
+    def test_version_flag_returns_success(self):
+        with redirect_stdout(io.StringIO()) as stdout:
+            with self.assertRaises(SystemExit) as exc:
+                main(["--version"])
+
+        self.assertEqual(exc.exception.code, 0)
+        self.assertIn("sentinel 0.2.0", stdout.getvalue())
+
     def test_scan_command_can_write_markdown_report(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

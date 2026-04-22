@@ -19,6 +19,7 @@ class FileResult:
     sha256: str | None = None
     matches: list[dict[str, Any]] = field(default_factory=list)
     heuristics: list[dict[str, Any]] = field(default_factory=list)
+    skip_reason: str | None = None
     error: str | None = None
 
 
@@ -29,6 +30,7 @@ def build_report(
     finished_at: str,
     results: list[FileResult],
     signature_schema_version: str,
+    scan_metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     summary = {status: 0 for status in STATUS_ORDER}
     for result in results:
@@ -43,6 +45,7 @@ def build_report(
         "started_at": started_at,
         "finished_at": finished_at,
         "target": str(target),
+        "scan_metadata": scan_metadata or {},
         "summary": summary,
         "findings": [
             _result_to_dict(result)
@@ -77,6 +80,14 @@ def render_markdown_report(report: dict[str, Any]) -> str:
         f"- Signature schema: `{_md(report.get('signature_schema_version', 'unknown'))}`",
         f"- Started: `{_md(report.get('started_at', ''))}`",
         f"- Finished: `{_md(report.get('finished_at', ''))}`",
+        "",
+        "## Scan Engine",
+        "",
+        f"- Pattern engine: `{_md(_scan_metadata(report, 'pattern_engine', 'unknown'))}`",
+        f"- Pattern count: `{_md(_scan_metadata(report, 'pattern_count', 0))}`",
+        f"- Automaton states: `{_md(_scan_metadata(report, 'automaton_states', 0))}`",
+        f"- Chunk size bytes: `{_md(_scan_metadata(report, 'chunk_size_bytes', 0))}`",
+        f"- Symlink policy: `{_md(_scan_metadata(report, 'symlink_policy', 'unknown'))}`",
         "",
         "## Summary",
         "",
@@ -144,20 +155,37 @@ def _result_to_dict(result: FileResult) -> dict[str, Any]:
 def _finding_evidence(finding: dict[str, Any]) -> str:
     matches = finding.get("matches", [])
     heuristics = finding.get("heuristics", [])
+    skip_reason = finding.get("skip_reason")
     error = finding.get("error")
 
     evidence: list[str] = []
     for match in matches:
         evidence.append(
-            f"{match.get('matcher', 'matcher')}:{match.get('signature_id', 'unknown-signature')}"
+            _match_evidence(match)
         )
     for heuristic in heuristics:
         evidence.append(
             f"{heuristic.get('rule_id', 'heuristic')} ({heuristic.get('evidence', 'no evidence')})"
         )
+    if skip_reason:
+        evidence.append(f"skipped: {skip_reason}")
     if error:
         evidence.append(f"error: {error}")
     return "; ".join(evidence) if evidence else "-"
+
+
+def _match_evidence(match: dict[str, Any]) -> str:
+    evidence = f"{match.get('matcher', 'matcher')}:{match.get('signature_id', 'unknown-signature')}"
+    if "pattern_offset" in match:
+        evidence += f"@{match['pattern_offset']}"
+    return evidence
+
+
+def _scan_metadata(report: dict[str, Any], key: str, default: Any) -> Any:
+    metadata = report.get("scan_metadata", {})
+    if isinstance(metadata, dict):
+        return metadata.get(key, default)
+    return default
 
 
 def _md(value: Any) -> str:

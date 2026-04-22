@@ -102,7 +102,7 @@ Use JSON first. It is readable, easy to validate with the standard library, and 
       "matchers": [
         {
           "type": "sha256",
-          "value": "3c02151fde3384bab4474e6a2f619157e1c0d51a14b711d226e9d750d31d9b54"
+          "value": "569f58884e12c423aa9442c7b220c2814ea0febb66278e61f4b8b0bd35dad122"
         },
         {
           "type": "hex_pattern",
@@ -121,7 +121,8 @@ Recommended in-memory structures:
 | --- | --- | --- |
 | `dict[str, Signature]` | Signature lookup by ID. | Stable report references and simple validation. |
 | `dict[str, list[SignatureMatcher]]` | Hash lookup by algorithm and digest. | Exact hash checks become constant-time dictionary lookups. |
-| `tuple[PatternMatcher, ...]` | Byte or hex pattern scan. | Validated once and reused during chunked file scans. |
+| `PatternScanEngine` | Byte or hex pattern scan. | Builds an Aho-Corasick automaton once per scan run and reuses it for streamed file scans. |
+| `PatternStreamScanner` | Per-file byte-pattern scan state. | Preserves automaton state across chunks without loading the whole file. |
 | `list[HeuristicRule]` | Suspicious-file rules. | Keeps confirmed malware signatures separate from weaker signals. |
 
 Optional report-only discussion:
@@ -135,18 +136,19 @@ Optional report-only discussion:
 1. Parse CLI arguments.
 2. Load and validate the signature database.
 3. Walk the target directory with a deterministic ordering.
-4. For each regular file:
+4. Report symbolic links as `skipped` so the scanner does not silently leave the explicit target tree.
+5. For each regular file:
    - record file path, size, and read status
    - read file content in chunks
    - compute MD5 and SHA-256 incrementally
    - check hash signatures through lookup maps
-   - scan chunks for configured hex or byte patterns
-   - preserve enough overlap between chunks to catch split patterns
+   - scan chunks with the Aho-Corasick byte-pattern automaton
+   - preserve automaton state across chunks to catch split patterns
    - run heuristic rules against a bounded sample
    - append clean, suspicious, infected, skipped, or error result
-5. Aggregate counts and severity.
-6. Write a timestamped JSON or Markdown report.
-7. Return an exit code:
+6. Aggregate counts and severity.
+7. Write a timestamped JSON or Markdown report.
+8. Return an exit code:
    - `0` when no infected files are found
    - `1` when infected files are found
    - `2` for configuration or scanner errors
@@ -170,10 +172,13 @@ Pattern matching supports the brief's bitwise-comparison requirement.
 Acceptance behavior:
 
 - Convert each configured hex pattern into bytes at load time.
-- Search file bytes for the pattern during the chunked scan.
-- Report pattern length and signature ID, but do not print large binary blobs.
-- Preserve overlap between chunks so a pattern split across two chunks is still detectable.
-- Test this with a safe fixture whose `ABCDE` marker crosses a small artificial chunk boundary.
+- Build a trie with failure links from all configured byte patterns.
+- Search streamed file chunks with one automaton state machine instead of one independent search per pattern.
+- Report pattern length, first matched offset, and signature ID, but do not print large binary blobs.
+- Preserve automaton state across chunks so a pattern split across two chunks is still detectable.
+- Test overlapping patterns, stream chunk boundaries, and a safe fixture whose `ABCDE` marker crosses a small artificial chunk boundary.
+
+The current implementation is intentionally standard-library Python. The synthetic benchmark records both the Aho-Corasick automaton and a naive per-pattern `bytes` search. For small demo-scale inputs, CPython's C-backed `bytes` search can be faster; the reason to keep the automaton is explainable multi-pattern behavior and better algorithmic scaling as signature count grows.
 
 ### Heuristic Rules
 
@@ -230,8 +235,13 @@ Heuristic output should use wording such as `suspicious` or `review`, not `infec
 - SHA-256 and size for the signature database
 - SHA-256 and size for each demo-tree file
 - SHA-256 and size for the generated JSON and Markdown reports
+- SHA-256 and size for the generated pattern benchmark artifacts
 - JSON report summary copied from `reports/demo-report.json`
 - reproducibility commands for tests, signature validation, JSON scan, and Markdown scan
+
+## Release Gate
+
+`scripts/check_release.py` is the local submission-candidate gate. It runs the full demo regeneration path, then validates version consistency, standards alignment, EICAR reference hashes, expected demo counts, Aho-Corasick scan metadata, symbolic-link traversal policy, benchmark equivalence, evidence-manifest safety flags, and final-report PDF presence. Use it before mirroring the project into the required private repository and again after the private-repo move.
 
 ## Test Plan
 
@@ -241,11 +251,16 @@ Heuristic output should use wording such as `suspicious` or `review`, not `infec
 | Invalid signature file fails clearly. | Make configuration errors easy to debug. |
 | Clean file remains clean. | Avoid false positive in the simplest case. |
 | Safe mock-virus file is detected. | Prove the core requirement. |
+| EICAR reference hashes match in memory. | Use an international anti-malware test reference without storing the test file. |
 | Nested folder scan finds hidden fixture. | Prove directory traversal. |
+| Symbolic links are skipped by default. | Keep scans inside the explicit target tree unless the policy is deliberately changed. |
 | Pattern split case across chunk boundary. | Prove bitwise comparison is not only whole-file search. |
+| Overlapping pattern matches are both reported. | Prove the automaton handles failure-link outputs correctly. |
+| Streamed chunks preserve pattern state. | Prove the matcher does not rely on whole-file reads or manual overlap buffers. |
 | Suspicious fixture produces heuristic-only finding. | Prove Phase III without overclaiming. |
 | Report contains required fields. | Protect report/demo stability. |
 | Evidence manifest records demo tree and report hashes. | Keep the final demo reproducible. |
+| Pattern benchmark matches naive baseline. | Keep algorithmic-hardening evidence honest and reproducible. |
 
 ## Milestone Plan
 
@@ -258,7 +273,7 @@ Heuristic output should use wording such as `suspicious` or `review`, not `infec
 | M4 - Demo package | Demo tree, run script, captured report | A teammate can reproduce the demo from README commands. |
 | M5 - Final report | PDF/report source | Report explains data structures and limitations honestly. |
 
-Current local status as of `2026-04-22`: M1-M5 are locally implemented or drafted in the course repo, including chunked hashing, chunk-boundary pattern matching, reproducible demo reports, evidence manifest, demo runner, report source, and compiled PDF. M0 is still open because team/private repo/Project I-vs-II status is not locked; final submission still needs the private repo URL, final commit hash, and demo video or live-demo decision.
+Current local status as of `2026-04-22`: M1-M5 are locally implemented or drafted in the course repo, including chunked hashing, Aho-Corasick byte-pattern matching, symbolic-link skipping, EICAR reference-hash validation, standards alignment notes, chunk-boundary pattern tests, reproducible demo reports, synthetic benchmark evidence, evidence manifest, demo runner, report source, and compiled PDF. M0 is still open because team/private repo/Project I-vs-II status is not locked; final submission still needs the private repo URL, final commit hash, and demo video or live-demo decision.
 
 ## Team Split
 

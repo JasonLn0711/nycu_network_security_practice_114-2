@@ -32,6 +32,13 @@ COMMANDS = [
         PYTHON,
         "-m",
         "sentinel",
+        "validate-signatures",
+        "signatures/eicar-reference-signature.json",
+    ],
+    [
+        PYTHON,
+        "-m",
+        "sentinel",
         "scan",
         "demo/demo-tree",
         "--signatures",
@@ -56,6 +63,14 @@ COMMANDS = [
     ],
     [
         PYTHON,
+        "scripts/benchmark_patterns.py",
+        "--json-output",
+        "reports/pattern-benchmark.json",
+        "--markdown-output",
+        "reports/pattern-benchmark.md",
+    ],
+    [
+        PYTHON,
         "-m",
         "sentinel",
         "write-evidence",
@@ -67,6 +82,10 @@ COMMANDS = [
         "reports/demo-report.json",
         "--report",
         "reports/demo-report.md",
+        "--report",
+        "reports/pattern-benchmark.json",
+        "--report",
+        "reports/pattern-benchmark.md",
         "--output",
         "reports/demo-evidence-manifest.json",
     ],
@@ -92,6 +111,8 @@ def main() -> int:
     print("Demo artifacts regenerated:")
     print("- reports/demo-report.json")
     print("- reports/demo-report.md")
+    print("- reports/pattern-benchmark.json")
+    print("- reports/pattern-benchmark.md")
     print("- reports/demo-evidence-manifest.json")
     return 0
 

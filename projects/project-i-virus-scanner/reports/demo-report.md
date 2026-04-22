@@ -5,8 +5,16 @@
 - Tool: `Sentinel`
 - Target: `demo/demo-tree`
 - Signature schema: `1.0`
-- Started: `2026-04-22T04:29:46+00:00`
-- Finished: `2026-04-22T04:29:46+00:00`
+- Started: `2026-04-22T05:21:49+00:00`
+- Finished: `2026-04-22T05:21:49+00:00`
+
+## Scan Engine
+
+- Pattern engine: `aho-corasick-byte-automaton`
+- Pattern count: `1`
+- Automaton states: `30`
+- Chunk size bytes: `1048576`
+- Symlink policy: `skip`
 
 ## Summary
 
@@ -23,7 +31,7 @@
 
 | Path | Status | Severity | Evidence |
 | --- | --- | --- | --- |
-| `nested/level-1/level-2/sentinel-safe-mock-virus.txt` | infected | critical | hex_pattern:sig-sentinel-safe-mock-virus |
+| `nested/level-1/level-2/sentinel-safe-mock-virus.txt` | infected | critical | md5:sig-sentinel-safe-mock-virus; sha256:sig-sentinel-safe-mock-virus; hex_pattern:sig-sentinel-safe-mock-virus@109 |
 | `suspicious/api-names-fixture.txt` | suspicious | medium | api-name-indicator (CreateRemoteThread, VirtualAllocEx, WriteProcessMemory) |
 
 ## All Results

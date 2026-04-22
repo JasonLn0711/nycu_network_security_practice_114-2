@@ -4,15 +4,42 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .heuristics import run_heuristics
-from .matchers import find_hash_matches, scan_file_content
+from .matchers import PatternScanEngine, find_hash_matches, scan_file_content
 from .reporting import FileResult, build_report
 from .signatures import SEVERITY_RANK, SignatureDatabase
+
+
+SYMLINK_SKIP_REASON = "Symbolic link skipped to keep scans inside the explicit target tree."
 
 
 def scan_directory(target: str | Path, database: SignatureDatabase) -> dict:
     root = Path(target)
     started_at = _timestamp()
     results: list[FileResult] = []
+    pattern_engine = PatternScanEngine(database.patterns)
+    scan_metadata = {
+        **pattern_engine.metadata(),
+        "traversal_policy": "deterministic-rglob-files",
+        "symlink_policy": "skip",
+    }
+
+    if root.is_symlink():
+        finished_at = _timestamp()
+        return build_report(
+            target=root,
+            started_at=started_at,
+            finished_at=finished_at,
+            results=[
+                FileResult(
+                    path=str(root),
+                    status="skipped",
+                    severity="info",
+                    skip_reason=SYMLINK_SKIP_REASON,
+                )
+            ],
+            signature_schema_version=database.schema_version,
+            scan_metadata=scan_metadata,
+        )
 
     if not root.exists():
         finished_at = _timestamp()
@@ -29,15 +56,24 @@ def scan_directory(target: str | Path, database: SignatureDatabase) -> dict:
                 )
             ],
             signature_schema_version=database.schema_version,
+            scan_metadata=scan_metadata,
         )
 
     if root.is_file():
-        files = [root]
+        results.append(scan_file(root, root, database, pattern_engine))
     else:
-        files = sorted(path for path in root.rglob("*") if path.is_file())
-
-    for path in files:
-        results.append(scan_file(path, root, database))
+        for path in sorted(root.rglob("*")):
+            if path.is_symlink():
+                results.append(
+                    FileResult(
+                        path=_display_path(path, root),
+                        status="skipped",
+                        severity="info",
+                        skip_reason=SYMLINK_SKIP_REASON,
+                    )
+                )
+            elif path.is_file():
+                results.append(scan_file(path, root, database, pattern_engine))
 
     finished_at = _timestamp()
     return build_report(
@@ -46,14 +82,20 @@ def scan_directory(target: str | Path, database: SignatureDatabase) -> dict:
         finished_at=finished_at,
         results=results,
         signature_schema_version=database.schema_version,
+        scan_metadata=scan_metadata,
     )
 
 
-def scan_file(path: Path, root: Path, database: SignatureDatabase) -> FileResult:
+def scan_file(
+    path: Path,
+    root: Path,
+    database: SignatureDatabase,
+    pattern_engine: PatternScanEngine | None = None,
+) -> FileResult:
     display_path = _display_path(path, root)
 
     try:
-        content = scan_file_content(path, database)
+        content = scan_file_content(path, database, pattern_engine=pattern_engine)
     except OSError as exc:
         return FileResult(path=display_path, status="error", severity="medium", error=str(exc))
 
@@ -73,12 +115,13 @@ def scan_file(path: Path, root: Path, database: SignatureDatabase) -> FileResult
     ]
     signature_matches.extend(
         {
-            "signature_id": match.signature.id,
-            "signature_name": match.signature.name,
-            "category": match.signature.category,
-            "severity": match.signature.severity,
-            "matcher": match.matcher.type,
-            "pattern_bytes": len(match.pattern),
+            "signature_id": match.matcher.signature.id,
+            "signature_name": match.matcher.signature.name,
+            "category": match.matcher.signature.category,
+            "severity": match.matcher.signature.severity,
+            "matcher": match.matcher.matcher.type,
+            "pattern_bytes": len(match.matcher.pattern),
+            "pattern_offset": match.offset,
         }
         for match in pattern_matches
     )

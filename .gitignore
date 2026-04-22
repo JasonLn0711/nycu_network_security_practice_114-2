@@ -20,5 +20,11 @@ ehthumbs.db
 build/
 dist/
 
+# LaTeX build artifacts
+*.aux
+*.fdb_latexmk
+*.fls
+*.out
+
 # Python
 __pycache__/

@@ -9,13 +9,15 @@ from .evidence import build_evidence_manifest, write_evidence_manifest
 from .reporting import write_json_report, write_markdown_report
 from .scanner import scan_directory
 from .signatures import SignatureError, load_signature_database
+from .version import __version__
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="sentinel",
-        description="Sentinel safe signature-based scanner prototype for the network security project.",
+        description="Sentinel safe signature-based scanner for the network security project.",
     )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     scan_parser = subparsers.add_parser("scan", help="Scan an explicit file or directory.")
