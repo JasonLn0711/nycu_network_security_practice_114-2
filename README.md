@@ -28,6 +28,7 @@ lectures/    Weekly topic modules with concepts and examples
 handouts/    Curated study handouts plus raw official materials
 labs/        Hands-on practice tasks and evidence guides
 homeworks/   Assignment instructions, expected outputs, and notes
+projects/    Term-project briefs, reports, demos, lab bundles, and source routing
 datasets/    Packet captures, binaries, logs, and sample inputs
 tools/       Small local helper scripts
 misc/        Temporary parking only when no better folder fits
@@ -40,7 +41,8 @@ misc/        Temporary parking only when no better folder fits
 3. Use `key-concepts.md` for definitions and exam framing.
 4. Use `examples.md` and `labs/` for practice.
 5. Use `homeworks/` only for assignment-specific work.
-6. Check `handouts/raw/` when you need the original course files.
+6. Use `projects/` for term-report and final-demo work.
+7. Check `handouts/raw/` when you need the original course files.
 
 ## Weekly Learning Path
 
@@ -53,6 +55,15 @@ misc/        Temporary parking only when no better folder fits
 | 05 | Host Security | `lectures/week05-host-security/` |
 | 06 | Code Integrity | `lectures/week06-code-integrity/` |
 | 07 | Web Security | `lectures/week07-web-security/` |
+
+## Term Projects
+
+| Project | Start Here | Current note |
+| --- | --- | --- |
+| Project I - Virus Scanner | `projects/project-i-virus-scanner/` | Build a signature-based scanner with source code, report, and demo. |
+| Project II - Autonomous APT Agent | `projects/project-ii-apt-agent/` | Prepare the external-container `/exploit` and `/triage` grading artifact. |
+
+The planning repository should track schedule, capacity, and next actions. This course repository owns the project briefs, lab bundles, implementation notes, report assets, and demo evidence.
 
 ## Tools Setup
 
@@ -75,4 +86,5 @@ Official and third-party materials are stored in `handouts/raw/`. They remain un
 - Add short curated handouts to `handouts/`.
 - Add lecture-specific notes under the matching `lectures/weekXX-*` folder.
 - Add assignment-specific material under `homeworks/`.
+- Add term-project material under `projects/`.
 - Add practice tasks under `labs/`, with expected evidence listed in the lab README.

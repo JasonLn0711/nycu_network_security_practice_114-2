@@ -73,3 +73,4 @@ The official syllabus lists the following Wednesday class dates:
 - Keep lecture-specific notes in `lectures/weekXX-*/`.
 - Keep exam recall material in the matching lecture folder.
 - Keep assignment-specific material under `homeworks/`.
+- Keep term-project briefs, lab bundles, report assets, and demo evidence under `projects/`.

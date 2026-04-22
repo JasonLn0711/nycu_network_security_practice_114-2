@@ -33,6 +33,7 @@ Do not turn this repository into:
 - `handouts/raw/`: raw official or third-party course materials. Use normalized lowercase kebab-case filenames, such as `d5-dns-security.pdf`.
 - `labs/`: hands-on practice guides and expected evidence.
 - `homeworks/`: assignment-specific instructions, expected outputs, notes, and optional solutions when real solution material exists.
+- `projects/`: term-project and final-demo briefs, lab bundles, implementation notes, report assets, demos, and submission packaging.
 - `datasets/`: packet captures, binaries, logs, and sample inputs.
 - `tools/`: small local helpers. The capacity checker lives in `tools/capacity-check/`.
 - `misc/`: temporary parking only when no better folder fits.
@@ -52,6 +53,8 @@ The planning repository may link to these files, promote distilled concepts into
 - Put short handout-aligned summaries in `handouts/`.
 - Put lecture notes, exam-review notes, and long-form deep dives under the most relevant `lectures/weekXX-*` folder.
 - Put assignment-specific plans, walkthrough notes, and evidence under `homeworks/`.
+- Put term-project briefs, lab bundles, source routing, report assets, and demo evidence under `projects/`.
+- Keep planning links to term projects lightweight: status, deadline, next action, open questions, and capacity tradeoffs only.
 - Preserve Markdown notes as readable learning assets: plain definitions, intuition, real-world examples, workflows, and exam cues are welcome.
 - Keep official handouts separate from personal notes because the repository license does not cover third-party course materials.
 - Prefer small indexes and explicit links over nested folder complexity.
