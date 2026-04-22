@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sentinel-virus-scanner"
+version = "0.1.0"
+description = "Safe signature-based virus scanner prototype for a network security course project."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "Network Security Practice Project Team" }
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Security",
+  "Topic :: Education",
+]
+dependencies = []
+
+[project.scripts]
+sentinel = "sentinel.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
