@@ -34,10 +34,18 @@ tools/       Small local helper scripts
 misc/        Temporary parking only when no better folder fits
 ```
 
+## Organization Principles
+
+- Keep one live source of truth for each artifact.
+- Keep raw official material separate from student notes.
+- Keep current deliverables in the working tree; let Git history preserve superseded drafts and prototypes.
+- Prefer folder-level `README.md` files over duplicate cross-references.
+- Use generated folders such as `dist/`, `build/`, and `target/` only as rebuildable output.
+
 ## How To Use This Repo
 
 1. Start with `syllabus/course-overview.md`.
-2. Read the matching `lectures/weekXX-*/README.md`.
+2. Use `lectures/README.md` to choose the matching `lectures/weekXX-*/README.md`.
 3. Use `key-concepts.md` for definitions and exam framing.
 4. Use `examples.md` and `labs/` for practice.
 5. Use `homeworks/` only for assignment-specific work.
@@ -88,3 +96,4 @@ Official and third-party materials are stored in `handouts/raw/`. They remain un
 - Add assignment-specific material under `homeworks/`.
 - Add term-project material under `projects/`.
 - Add practice tasks under `labs/`, with expected evidence listed in the lab README.
+- Remove or rename obsolete parallel artifacts instead of keeping multiple live copies with unclear authority.
