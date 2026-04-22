@@ -5,8 +5,8 @@
 - Tool: `Sentinel`
 - Target: `demo/demo-tree`
 - Signature schema: `1.0`
-- Started: `2026-04-22T06:58:24+00:00`
-- Finished: `2026-04-22T06:58:24+00:00`
+- Started: `2026-04-22T07:01:35+00:00`
+- Finished: `2026-04-22T07:01:35+00:00`
 
 ## Scan Engine
 
