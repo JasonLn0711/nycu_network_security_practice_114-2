@@ -52,7 +52,9 @@ demo/demo-tree/
 8. Open `reports/pattern-benchmark.md`.
 9. Open `reports/demo-evidence-manifest.json`.
 10. Show `python3 scripts/export_private_repo.py --dry-run` or the generated export manifest if the demo includes submission packaging.
-11. Close with the limitation: educational signature scanner, not production antivirus.
+11. State the final demo decision: the current final demo does not require literal EICAR; it uses a safe mock fixture plus EICAR reference hashes.
+12. State the private-repo decision: the implementation was not moved to a private remote in this pass, by instruction; the curated export package is ready.
+13. Close with the limitation: educational signature scanner, not production antivirus.
 
 Manual scan command:
 
@@ -85,8 +87,9 @@ The scan returns exit code `1` because the safe mock-virus fixture is intentiona
 
 ## Remaining Demo Work
 
-- [ ] Confirm whether literal EICAR is required.
+- [x] Confirm whether literal EICAR is required. Current decision: no, unless the instructor explicitly overrides later.
 - [ ] Run `python3 scripts/export_private_repo.py --clean` before private repo mirroring.
-- [ ] Record private repo URL and final commit hash.
-- [ ] Re-run `python3 scripts/check_release.py` after private repo mirroring.
-- [ ] Record a short demo video or finalize the live-demo script.
+- [x] Record private repo URL and final commit hash. Private repo URL is not created/moved in this pass; final local demo commit is `2be51a0f003834e58795efcdd4b9224a730b90e7`.
+- [ ] Re-run `python3 scripts/check_release.py` after private repo mirroring. Private repo mirroring is intentionally not performed in this pass.
+- [x] Record a short demo video or finalize the live-demo script.
+- [x] Run exported-package verification. No-install verification passed; editable install was blocked by missing `pip`.

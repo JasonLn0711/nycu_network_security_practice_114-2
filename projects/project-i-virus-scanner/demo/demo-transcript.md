@@ -9,6 +9,7 @@ It can be used as the base for a live demo script or a short recorded video.
 
 The current demo uses a local safe mock-virus fixture. It is not live malware and does not contain the literal EICAR string.
 The scanner is read-only: it does not execute, delete, quarantine, upload, or modify scanned files. It skips symbolic links by default so the demo scan stays inside the explicit target tree.
+Final demo decision: literal EICAR is not required for the current final demo. Use the safe mock fixture plus EICAR reference hashes unless the instructor explicitly requires literal EICAR later.
 
 ## Commands
 
@@ -178,3 +179,9 @@ Release check passed for Sentinel 0.4.0.
    - status: `suspicious`
    - evidence: suspicious API-name strings
 15. Close by saying the scanner is educational and read-only, not production antivirus.
+
+## Final Submission Fields
+
+- Team members: `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen)
+- Private repository URL: not created or moved in this pass, per instruction.
+- Final local demo commit hash: `2be51a0f003834e58795efcdd4b9224a730b90e7`

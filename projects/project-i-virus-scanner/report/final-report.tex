@@ -21,7 +21,7 @@
 }
 
 \title{Sentinel: A Functional Signature-Based Virus Scanner}
-\author{Network Security Practice Final Project}
+\author{513559004 Jsaon Chia-Sheng Lin; 313264012 Ching-Chung Chen}
 \date{2026-04-22}
 
 \begin{document}
@@ -36,6 +36,18 @@ with exact hash-map verification, performs Aho-Corasick byte-pattern matching,
 skips symbolic links by default, separates heuristic warnings from confirmed
 signature matches, and generates JSON and Markdown evidence reports. The demo
 uses only local safe fixtures, not live malware.
+
+\section{Team And Submission Decisions}
+
+This report covers Project I - Virus Scanner. The recorded team members are
+513559004 Jsaon Chia-Sheng Lin and 313264012 Ching-Chung Chen.
+
+The implementation is not moved into a private GitHub or GitLab repository in
+this pass, by instruction. The private repository URL is therefore recorded as
+not created or moved. The local demo commit hash for the current package is
+\texttt{2be51a0f003834e58795efcdd4b9224a730b90e7}. The current final demo does
+not require the literal EICAR test file; it uses a safe mock fixture plus EICAR
+reference hashes unless the instructor explicitly requires literal EICAR later.
 
 \section{Introduction}
 
@@ -315,21 +327,5 @@ than real-world malware coverage. The repository does not store the literal
 EICAR test file; it stores only reference hashes and in-memory tests. The
 benchmark is safe synthetic evidence for algorithm explanation, not a production
 antivirus performance claim.
-
-\section{Remaining Submission Work}
-
-\begin{enumerate}[leftmargin=*]
-  \item Confirm whether Project I is required alongside Project II.
-  \item Confirm team members.
-  \item Run \texttt{scripts/export\_private\_repo.py} to create the curated
-        handoff package.
-  \item Move or mirror the implementation into the required private GitHub or
-        GitLab repository.
-  \item Record the final private repository URL and commit hash.
-  \item Run the private-repository verification commands from
-        \texttt{report/submission-package.md}.
-  \item Decide whether the final demo must use the literal EICAR test file.
-  \item Record a short demo video or prepare for a live demo.
-\end{enumerate}
 
 \end{document}

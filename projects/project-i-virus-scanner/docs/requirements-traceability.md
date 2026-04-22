@@ -10,7 +10,7 @@ Use it to decide whether the scanner, report, and demo are complete enough for s
 - Course project: `[2026 NS] Project - Virus Scanner`
 - Tool name in brief: `Sentinel`
 - Due date tracked in planning: `2026-06-07 23:59`
-- Team size tracked in planning: `1-4`
+- Team members: `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen)
 - Required output: functional signature-based virus scanner, source code, report, and demo
 - Safety input: safe mock virus such as the EICAR test file
 
@@ -25,7 +25,7 @@ Use it to decide whether the scanner, report, and demo are complete enough for s
 | R5 | Add basic heuristic analysis. | Phase III - Heuristic Analysis | At least one documented low-risk heuristic flags a safe suspicious fixture without claiming it is confirmed malware. | Heuristic rules table, sample report row |
 | R6 | Generate a security report. | Phase IV - Reporting and UI | Report includes scanned paths, infected or suspicious paths, threat names, severity, match reason, and timestamps. | JSON or Markdown report artifact |
 | R7 | Host well-documented source code in a private GitHub or GitLab repository. | Deliverable 1 | Private repo exists, README explains setup/run/test, and final source has no live malware or secrets. | Private repo URL, commit hash |
-| R8 | Write a project report explaining data-structure choices. | Deliverable 2 | Report explains the implemented hash map, Bloom filter, and Aho-Corasick structures without production-antivirus claims. | Report source/PDF |
+| R8 | Write a project report explaining data-structure choices. | Deliverable 2 | Report explains the implemented hash map, Bloom filter, and Aho-Corasick structures without production-antivirus claims. | Report source/PDF, screenshot-evidence report copy |
 | R9 | Demonstrate detection inside a complex folder structure. | Deliverable 3 | Demo tree contains clean files plus a hidden safe mock-virus file; scanner finds the mock virus and leaves clean files clean. | Video or live-demo script, demo report |
 
 ## Minimal Valid Scope
@@ -64,10 +64,9 @@ Only add these after the minimum project works:
 
 | Decision | Default recommendation | Owner / status |
 | --- | --- | --- |
-| Team members | Confirm early, then assign source, report, and demo owners. | Open |
+| Team members | `513559004` Jsaon Chia-Sheng Lin and `313264012` 陳靖中 (Ching-Chung Chen) are recorded. | Recorded |
 | Language | Python 3 CLI is the current local implementation; team can override only with a strong reason. | Local default chosen; team confirmation open |
-| Private repo location | Create private GitHub or GitLab repo and link it from this folder. | Open |
-| Project I vs Project II relationship | Ask instructor or E3 whether both briefs are required. | Open |
+| Private repo location | Do not move the implementation into a private GitHub/GitLab repository in this pass. | Explicitly deferred by instruction |
 | Minimum heuristic | Current local implementation uses safe suspicious API-name indicators as suspicious-only findings. | Implemented locally; final acceptance open |
 
 ## Completion Gate
@@ -80,7 +79,7 @@ Before submission, every row in the requirement matrix should have:
 
 ## Current Local Package Snapshot
 
-As of `2026-04-22`, the local course-repo package covers the scanner core, evidence artifacts, and report package. It does not yet satisfy the final private-repo/video or live-demo submission gate.
+As of `2026-04-22`, the local course-repo package covers the scanner core, evidence artifacts, report package, export package, and live-demo script. The private-repo move is intentionally not performed in this pass.
 
 | Requirement | Prototype state | Evidence |
 | --- | --- | --- |
@@ -90,9 +89,9 @@ As of `2026-04-22`, the local course-repo package covers the scanner core, evide
 | R4 | Implemented locally | Aho-Corasick `hex_pattern` matcher in `src/sentinel/matchers.py`; overlapping-pattern, stream-boundary, and chunk-boundary tests in `tests/test_matchers.py`; benchmark artifacts in `reports/pattern-benchmark.*` |
 | R5 | Implemented locally | `src/sentinel/heuristics.py`, suspicious fixture in demo report |
 | R6 | Implemented locally | `src/sentinel/reporting.py`, scan metadata in reports, `reports/demo-report.json`, `reports/demo-report.md`, `reports/demo-evidence-manifest.json` |
-| R7 | Export package implemented; private remote pending | `scripts/export_private_repo.py`, `report/submission-package.md`; private GitHub/GitLab repo not chosen |
+| R7 | Export package implemented; private remote not moved by instruction | `scripts/export_private_repo.py`, `report/submission-package.md`; private repository URL recorded as not created/moved in this pass |
 | R8 | Drafted and compiled locally | `report/final-report.tex`, `report/final-report.pdf` |
-| R9 | Locally reproducible; final recording/live demo pending | local demo works, `demo/demo-transcript.md` exists, `demo/run_demo.py` regenerates evidence, and `reports/demo-evidence-manifest.json` captures reproducibility evidence |
+| R9 | Live-demo script prepared | local demo works, `demo/runbook.md` and `demo/demo-transcript.md` exist, `demo/run_demo.py` regenerates evidence, and `reports/demo-evidence-manifest.json` captures reproducibility evidence |
 
 ## Release-Readiness Gate
 

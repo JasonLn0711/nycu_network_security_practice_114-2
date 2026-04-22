@@ -231,4 +231,4 @@ Heuristic output should use wording such as `suspicious` or `review`, not `infec
 
 ## Current Status
 
-As of `2026-04-22`, scanner core, report generation, demo evidence, synthetic benchmark evidence, standards notes, private-repo export tooling, release gate, and compiled report are implemented locally. Final submission still needs team confirmation, private repository URL, final commit hash, Project I/II clarification, and demo video or live-demo decision.
+As of `2026-04-22`, scanner core, report generation, demo evidence, synthetic benchmark evidence, standards notes, private-repo export tooling, release gate, and compiled report are implemented locally. Final submission still needs team confirmation, private repository URL, final commit hash, and demo video or live-demo decision.

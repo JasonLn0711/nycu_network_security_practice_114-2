@@ -8,7 +8,10 @@
 - Official brief: `project-spec.pdf`
 - Planning locator: `../../../planning-everything-track/data/projects/2026-06-network-security-virus-scanner.md`
 - Current local package: Sentinel `v0.4.0`
-- Status: scanner, tests, demo evidence, report source/PDF, and submission package are working locally; team, private repo, Project I/II relationship, and final demo format remain open.
+- Status: scanner, tests, demo evidence, report source/PDF, export package, and live-demo script are working locally; team identity is recorded; private repo move is intentionally not performed in this pass.
+- Team: `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen)
+- Private repository URL: not created or moved in this pass, per instruction.
+- Final local demo commit hash: `2be51a0f003834e58795efcdd4b9224a730b90e7`
 
 ## Deliverables
 
@@ -16,7 +19,7 @@
 | --- | --- | --- |
 | Source code | Python 3 CLI package under `src/sentinel/` | `src/sentinel/`, `pyproject.toml` |
 | Signature database | Safe JSON signatures with MD5, SHA-256, and hex-pattern matchers | `signatures/malware-signatures.json` |
-| Report | LaTeX source and compiled PDF | `report/final-report.tex`, `report/final-report.pdf` |
+| Report | LaTeX source, compiled PDF, and screenshot-evidence copy | `report/final-report.tex`, `report/final-report.pdf`, `report/final-report-v2.tex`, `report/final-report-v2.pdf` |
 | Demo evidence | Regenerated JSON/Markdown reports, benchmark, and manifest | `reports/`, `demo/demo-transcript.md` |
 | Submission gate | Local release check passes | `scripts/check_release.py` |
 | Private repo export | Curated handoff package and manifest | `scripts/export_private_repo.py`, `dist/sentinel-private-repo/` |
@@ -85,11 +88,9 @@ The scan command returns exit code `1` when the safe mock-virus fixture is detec
 | Private repo export tool | `scripts/export_private_repo.py` |
 | Release history | `CHANGELOG.md` |
 
-## Remaining Decisions
+## Final Submission State
 
-- Confirm whether Project I is required alongside Project II.
-- Confirm team members and final ownership split.
-- Create or choose the required private GitHub/GitLab repository and copy the export package into it.
-- Record final private repo URL and commit hash.
-- Confirm whether the final demo must use the literal EICAR test file.
-- Record a short demo video or prepare the live-demo script.
+- Private GitHub/GitLab move: not performed in this pass by instruction.
+- Literal EICAR: not required for the current final demo; use the safe mock fixture plus EICAR reference hashes unless the instructor explicitly requires literal EICAR later.
+- Demo format: live-demo script/runbook prepared; short video not recorded in this pass.
+- Export verification: `dist/sentinel-private-repo/` passed no-install verification with `PYTHONPATH=src`; editable install was blocked on this machine because `/usr/bin/python3` has no `pip` or `ensurepip`.
