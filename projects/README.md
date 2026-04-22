@@ -8,7 +8,7 @@ Use this folder for project briefs, provided lab bundles, implementation notes, 
 
 | Project | Due | Canonical folder | Current objective | Status |
 | --- | --- | --- | --- | --- |
-| Project I - Virus Scanner | `2026-06-07 23:59` | `project-i-virus-scanner/` | Build a functional signature-based virus scanner with source code, report, and demo. | Team and scope not locked |
+| Project I - Virus Scanner | `2026-06-07 23:59` | `project-i-virus-scanner/` | Build a functional signature-based virus scanner with source code, report, and demo. | Local package/report/demo evidence working; team/private repo not locked |
 | Project II - Autonomous APT Agent | `2026-06-07 23:59` | `project-ii-apt-agent/` | Prepare an external-container grading artifact with runnable `/exploit` and `/triage` paths. | Relationship to Project I unclear |
 
 ## Routing Rule
