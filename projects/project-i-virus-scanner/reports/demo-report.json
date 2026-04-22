@@ -1,0 +1,140 @@
+{
+  "all_results": [
+    {
+      "md5": "fd5a8a63e0c7602eddb7e541559b3711",
+      "path": "clean/image-placeholder.bin",
+      "severity": "info",
+      "sha256": "7f4f12bf857a1f5d3ada9afe9489605bc5f4e8d55a15abd82675dde5bd488ee7",
+      "size_bytes": 57,
+      "status": "clean"
+    },
+    {
+      "md5": "dcc15b55a9a622902c3577f0086af444",
+      "path": "clean/notes.txt",
+      "severity": "info",
+      "sha256": "2f5d4f23920fc8aa80b4e63d175b23a26c1f2b201bc7f8a07bcb05770c59d11c",
+      "size_bytes": 106,
+      "status": "clean"
+    },
+    {
+      "md5": "68b329da9893e34099c7d8ad5cb9c940",
+      "path": "ignored-or-empty/empty.txt",
+      "severity": "info",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "size_bytes": 1,
+      "status": "clean"
+    },
+    {
+      "matches": [
+        {
+          "category": "safe-mock-virus",
+          "matcher": "md5",
+          "severity": "critical",
+          "signature_id": "sig-sentinel-safe-mock-virus",
+          "signature_name": "Sentinel Safe Mock Virus Fixture"
+        },
+        {
+          "category": "safe-mock-virus",
+          "matcher": "sha256",
+          "severity": "critical",
+          "signature_id": "sig-sentinel-safe-mock-virus",
+          "signature_name": "Sentinel Safe Mock Virus Fixture"
+        },
+        {
+          "category": "safe-mock-virus",
+          "matcher": "hex_pattern",
+          "pattern_bytes": 29,
+          "severity": "critical",
+          "signature_id": "sig-sentinel-safe-mock-virus",
+          "signature_name": "Sentinel Safe Mock Virus Fixture"
+        }
+      ],
+      "md5": "b81408e69350df7c388b002c5a9c0671",
+      "path": "nested/level-1/level-2/sentinel-safe-mock-virus.txt",
+      "severity": "critical",
+      "sha256": "3c02151fde3384bab4474e6a2f619157e1c0d51a14b711d226e9d750d31d9b54",
+      "size_bytes": 140,
+      "status": "infected"
+    },
+    {
+      "heuristics": [
+        {
+          "description": "Suspicious API-name strings appear in the file.",
+          "evidence": "CreateRemoteThread, VirtualAllocEx, WriteProcessMemory",
+          "rule_id": "api-name-indicator",
+          "severity": "medium"
+        }
+      ],
+      "md5": "3cf99bb8b69924c12de8ad20c6f95c28",
+      "path": "suspicious/api-names-fixture.txt",
+      "severity": "medium",
+      "sha256": "2b8bc14462bbb16f771ea073728786ea462fdddfab54af6ff547381dd6db56e1",
+      "size_bytes": 150,
+      "status": "suspicious"
+    }
+  ],
+  "findings": [
+    {
+      "matches": [
+        {
+          "category": "safe-mock-virus",
+          "matcher": "md5",
+          "severity": "critical",
+          "signature_id": "sig-sentinel-safe-mock-virus",
+          "signature_name": "Sentinel Safe Mock Virus Fixture"
+        },
+        {
+          "category": "safe-mock-virus",
+          "matcher": "sha256",
+          "severity": "critical",
+          "signature_id": "sig-sentinel-safe-mock-virus",
+          "signature_name": "Sentinel Safe Mock Virus Fixture"
+        },
+        {
+          "category": "safe-mock-virus",
+          "matcher": "hex_pattern",
+          "pattern_bytes": 29,
+          "severity": "critical",
+          "signature_id": "sig-sentinel-safe-mock-virus",
+          "signature_name": "Sentinel Safe Mock Virus Fixture"
+        }
+      ],
+      "md5": "b81408e69350df7c388b002c5a9c0671",
+      "path": "nested/level-1/level-2/sentinel-safe-mock-virus.txt",
+      "severity": "critical",
+      "sha256": "3c02151fde3384bab4474e6a2f619157e1c0d51a14b711d226e9d750d31d9b54",
+      "size_bytes": 140,
+      "status": "infected"
+    },
+    {
+      "heuristics": [
+        {
+          "description": "Suspicious API-name strings appear in the file.",
+          "evidence": "CreateRemoteThread, VirtualAllocEx, WriteProcessMemory",
+          "rule_id": "api-name-indicator",
+          "severity": "medium"
+        }
+      ],
+      "md5": "3cf99bb8b69924c12de8ad20c6f95c28",
+      "path": "suspicious/api-names-fixture.txt",
+      "severity": "medium",
+      "sha256": "2b8bc14462bbb16f771ea073728786ea462fdddfab54af6ff547381dd6db56e1",
+      "size_bytes": 150,
+      "status": "suspicious"
+    }
+  ],
+  "finished_at": "2026-04-22T04:26:54+00:00",
+  "signature_schema_version": "1.0",
+  "started_at": "2026-04-22T04:26:54+00:00",
+  "summary": {
+    "clean": 3,
+    "error": 0,
+    "files_scanned": 5,
+    "infected": 1,
+    "skipped": 0,
+    "suspicious": 1,
+    "total_results": 5
+  },
+  "target": "demo/demo-tree",
+  "tool": "Sentinel"
+}
