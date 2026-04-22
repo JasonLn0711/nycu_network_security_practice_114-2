@@ -248,7 +248,7 @@ evidence-manifest safety flags, private-repository export boundaries, and
 final-report PDF presence.
 
 \begin{lstlisting}[style=sentinel]
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/check_release.py
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 scripts/check_release.py
 \end{lstlisting}
 
 \section{Current Evaluation}
@@ -289,7 +289,7 @@ hash validation, report generation, Markdown output, evidence manifest
 generation, private-repo export boundaries, CLI paths, and the version flag.
 
 \begin{lstlisting}[style=sentinel]
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -v
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m unittest discover -s python/tests -v
 \end{lstlisting}
 
 \clearpage
@@ -364,8 +364,8 @@ handoff folder can be generated with:
 python3 scripts/export_private_repo.py --clean
 \end{lstlisting}
 
-The project includes \texttt{pyproject.toml}, so it can also be installed in
-editable mode with \texttt{python3 -m pip install -e .}. After installation, the
+The project includes \texttt{python/pyproject.toml}, so it can also be installed in
+editable mode with \texttt{python3 -m pip install -e python}. After installation, the
 \texttt{sentinel} console command is available for the same scan, validation,
 summary, and evidence-manifest workflows.
 

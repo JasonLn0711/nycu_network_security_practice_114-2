@@ -4,7 +4,12 @@
 
 Build a small, explainable, safe signature-based virus scanner that satisfies the course brief without pretending to be production antivirus software.
 
-The implementation is a Python 3 command-line tool because it is easy to run, easy to review, and enough for the required scanner/report/demo workflow.
+The primary implementation is a Python 3 command-line tool because it is easy to run, easy to review, and enough for the required scanner/report/demo workflow.
+
+An optional Rust companion implementation now lives in `../../rust/`. It mirrors
+the same scanner boundaries and data structures for a systems-language path, but
+it is not the primary release-gated submission artifact until it can be compiled
+and tested on a machine with `rustc` / `cargo` installed.
 
 ## System Boundary
 

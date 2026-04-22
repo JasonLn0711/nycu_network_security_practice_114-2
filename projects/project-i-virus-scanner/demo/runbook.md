@@ -59,7 +59,7 @@ demo/demo-tree/
 Manual scan command:
 
 ```bash
-PYTHONPATH=src python3 -m sentinel scan demo/demo-tree \
+PYTHONPATH=python/src python3 -m sentinel scan demo/demo-tree \
   --signatures signatures/malware-signatures.json \
   --report reports/demo-report.json \
   --format json

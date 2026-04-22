@@ -4,6 +4,9 @@
 
 - Added a private-repository export tool that builds a curated handoff package for the required private GitHub/GitLab submission repo.
 - Added export-manifest safety checks so the package excludes the official project PDF, LaTeX build artifacts, the removed report draft, and any literal EICAR file.
+- Added `rust/` as an optional Rust companion implementation with JSON signatures, hash matching, Bloom-filter pre-checks, Aho-Corasick byte-pattern matching, heuristic-only findings, and JSON/Markdown reports.
+- Added Rust v2 notes to document that Python remains the primary verified submission path until a Rust toolchain is available.
+- Split implementation and documentation into explicit `python/`, `rust/`, `docs/python/`, and `docs/rust/` paths.
 - Added standard-library tests for the export dry-run and copy path.
 - Expanded the release-readiness gate to verify the private-repo export plan.
 - Reorganized project docs around first-principle deliverables: source, report, demo, evidence, and submission package.

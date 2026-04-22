@@ -74,8 +74,8 @@ def main() -> int:
 
 def check_versions() -> None:
     version_file = (PROJECT_ROOT / "VERSION").read_text(encoding="utf-8").strip()
-    pyproject = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
-    version_module = (PROJECT_ROOT / "src/sentinel/version.py").read_text(encoding="utf-8")
+    pyproject = (PROJECT_ROOT / "python/pyproject.toml").read_text(encoding="utf-8")
+    version_module = (PROJECT_ROOT / "python/src/sentinel/version.py").read_text(encoding="utf-8")
     changelog = (PROJECT_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
 
     assert version_file == EXPECTED_VERSION, f"VERSION is {version_file!r}"
@@ -195,9 +195,13 @@ def check_private_export() -> None:
     assert manifest["safety"]["literal_eicar_file_stored"] is False
     assert "README.md" in paths
     assert "docs/requirements-traceability.md" in paths
-    assert "docs/technical-design.md" in paths
+    assert "docs/python/technical-design.md" in paths
+    assert "docs/rust/README.md" in paths
     assert "demo/runbook.md" in paths
-    assert "src/sentinel/scanner.py" in paths
+    assert "python/README.md" in paths
+    assert "python/src/sentinel/scanner.py" in paths
+    assert "rust/Cargo.toml" in paths
+    assert "rust/src/main.rs" in paths
     assert "scripts/check_release.py" in paths
     assert "scripts/export_private_repo.py" in paths
     assert "report/final-report.pdf" in paths
@@ -239,7 +243,7 @@ def check_pdf() -> None:
 def _run(command: list[str], *, allow_detection: bool) -> subprocess.CompletedProcess[str]:
     env = os.environ.copy()
     env["PYTHONDONTWRITEBYTECODE"] = "1"
-    env["PYTHONPATH"] = "src"
+    env["PYTHONPATH"] = "python/src"
     completed = subprocess.run(
         command,
         cwd=PROJECT_ROOT,

@@ -18,7 +18,7 @@ COMMANDS = [
         "unittest",
         "discover",
         "-s",
-        "tests",
+        "python/tests",
         "-v",
     ],
     [
@@ -95,7 +95,7 @@ COMMANDS = [
 def main() -> int:
     env = os.environ.copy()
     env["PYTHONDONTWRITEBYTECODE"] = "1"
-    env["PYTHONPATH"] = "src"
+    env["PYTHONPATH"] = "python/src"
 
     for command in COMMANDS:
         print()

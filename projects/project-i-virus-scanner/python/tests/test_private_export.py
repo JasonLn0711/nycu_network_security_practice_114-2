@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 class PrivateRepoExportTests(unittest.TestCase):
@@ -24,9 +24,13 @@ class PrivateRepoExportTests(unittest.TestCase):
 
         self.assertEqual(manifest["manifest_type"], "private-repo-export")
         self.assertIn("docs/requirements-traceability.md", paths)
-        self.assertIn("docs/technical-design.md", paths)
+        self.assertIn("docs/python/technical-design.md", paths)
+        self.assertIn("docs/rust/README.md", paths)
         self.assertIn("demo/runbook.md", paths)
-        self.assertIn("src/sentinel/cli.py", paths)
+        self.assertIn("python/README.md", paths)
+        self.assertIn("python/src/sentinel/cli.py", paths)
+        self.assertIn("rust/Cargo.toml", paths)
+        self.assertIn("rust/src/main.rs", paths)
         self.assertIn("scripts/check_release.py", paths)
         self.assertIn("report/final-report.pdf", paths)
         self.assertIn("report/final-report-v2.pdf", paths)
@@ -64,8 +68,11 @@ class PrivateRepoExportTests(unittest.TestCase):
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 
             self.assertTrue((output / "README.md").is_file())
-            self.assertTrue((output / "src/sentinel/scanner.py").is_file())
-            self.assertTrue((output / "docs/technical-design.md").is_file())
+            self.assertTrue((output / "python/README.md").is_file())
+            self.assertTrue((output / "python/src/sentinel/scanner.py").is_file())
+            self.assertTrue((output / "rust/Cargo.toml").is_file())
+            self.assertTrue((output / "rust/src/main.rs").is_file())
+            self.assertTrue((output / "docs/python/technical-design.md").is_file())
             self.assertTrue((output / "demo/runbook.md").is_file())
             self.assertTrue((output / "report/submission-package.md").is_file())
             self.assertTrue((output / "report/final-report-v2.pdf").is_file())

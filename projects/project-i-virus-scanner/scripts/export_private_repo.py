@@ -19,11 +19,10 @@ EXPORT_PATHS = (
     "VERSION",
     "CHANGELOG.md",
     "Makefile",
-    "pyproject.toml",
     "README.md",
     "docs",
-    "src/sentinel",
-    "tests",
+    "rust",
+    "python",
     "signatures/malware-signatures.json",
     "signatures/eicar-reference-signature.json",
     "demo",
@@ -49,7 +48,7 @@ EXCLUDED_SUFFIXES = (
     ".out",
     ".pyc",
 )
-EXCLUDED_DIRS = {"__pycache__", ".pytest_cache", ".mypy_cache", "dist", "build"}
+EXCLUDED_DIRS = {"__pycache__", ".pytest_cache", ".mypy_cache", "dist", "build", "target"}
 EXCLUDED_NAMES = {"project-spec.pdf", "report-draft.md", ".DS_Store", "Thumbs.db", ".gitkeep"}
 
 
@@ -201,8 +200,9 @@ def _build_manifest(files: list[Path], output: Path) -> dict[str, Any]:
         "next_steps": [
             "Create or choose the private GitHub/GitLab repository.",
             "Copy the export package contents into the private repository root.",
-            "Run python3 -m pip install -e .",
+            "Run python3 -m pip install -e python.",
             "Run python3 scripts/check_release.py.",
+            "If using the optional Rust companion implementation, install Rust and run cargo test from rust/.",
             "Record the private repository URL and final commit hash.",
         ],
         "files": entries,

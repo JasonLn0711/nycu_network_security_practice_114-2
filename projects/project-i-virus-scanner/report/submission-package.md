@@ -10,7 +10,7 @@ safety checks so submission state does not split across multiple notes.
 
 | Area | State | Evidence |
 | --- | --- | --- |
-| Scanner package | Working | `src/sentinel/`, `pyproject.toml` |
+| Scanner package | Working | `python/src/sentinel/`, `python/pyproject.toml` |
 | Signature database | Working | `signatures/malware-signatures.json` |
 | Demo tree | Working | `demo/demo-tree/` |
 | Tests | Passing, `25` tests | `python3 demo/run_demo.py` |
@@ -18,6 +18,7 @@ safety checks so submission state does not split across multiple notes.
 | Benchmark | Generated | `reports/pattern-benchmark.json`, `reports/pattern-benchmark.md` |
 | Evidence manifest | Generated | `reports/demo-evidence-manifest.json` |
 | Private repo export | Working | `scripts/export_private_repo.py` |
+| Rust companion | Source-ready; compile pending Rust toolchain | `rust/`, `docs/rust/README.md` |
 | Final report | Compiled, `6` pages; screenshot-evidence copy compiled as `12` pages | `report/` |
 | Release gate | Passing locally | `python3 scripts/check_release.py` |
 
@@ -43,14 +44,14 @@ Verification was run against the curated export package at
 
 | Command | Result |
 | --- | --- |
-| `python3 -m pip install -e .` | Blocked by local environment: `/usr/bin/python3: No module named pip`. |
+| `python3 -m pip install -e python` | Blocked by local environment: `/usr/bin/python3: No module named pip`. |
 | `python3 -m ensurepip --upgrade --user` | Blocked by local environment: `/usr/bin/python3: No module named ensurepip`. |
-| `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v` | Failed before install because `sentinel` was not importable without package installation. |
-| `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -v` | Passed: `25` tests. |
+| `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s python/tests -v` | Failed before install because `sentinel` was not importable without package installation. |
+| `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m unittest discover -s python/tests -v` | Passed: `25` tests. |
 | `python3 demo/run_demo.py` | Passed; regenerated reports, benchmark, and evidence manifest. |
 | `python3 scripts/check_release.py` | Passed for Sentinel `0.4.0`. |
-| `PYTHONPATH=src python3 -m sentinel validate-signatures signatures/malware-signatures.json` | Passed. |
-| `PYTHONPATH=src python3 scripts/benchmark_patterns.py` | Passed. |
+| `PYTHONPATH=python/src python3 -m sentinel validate-signatures signatures/malware-signatures.json` | Passed. |
+| `PYTHONPATH=python/src python3 scripts/benchmark_patterns.py` | Passed. |
 
 Interpretation: the export package verifies correctly in no-install mode. The
 editable-install command still needs a Python environment with `pip` available.
@@ -80,13 +81,14 @@ literal EICAR files.
 | Path | Purpose |
 | --- | --- |
 | `README.md` | Reviewer entrypoint |
-| `pyproject.toml`, `VERSION`, `CHANGELOG.md`, `Makefile` | Package metadata and release controls |
-| `src/sentinel/` | Scanner implementation |
-| `tests/` | Standard-library test suite |
+| `python/`, `VERSION`, `CHANGELOG.md`, `Makefile` | Python package metadata, tests, and release controls |
+| `python/src/sentinel/` | Scanner implementation |
+| `python/tests/` | Standard-library test suite |
 | `signatures/` | Safe mock-virus signatures and EICAR reference hashes |
 | `demo/` | Demo tree, runbook, transcript, and runner |
 | `reports/` | Generated demo, benchmark, and evidence artifacts |
 | `docs/` | Traceability, technical design, and standards notes |
+| `rust/` | Optional Rust companion scanner implementation |
 | `scripts/` | Benchmark, release-check, and export commands |
 | `report/final-report.tex`, `report/final-report.pdf` | Final report source and PDF |
 | `report/submission-package.md` | This final submission note |
@@ -99,8 +101,8 @@ to store official handouts in the private repository.
 From the private repository root:
 
 ```bash
-python3 -m pip install -e .
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+python3 -m pip install -e python
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s python/tests -v
 python3 demo/run_demo.py
 python3 scripts/check_release.py
 ```
@@ -109,7 +111,7 @@ Optional smoke checks:
 
 ```bash
 sentinel validate-signatures signatures/malware-signatures.json
-PYTHONPATH=src python3 scripts/benchmark_patterns.py
+PYTHONPATH=python/src python3 scripts/benchmark_patterns.py
 ```
 
 Expected demo summary:
@@ -138,7 +140,7 @@ detected. That is expected behavior for this demo.
 - [ ] Mirror the export package into the private repository. Not performed in this pass by instruction.
 - [x] Record private repository URL in `README.md`.
 - [x] Record final commit hash used for the demo.
-- [x] Run the private-repository verification commands. Editable install was blocked by missing `pip`; no-install verification passed with `PYTHONPATH=src`.
+- [x] Run the private-repository verification commands. Editable install was blocked by missing `pip`; no-install verification passed with `PYTHONPATH=python/src`.
 - [x] Confirm whether the final demo must use literal EICAR.
 - [x] If EICAR is required, create it only in the controlled final demo environment. Current decision: not required unless instructor overrides.
 - [x] Recompile `report/final-report.pdf` after final team/repo/EICAR decisions.

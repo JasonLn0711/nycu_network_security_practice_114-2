@@ -17,7 +17,8 @@
 
 | Deliverable | Local state | Source of truth |
 | --- | --- | --- |
-| Source code | Python 3 CLI package under `src/sentinel/` | `src/sentinel/`, `pyproject.toml` |
+| Source code | Python 3 CLI package under `python/src/sentinel/` | `python/src/sentinel/`, `python/pyproject.toml` |
+| Optional Rust companion | Rust v2 scanner prototype for systems-language comparison | `rust/`, `docs/rust/README.md` |
 | Signature database | Safe JSON signatures with MD5, SHA-256, and hex-pattern matchers | `signatures/malware-signatures.json` |
 | Report | LaTeX source, compiled PDF, and screenshot-evidence copy | `report/final-report.tex`, `report/final-report.pdf`, `report/final-report-v2.tex`, `report/final-report-v2.pdf` |
 | Demo evidence | Regenerated JSON/Markdown reports, benchmark, and manifest | `reports/`, `demo/demo-transcript.md` |
@@ -39,6 +40,11 @@ Implemented detection and evidence paths:
 - Safe synthetic pattern benchmark.
 - Evidence manifest with file/report hashes and safety flags.
 - Private-repository export dry-run and local package builder.
+
+Optional companion path:
+
+- `rust/` mirrors the scanner design in Rust with JSON signatures, MD5/SHA-256 matching, Bloom-filter pre-checks, Aho-Corasick byte-pattern matching, heuristic-only suspicious findings, and JSON/Markdown reports.
+- Rust is not installed on this machine in the current pass, so `rust` is included as source-ready companion work rather than the primary verified submission path.
 
 Current verified demo result: `5` files scanned, `1` infected safe mock fixture, `1` suspicious heuristic fixture, `3` clean files, `0` skipped files, and `0` errors. The test suite currently has `25` standard-library tests.
 
@@ -65,7 +71,7 @@ python3 scripts/export_private_repo.py --clean
 Run the scanner manually:
 
 ```bash
-PYTHONPATH=src python3 -m sentinel scan demo/demo-tree \
+PYTHONPATH=python/src python3 -m sentinel scan demo/demo-tree \
   --signatures signatures/malware-signatures.json \
   --report reports/demo-report.json \
   --format json
@@ -78,7 +84,8 @@ The scan command returns exit code `1` when the safe mock-virus fixture is detec
 | Need | File |
 | --- | --- |
 | Requirement coverage | `docs/requirements-traceability.md` |
-| Architecture and data structures | `docs/technical-design.md` |
+| Architecture and data structures | `docs/python/technical-design.md` |
+| Optional Rust companion notes | `docs/rust/README.md` |
 | Demo runbook | `demo/runbook.md` |
 | Terminal/live-demo transcript | `demo/demo-transcript.md` |
 | External standards notes | `docs/standards-alignment.md` |
@@ -93,4 +100,4 @@ The scan command returns exit code `1` when the safe mock-virus fixture is detec
 - Private GitHub/GitLab move: not performed in this pass by instruction.
 - Literal EICAR: not required for the current final demo; use the safe mock fixture plus EICAR reference hashes unless the instructor explicitly requires literal EICAR later.
 - Demo format: live-demo script/runbook prepared; short video not recorded in this pass.
-- Export verification: `dist/sentinel-private-repo/` passed no-install verification with `PYTHONPATH=src`; editable install was blocked on this machine because `/usr/bin/python3` has no `pip` or `ensurepip`.
+- Export verification: `dist/sentinel-private-repo/` passed no-install verification with `PYTHONPATH=python/src`; editable install was blocked on this machine because `/usr/bin/python3` has no `pip` or `ensurepip`.

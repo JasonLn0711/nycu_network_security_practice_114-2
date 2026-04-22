@@ -43,17 +43,17 @@ def build_evidence_manifest(
         "demo_tree": _tree_metadata(target_path),
         "reports": [_report_metadata(report_path) for report_path in report_paths],
         "reproducibility": {
-            "test_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -v",
+            "test_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m unittest discover -s python/tests -v",
             "signature_validation_command": (
-                f"PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel "
+                f"PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel "
                 f"validate-signatures {signature_path}"
             ),
             "json_scan_command": (
-                f"PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel scan {target_path} "
+                f"PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel scan {target_path} "
                 f"--signatures {signature_path} --report reports/demo-report.json --format json"
             ),
             "markdown_scan_command": (
-                f"PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel scan {target_path} "
+                f"PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel scan {target_path} "
                 f"--signatures {signature_path} --report reports/demo-report.md --format markdown"
             ),
         },

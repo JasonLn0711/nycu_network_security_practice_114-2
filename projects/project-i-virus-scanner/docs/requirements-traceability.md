@@ -83,21 +83,26 @@ As of `2026-04-22`, the local course-repo package covers the scanner core, evide
 
 | Requirement | Prototype state | Evidence |
 | --- | --- | --- |
-| R1 | Implemented locally | `src/sentinel/scanner.py`, `tests/test_scanner.py`; symlink-skip tests cover links inside the target tree and a symlink target path |
-| R2 | Implemented locally | `signatures/malware-signatures.json`, `signatures/eicar-reference-signature.json`, `tests/test_signatures.py` |
-| R3 | Implemented locally | safe mock-virus fixture detected in `reports/demo-report.json`; Bloom-filter hash pre-check plus exact hash-map verification tested in `tests/test_matchers.py`; EICAR reference hashes validated in memory by `tests/test_eicar_reference.py` |
-| R4 | Implemented locally | Aho-Corasick `hex_pattern` matcher in `src/sentinel/matchers.py`; overlapping-pattern, stream-boundary, and chunk-boundary tests in `tests/test_matchers.py`; benchmark artifacts in `reports/pattern-benchmark.*` |
-| R5 | Implemented locally | `src/sentinel/heuristics.py`, suspicious fixture in demo report |
-| R6 | Implemented locally | `src/sentinel/reporting.py`, scan metadata in reports, `reports/demo-report.json`, `reports/demo-report.md`, `reports/demo-evidence-manifest.json` |
+| R1 | Implemented locally | `python/src/sentinel/scanner.py`, `python/tests/test_scanner.py`; symlink-skip tests cover links inside the target tree and a symlink target path |
+| R2 | Implemented locally | `signatures/malware-signatures.json`, `signatures/eicar-reference-signature.json`, `python/tests/test_signatures.py` |
+| R3 | Implemented locally | safe mock-virus fixture detected in `reports/demo-report.json`; Bloom-filter hash pre-check plus exact hash-map verification tested in `python/tests/test_matchers.py`; EICAR reference hashes validated in memory by `python/tests/test_eicar_reference.py` |
+| R4 | Implemented locally | Aho-Corasick `hex_pattern` matcher in `python/src/sentinel/matchers.py`; overlapping-pattern, stream-boundary, and chunk-boundary tests in `python/tests/test_matchers.py`; benchmark artifacts in `reports/pattern-benchmark.*` |
+| R5 | Implemented locally | `python/src/sentinel/heuristics.py`, suspicious fixture in demo report |
+| R6 | Implemented locally | `python/src/sentinel/reporting.py`, scan metadata in reports, `reports/demo-report.json`, `reports/demo-report.md`, `reports/demo-evidence-manifest.json` |
 | R7 | Export package implemented; private remote not moved by instruction | `scripts/export_private_repo.py`, `report/submission-package.md`; private repository URL recorded as not created/moved in this pass |
 | R8 | Drafted and compiled locally | `report/final-report.tex`, `report/final-report.pdf` |
 | R9 | Live-demo script prepared | local demo works, `demo/runbook.md` and `demo/demo-transcript.md` exist, `demo/run_demo.py` regenerates evidence, and `reports/demo-evidence-manifest.json` captures reproducibility evidence |
+
+Optional systems-language companion: `rust/` now mirrors the scanner design in
+Rust with its own Cargo project. It is useful if the instructor asks about C++ or
+Rust, but Python remains the primary verified submission path because this local
+machine does not currently have `rustc` / `cargo` installed.
 
 ## Release-Readiness Gate
 
 `scripts/check_release.py` is the local submission-candidate gate. It checks:
 
-- `VERSION`, `pyproject.toml`, `src/sentinel/version.py`, and `sentinel --version` agree on `0.4.0`
+- `VERSION`, `python/pyproject.toml`, `python/src/sentinel/version.py`, and `sentinel --version` agree on `0.4.0`
 - `docs/standards-alignment.md` and EICAR reference hashes are present
 - the full demo regeneration path passes
 - the JSON report has the expected safe-demo summary, Bloom-filter metadata, Aho-Corasick metadata, and `symlink_policy: skip`
