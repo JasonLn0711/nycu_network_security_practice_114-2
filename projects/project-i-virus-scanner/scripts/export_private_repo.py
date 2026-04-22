@@ -35,6 +35,9 @@ EXPORT_PATHS = (
     "scripts",
     "report/final-report.tex",
     "report/final-report.pdf",
+    "report/final-report-v2.tex",
+    "report/final-report-v2.pdf",
+    "report/evidence-screenshots",
     "report/submission-package.md",
 )
 
@@ -168,6 +171,11 @@ def _assert_export_boundaries(files: list[Path]) -> None:
         "report/final-report.fls",
         "report/final-report.log",
         "report/final-report.out",
+        "report/final-report-v2.aux",
+        "report/final-report-v2.fdb_latexmk",
+        "report/final-report-v2.fls",
+        "report/final-report-v2.log",
+        "report/final-report-v2.out",
     }
     leaked = sorted(relative_paths & forbidden)
     if leaked:

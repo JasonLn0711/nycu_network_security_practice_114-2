@@ -47,7 +47,7 @@ def main() -> int:
         ("benchmark evidence is consistent", check_benchmark),
         ("evidence manifest is consistent", check_manifest),
         ("private repo export plan is consistent", check_private_export),
-        ("final report PDF exists", check_pdf),
+        ("final report PDFs exist", check_pdf),
     ]
 
     failures: list[str] = []
@@ -201,30 +201,39 @@ def check_private_export() -> None:
     assert "scripts/check_release.py" in paths
     assert "scripts/export_private_repo.py" in paths
     assert "report/final-report.pdf" in paths
+    assert "report/final-report-v2.pdf" in paths
+    assert "report/evidence-screenshots/signature-database.png" in paths
+    assert "report/evidence-screenshots/release-gate.png" in paths
     assert "report/submission-package.md" in paths
     assert "project-spec.pdf" not in paths
     assert "report/report-draft.md" not in paths
     assert "report/private-repo-handoff.md" not in paths
     assert "report/submission-checklist.md" not in paths
     assert "report/final-report.aux" not in paths
+    assert "report/final-report-v2.aux" not in paths
 
 
 def check_pdf() -> None:
-    pdf_path = PROJECT_ROOT / "report/final-report.pdf"
-    assert pdf_path.is_file(), "report/final-report.pdf missing"
-    assert pdf_path.stat().st_size > 100_000, "PDF is unexpectedly small"
+    expectations = {
+        "report/final-report.pdf": (100_000, 5),
+        "report/final-report-v2.pdf": (500_000, 10),
+    }
+    for relative, (minimum_bytes, minimum_pages) in expectations.items():
+        pdf_path = PROJECT_ROOT / relative
+        assert pdf_path.is_file(), f"{relative} missing"
+        assert pdf_path.stat().st_size > minimum_bytes, f"{relative} is unexpectedly small"
 
-    if shutil.which("pdfinfo"):
-        completed = subprocess.run(
-            ["pdfinfo", str(pdf_path)],
-            cwd=PROJECT_ROOT,
-            check=True,
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        pages = _extract_pdf_pages(completed.stdout)
-        assert pages >= 5, f"expected at least 5 PDF pages, got {pages}"
+        if shutil.which("pdfinfo"):
+            completed = subprocess.run(
+                ["pdfinfo", str(pdf_path)],
+                cwd=PROJECT_ROOT,
+                check=True,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            pages = _extract_pdf_pages(completed.stdout)
+            assert pages >= minimum_pages, f"expected at least {minimum_pages} PDF pages for {relative}, got {pages}"
 
 
 def _run(command: list[str], *, allow_detection: bool) -> subprocess.CompletedProcess[str]:

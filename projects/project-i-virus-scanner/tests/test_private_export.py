@@ -29,12 +29,16 @@ class PrivateRepoExportTests(unittest.TestCase):
         self.assertIn("src/sentinel/cli.py", paths)
         self.assertIn("scripts/check_release.py", paths)
         self.assertIn("report/final-report.pdf", paths)
+        self.assertIn("report/final-report-v2.pdf", paths)
+        self.assertIn("report/evidence-screenshots/signature-database.png", paths)
+        self.assertIn("report/evidence-screenshots/release-gate.png", paths)
         self.assertIn("report/submission-package.md", paths)
         self.assertNotIn("project-spec.pdf", paths)
         self.assertNotIn("report/report-draft.md", paths)
         self.assertNotIn("report/private-repo-handoff.md", paths)
         self.assertNotIn("report/submission-checklist.md", paths)
         self.assertNotIn("report/final-report.aux", paths)
+        self.assertNotIn("report/final-report-v2.aux", paths)
         self.assertFalse(manifest["safety"]["literal_eicar_file_stored"])
 
     def test_export_copies_package_and_manifest(self):
@@ -64,8 +68,11 @@ class PrivateRepoExportTests(unittest.TestCase):
             self.assertTrue((output / "docs/technical-design.md").is_file())
             self.assertTrue((output / "demo/runbook.md").is_file())
             self.assertTrue((output / "report/submission-package.md").is_file())
+            self.assertTrue((output / "report/final-report-v2.pdf").is_file())
+            self.assertTrue((output / "report/evidence-screenshots/release-gate.png").is_file())
             self.assertFalse((output / "project-spec.pdf").exists())
             self.assertFalse((output / "report/final-report.aux").exists())
+            self.assertFalse((output / "report/final-report-v2.aux").exists())
             self.assertGreater(manifest["file_count"], 40)
 
 
