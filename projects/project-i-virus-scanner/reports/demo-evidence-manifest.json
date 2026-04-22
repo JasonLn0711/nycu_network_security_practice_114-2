@@ -26,7 +26,7 @@
       "size_bytes": 149
     }
   ],
-  "generated_at": "2026-04-22T07:01:35+00:00",
+  "generated_at": "2026-04-22T07:36:44+00:00",
   "inputs": {
     "signature_database": {
       "path": "signatures/malware-signatures.json",
@@ -56,7 +56,7 @@
         "symlink_policy": "skip",
         "traversal_policy": "deterministic-rglob-files"
       },
-      "sha256": "7130a2ad134ad1d8c6442133883e4af56b1e7a0955f36c5731de73abdfac29dc",
+      "sha256": "5b94248bd26fd2a21e2d64282a951c6dcc7c69197b8d1c7f606e93fa6c63a7dd",
       "size_bytes": 5029,
       "summary": {
         "clean": 3,
@@ -72,29 +72,29 @@
     },
     {
       "path": "reports/demo-report.md",
-      "sha256": "48460c5356bdf8d535633fe7daa35cc5fbcbc0fe96f5669b533f8fa646ee839e",
+      "sha256": "3d4567c5b2dc733b53676c1f4a013c9be02a2ee8390353cd57a967d1ec40a4f8",
       "size_bytes": 1805
     },
     {
       "path": "reports/pattern-benchmark.json",
       "scan_metadata": {},
-      "sha256": "f95bf81f3da758546d3563c8de7c3765de4f0f6783c342fbb438c8d343d89709",
-      "size_bytes": 969,
+      "sha256": "488a70e5425de705add8c66e28fc1644fe584f0009354cecf30a986ac7bf690d",
+      "size_bytes": 968,
       "summary": {},
       "target": null,
       "tool": "Sentinel"
     },
     {
       "path": "reports/pattern-benchmark.md",
-      "sha256": "54f7d4184bd324599de3978bd04699cff520cbcd13bb10d382f11555c85bec39",
+      "sha256": "7aa8d4dafb6056bc2766f9069b34524939f7914867ef738411a0ff1ad6bf3d61",
       "size_bytes": 801
     }
   ],
   "reproducibility": {
-    "json_scan_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel scan demo/demo-tree --signatures signatures/malware-signatures.json --report reports/demo-report.json --format json",
-    "markdown_scan_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel scan demo/demo-tree --signatures signatures/malware-signatures.json --report reports/demo-report.md --format markdown",
-    "signature_validation_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel validate-signatures signatures/malware-signatures.json",
-    "test_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -v"
+    "json_scan_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel scan demo/demo-tree --signatures signatures/malware-signatures.json --report reports/demo-report.json --format json",
+    "markdown_scan_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel scan demo/demo-tree --signatures signatures/malware-signatures.json --report reports/demo-report.md --format markdown",
+    "signature_validation_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel validate-signatures signatures/malware-signatures.json",
+    "test_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m unittest discover -s python/tests -v"
   },
   "safety": {
     "executes_scanned_files": false,

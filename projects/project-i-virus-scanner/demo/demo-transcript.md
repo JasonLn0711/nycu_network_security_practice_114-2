@@ -16,7 +16,7 @@ Final demo decision: literal EICAR is not required for the current final demo. U
 From `projects/project-i-virus-scanner/`:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -v
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m unittest discover -s python/tests -v
 ```
 
 Observed result:
@@ -30,13 +30,13 @@ OK
 Validate the signature database:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel validate-signatures signatures/malware-signatures.json
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel validate-signatures signatures/malware-signatures.json
 ```
 
 Validate the EICAR reference-hash profile:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel validate-signatures signatures/eicar-reference-signature.json
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel validate-signatures signatures/eicar-reference-signature.json
 ```
 
 Observed result:
@@ -49,7 +49,7 @@ Signature database valid: schema=1.0 signatures=1 patterns=0
 Generate the JSON report:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel scan demo/demo-tree \
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel scan demo/demo-tree \
   --signatures signatures/malware-signatures.json \
   --report reports/demo-report.json \
   --format json
@@ -66,7 +66,7 @@ The command returns exit code `1` because an infected safe mock-virus fixture wa
 Generate the Markdown report:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel scan demo/demo-tree \
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel scan demo/demo-tree \
   --signatures signatures/malware-signatures.json \
   --report reports/demo-report.md \
   --format markdown
@@ -81,7 +81,7 @@ Sentinel scan complete: scanned=5 infected=1 suspicious=1 clean=3 errors=0 repor
 Summarize the JSON report:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel summarize-report reports/demo-report.json
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel summarize-report reports/demo-report.json
 ```
 
 Observed result:
@@ -93,7 +93,7 @@ Sentinel report summary: scanned=5 infected=1 suspicious=1 clean=3 errors=0
 Generate the evidence manifest:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel write-evidence \
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel write-evidence \
   --target demo/demo-tree \
   --signatures signatures/malware-signatures.json \
   --report reports/demo-report.json \
@@ -112,7 +112,7 @@ Evidence manifest written: files=5 reports=4 output=reports/demo-evidence-manife
 Generate the safe synthetic pattern benchmark:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/benchmark_patterns.py
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 scripts/benchmark_patterns.py
 ```
 
 Observed result:
@@ -137,7 +137,7 @@ Observed result:
 Run the release-readiness gate:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/check_release.py
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 scripts/check_release.py
 ```
 
 Observed result:
