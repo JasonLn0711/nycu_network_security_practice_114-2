@@ -184,4 +184,4 @@ Release check passed for Sentinel 0.4.0.
 
 - Team members: `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen)
 - Private repository URL: not created or moved in this pass, per instruction.
-- Final local demo commit hash: `2be51a0f003834e58795efcdd4b9224a730b90e7`
+- Local demo source-baseline commit hash: `2be51a0f003834e58795efcdd4b9224a730b90e7`

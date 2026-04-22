@@ -89,7 +89,7 @@ The scan returns exit code `1` because the safe mock-virus fixture is intentiona
 
 - [x] Confirm whether literal EICAR is required. Current decision: no, unless the instructor explicitly overrides later.
 - [ ] Run `python3 scripts/export_private_repo.py --clean` before private repo mirroring.
-- [x] Record private repo URL and final commit hash. Private repo URL is not created/moved in this pass; final local demo commit is `2be51a0f003834e58795efcdd4b9224a730b90e7`.
+- [x] Record private repo URL and final commit hash. Private repo URL is not created/moved in this pass; local demo source-baseline commit is `2be51a0f003834e58795efcdd4b9224a730b90e7`.
 - [ ] Re-run `python3 scripts/check_release.py` after private repo mirroring. Private repo mirroring is intentionally not performed in this pass.
 - [x] Record a short demo video or finalize the live-demo script.
 - [x] Run exported-package verification. No-install verification passed; editable install was blocked by missing `pip`.

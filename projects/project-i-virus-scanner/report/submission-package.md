@@ -32,7 +32,7 @@ Latest verified result on `2026-04-22`: Sentinel `v0.4.0`, `5` files scanned,
 | Project package | Project I - Virus Scanner final submission package. |
 | Team members | `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen) |
 | Private repository URL | Not created or moved in this pass, per instruction. |
-| Final local demo commit hash | `2be51a0f003834e58795efcdd4b9224a730b90e7` |
+| Local demo source-baseline commit hash | `2be51a0f003834e58795efcdd4b9224a730b90e7` |
 | Literal EICAR decision | Not required for the current final demo. Use the safe mock fixture plus EICAR reference hashes; create literal EICAR only if the instructor explicitly requires it later. |
 | Demo format | Live-demo script/runbook prepared; short video not recorded in this pass. |
 
@@ -124,7 +124,7 @@ detected. That is expected behavior for this demo.
 ## Fields To Fill
 
 - Private repository URL: not created or moved in this pass, per instruction.
-- Final demo commit hash: `2be51a0f003834e58795efcdd4b9224a730b90e7`
+- Local demo source-baseline commit hash: `2be51a0f003834e58795efcdd4b9224a730b90e7`
 - Team members: `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen)
 - Project package: Project I - Virus Scanner final submission package.
 - Whether the final demo must use the literal EICAR test file: no for the current final demo; use safe mock fixture plus EICAR reference hashes unless the instructor explicitly requires literal EICAR later.
