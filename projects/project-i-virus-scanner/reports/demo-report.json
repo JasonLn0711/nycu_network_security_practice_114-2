@@ -125,7 +125,7 @@
       "status": "suspicious"
     }
   ],
-  "finished_at": "2026-04-22T06:54:47+00:00",
+  "finished_at": "2026-04-22T06:58:24+00:00",
   "scan_metadata": {
     "automaton_states": 30,
     "chunk_size_bytes": 1048576,
@@ -141,7 +141,7 @@
     "traversal_policy": "deterministic-rglob-files"
   },
   "signature_schema_version": "1.0",
-  "started_at": "2026-04-22T06:54:47+00:00",
+  "started_at": "2026-04-22T06:58:24+00:00",
   "summary": {
     "clean": 3,
     "error": 0,

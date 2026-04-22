@@ -26,7 +26,7 @@
       "size_bytes": 149
     }
   ],
-  "generated_at": "2026-04-22T06:54:47+00:00",
+  "generated_at": "2026-04-22T06:58:25+00:00",
   "inputs": {
     "signature_database": {
       "path": "signatures/malware-signatures.json",
@@ -56,7 +56,7 @@
         "symlink_policy": "skip",
         "traversal_policy": "deterministic-rglob-files"
       },
-      "sha256": "b433192ca685ada344f3f200aa52b9e23192cec44367c3803f79fc84e50f9c7b",
+      "sha256": "30120b5f98982e10edc3ba20953796742600d8fc20e4ee8cd40621151d1f3da9",
       "size_bytes": 5029,
       "summary": {
         "clean": 3,
@@ -72,21 +72,21 @@
     },
     {
       "path": "reports/demo-report.md",
-      "sha256": "6297058fabab2360454a53a074f3f75af3afcc3efd5ecb827a0cf40e50449ba3",
+      "sha256": "a6d001eb734317f24938c882fb17e841c775e3e85ac1effd5e1affb60dad24eb",
       "size_bytes": 1805
     },
     {
       "path": "reports/pattern-benchmark.json",
       "scan_metadata": {},
-      "sha256": "944456919c1741d55a1a0997087fbe88115e1fdaf6ac196c4da0998fbfea03fd",
-      "size_bytes": 970,
+      "sha256": "8afe00fe884ecd7f7660e000a064ed47f073bace5c7bf0855edc55651594e649",
+      "size_bytes": 968,
       "summary": {},
       "target": null,
       "tool": "Sentinel"
     },
     {
       "path": "reports/pattern-benchmark.md",
-      "sha256": "021b87549ca1c017891ae8a1e7a8ac42baf8431db9cf3f210cff4eabb780dbb9",
+      "sha256": "76f101e3cb9e8571ae0b105cb238d243afe61faceec015ef9b19e3f7c8ddb169",
       "size_bytes": 801
     }
   ],
