@@ -12,7 +12,7 @@ from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "0.2.0"
+EXPECTED_VERSION = "0.4.0"
 EXPECTED_SUMMARY = {
     "files_scanned": 5,
     "infected": 1,
@@ -46,6 +46,7 @@ def main() -> int:
         ("demo report is consistent", check_demo_report),
         ("benchmark evidence is consistent", check_benchmark),
         ("evidence manifest is consistent", check_manifest),
+        ("private repo export plan is consistent", check_private_export),
         ("final report PDF exists", check_pdf),
     ]
 
@@ -67,7 +68,7 @@ def main() -> int:
         return 1
 
     print("")
-    print("Release check passed for Sentinel 0.2.0.")
+    print(f"Release check passed for Sentinel {EXPECTED_VERSION}.")
     return 0
 
 
@@ -130,6 +131,11 @@ def check_demo_report() -> None:
         assert summary.get(key) == expected, f"summary[{key}]={summary.get(key)!r}, expected {expected!r}"
 
     metadata = report["scan_metadata"]
+    assert metadata["hash_filter"] == "bloom-filter"
+    assert metadata["hash_filter_items"] == 2
+    assert metadata["hash_filter_bits"] >= 128
+    assert metadata["hash_filter_hash_functions"] == 3
+    assert metadata["hash_filter_policy"] == "precheck-then-exact-hash-map"
     assert metadata["pattern_engine"] == EXPECTED_PATTERN_ENGINE
     assert metadata["pattern_count"] == 1
     assert metadata["automaton_states"] > 1
@@ -171,8 +177,36 @@ def check_manifest() -> None:
 
     json_report = next(report for report in manifest["reports"] if report["path"] == "reports/demo-report.json")
     assert json_report["summary"]["infected"] == 1
+    assert json_report["scan_metadata"]["hash_filter"] == "bloom-filter"
+    assert json_report["scan_metadata"]["hash_filter_policy"] == "precheck-then-exact-hash-map"
     assert json_report["scan_metadata"]["pattern_engine"] == EXPECTED_PATTERN_ENGINE
     assert json_report["scan_metadata"]["symlink_policy"] == "skip"
+
+
+def check_private_export() -> None:
+    completed = _run([sys.executable, "scripts/export_private_repo.py", "--dry-run"], allow_detection=False)
+    manifest = json.loads(completed.stdout)
+    paths = {entry["path"] for entry in manifest["files"]}
+
+    assert manifest["manifest_type"] == "private-repo-export"
+    assert manifest["file_count"] >= 40
+    assert manifest["safety"]["excludes_project_spec_pdf"] is True
+    assert manifest["safety"]["excludes_latex_build_artifacts"] is True
+    assert manifest["safety"]["literal_eicar_file_stored"] is False
+    assert "README.md" in paths
+    assert "docs/requirements-traceability.md" in paths
+    assert "docs/technical-design.md" in paths
+    assert "demo/runbook.md" in paths
+    assert "src/sentinel/scanner.py" in paths
+    assert "scripts/check_release.py" in paths
+    assert "scripts/export_private_repo.py" in paths
+    assert "report/final-report.pdf" in paths
+    assert "report/submission-package.md" in paths
+    assert "project-spec.pdf" not in paths
+    assert "report/report-draft.md" not in paths
+    assert "report/private-repo-handoff.md" not in paths
+    assert "report/submission-checklist.md" not in paths
+    assert "report/final-report.aux" not in paths
 
 
 def check_pdf() -> None:

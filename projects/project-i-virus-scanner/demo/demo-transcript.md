@@ -21,7 +21,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -
 Observed result:
 
 ```text
-Ran 22 tests in 0.006s
+Ran 25 tests in 0.071s
 
 OK
 ```
@@ -42,6 +42,7 @@ Observed result:
 
 ```text
 Signature database valid: schema=1.0 signatures=1 patterns=1
+Signature database valid: schema=1.0 signatures=1 patterns=0
 ```
 
 Generate the JSON report:
@@ -119,6 +120,19 @@ Observed result:
 Pattern benchmark complete: patterns=128 payload_size=524288
 ```
 
+Validate the private-repo export package without copying files:
+
+```bash
+python3 scripts/export_private_repo.py --dry-run
+```
+
+Observed result:
+
+```text
+"manifest_type": "private-repo-export"
+"file_count": 50
+```
+
 Run the release-readiness gate:
 
 ```bash
@@ -135,29 +149,32 @@ Observed result:
 [ ok ] demo report is consistent
 [ ok ] benchmark evidence is consistent
 [ ok ] evidence manifest is consistent
+[ ok ] private repo export plan is consistent
 [ ok ] final report PDF exists
 
-Release check passed for Sentinel 0.2.0.
+Release check passed for Sentinel 0.4.0.
 ```
 
 ## Expected Demo Talking Points
 
 1. Show the signature database and explain that it has MD5, SHA-256, and hex-pattern matchers.
 2. Show the demo folder tree.
-3. Run the tests briefly or state that the 22-test suite passed.
+3. Run the tests briefly or state that the 25-test suite passed.
 4. Run the JSON or Markdown scan command.
 5. Explain the exit code: `1` means an infected file was intentionally detected.
 6. Open `reports/demo-report.md`.
-7. Open `reports/pattern-benchmark.md` and explain that the Aho-Corasick matcher has the same match set as the naive baseline on safe synthetic data.
-8. Open `docs/standards-alignment.md` and explain that EICAR, NIST, OWASP, and MITRE were used as external calibration references.
-9. Run or show `scripts/check_release.py` as the final consistency gate.
-10. Open `reports/demo-evidence-manifest.json` and show that the demo tree, signature database, reports, and benchmark artifacts have SHA-256 hashes.
-10. Point to the safe mock-virus fixture:
+7. Point out the `bloom-filter` hash pre-check metadata and the exact hash-map verification policy.
+8. Open `reports/pattern-benchmark.md` and explain that the Aho-Corasick matcher has the same match set as the naive baseline on safe synthetic data.
+9. Open `docs/standards-alignment.md` and explain that EICAR, NIST, OWASP, and MITRE were used as external calibration references.
+10. Run or show `scripts/check_release.py` as the final consistency gate.
+11. Open `reports/demo-evidence-manifest.json` and show that the demo tree, signature database, reports, and benchmark artifacts have SHA-256 hashes.
+12. Run or show `scripts/export_private_repo.py --dry-run` and explain that this is the package checklist for the required private repo.
+13. Point to the safe mock-virus fixture:
    - path: `nested/level-1/level-2/sentinel-safe-mock-virus.txt`
    - status: `infected`
    - evidence: MD5, SHA-256, and hex-pattern match
-11. Point to the heuristic-only file:
+14. Point to the heuristic-only file:
    - path: `suspicious/api-names-fixture.txt`
    - status: `suspicious`
    - evidence: suspicious API-name strings
-12. Close by saying the scanner is educational and read-only, not production antivirus.
+15. Close by saying the scanner is educational and read-only, not production antivirus.

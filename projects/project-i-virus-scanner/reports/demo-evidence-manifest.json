@@ -26,7 +26,7 @@
       "size_bytes": 149
     }
   ],
-  "generated_at": "2026-04-22T05:21:50+00:00",
+  "generated_at": "2026-04-22T05:47:43+00:00",
   "inputs": {
     "signature_database": {
       "path": "signatures/malware-signatures.json",
@@ -45,14 +45,19 @@
       "scan_metadata": {
         "automaton_states": 30,
         "chunk_size_bytes": 1048576,
+        "hash_filter": "bloom-filter",
+        "hash_filter_bits": 128,
+        "hash_filter_hash_functions": 3,
+        "hash_filter_items": 2,
+        "hash_filter_policy": "precheck-then-exact-hash-map",
         "heuristic_sample_limit_bytes": 1048576,
         "pattern_count": 1,
         "pattern_engine": "aho-corasick-byte-automaton",
         "symlink_policy": "skip",
         "traversal_policy": "deterministic-rglob-files"
       },
-      "sha256": "88134b2bc715118514399423db936585e8f3f9094fa60417d4f3cfbb3f4615f8",
-      "size_bytes": 4842,
+      "sha256": "ccb14652b2ffe2395491bcd6a6b7747ea42ef0ff0a4cd0db4ed1f4552a86944b",
+      "size_bytes": 5029,
       "summary": {
         "clean": 3,
         "error": 0,
@@ -67,21 +72,21 @@
     },
     {
       "path": "reports/demo-report.md",
-      "sha256": "cb906f5f5d0794149aa147644f4ed531984b64ce1269258817e5039602b3e960",
-      "size_bytes": 1668
+      "sha256": "28b413d76a700a05fef4aa00b537ba1982f9f3628d87374f50b9fb1e7de20f1a",
+      "size_bytes": 1805
     },
     {
       "path": "reports/pattern-benchmark.json",
       "scan_metadata": {},
-      "sha256": "5291a7425a70ac3802eb6d1775f038fdf2db1f9383f32e9a87a801e29bb6a687",
-      "size_bytes": 967,
+      "sha256": "c960479480c8cc484749871748348e08fb006eace240fd4fd459d5603c9a5dae",
+      "size_bytes": 969,
       "summary": {},
       "target": null,
       "tool": "Sentinel"
     },
     {
       "path": "reports/pattern-benchmark.md",
-      "sha256": "821dee1d44390d23db9aebbb4f14ae2ef08b5f7ef560c5703aaafb30b7e2364c",
+      "sha256": "5dda8dacbeb5c4661080e61cabe9058991ce41029daa82c5d7b4624ffc8305b6",
       "size_bytes": 801
     }
   ],

@@ -29,29 +29,23 @@
 
 \section*{Abstract}
 
-Sentinel is a safe, read-only, signature-based virus scanner built for the
-Network Security Practice final project. It scans an explicit target directory,
-loads a structured malware-signature database, performs exact hash matching,
-performs Aho-Corasick byte-pattern matching, skips symbolic links by default,
-applies a small heuristic layer, and generates JSON and Markdown security
-reports. The current demonstration uses a local safe
-mock-virus fixture rather than live malware. This report explains the design,
-data structures, scanner workflow, evidence artifacts, evaluation results, and
-limitations.
+Sentinel is a safe, read-only, signature-based virus scanner for the Network
+Security Practice final project. It scans an explicit target directory, loads a
+structured malware-signature database, combines Bloom-filter hash pre-checks
+with exact hash-map verification, performs Aho-Corasick byte-pattern matching,
+skips symbolic links by default, separates heuristic warnings from confirmed
+signature matches, and generates JSON and Markdown evidence reports. The demo
+uses only local safe fixtures, not live malware.
 
 \section{Introduction}
 
-The goal of this project is to build a functional scanner that can identify a
-known mock threat hidden inside a directory tree and then produce a clear
-security report. Sentinel is intentionally scoped as an educational scanner. It
-does not execute scanned files, delete files, quarantine files, upload files, or
-scan the whole machine by default. It only scans a file or directory explicitly
-provided by the user.
-
-The current demo uses a local safe mock-virus marker, not live malware and not
-the literal EICAR string. If the instructor requires the exact EICAR test file
-for the final demo, it should be created only in the controlled final demo
-environment and recorded in the final evidence manifest.
+The project goal is to identify a known mock threat hidden inside a directory
+tree and produce a clear security report. Sentinel is intentionally educational:
+it does not execute scanned files, delete files, quarantine files, upload files,
+or scan the whole machine by default. The current demo uses a local safe
+mock-virus marker rather than live malware or the literal EICAR string. If the
+instructor requires the exact EICAR test file, it should be created only in the
+controlled final demo environment and recorded in the final evidence manifest.
 
 \section{Requirement Mapping}
 
@@ -112,6 +106,8 @@ Keeps the loaded database stable during a scan. \\
 \texttt{dict[str, dict[str, tuple[HashMatcher, ...]]]} & Hash lookup by
 algorithm and digest & Exact hash detection becomes a constant-time dictionary
 lookup. \\
+\texttt{HashBloomFilter} & Hash membership pre-check & Avoids unnecessary exact
+hash-map checks while preserving exact verification for possible hits. \\
 \texttt{PatternScanEngine} & Aho-Corasick byte-pattern automaton & Reused across
 files during a scan run. \\
 \texttt{PatternStreamScanner} & Per-file automaton state & Preserves pattern
@@ -121,9 +117,10 @@ signals separate from confirmed signature matches. \\
 \bottomrule
 \end{longtable}
 
-A Bloom filter is not implemented. It would be useful only if the signature
-database became large enough that avoiding dictionary lookups mattered. For this
-project, direct hash-map lookup is simpler, easy to test, and sufficient.
+The Bloom filter stores normalized \texttt{algorithm:digest} keys for configured
+hash signatures. It answers only ``might contain.'' Sentinel then confirms every
+possible hit against the exact hash map, so Bloom-filter false positives cannot
+create infected results.
 
 \section{Scanning Engine}
 
@@ -136,7 +133,8 @@ The scanner workflow is:
   \item Report symbolic links as \texttt{skipped} rather than following them.
   \item Read each file in chunks.
   \item Compute MD5 and SHA-256 incrementally.
-  \item Check exact hash signatures through lookup maps.
+  \item Pre-check hash signatures through the Bloom filter.
+  \item Confirm possible hash hits through exact lookup maps.
   \item Search configured byte patterns with an Aho-Corasick automaton.
   \item Run heuristic rules against a bounded sample.
   \item Assign status: \texttt{infected}, \texttt{suspicious}, \texttt{clean},
@@ -155,10 +153,10 @@ stream-boundary, and chunk-boundary pattern tests verify this behavior.
 
 The pattern engine uses the Aho-Corasick idea: multiple patterns are compiled
 into one automaton, and each input byte advances one shared state machine. The
-JSON report records \texttt{pattern\_engine},
-\texttt{pattern\_count}, \texttt{automaton\_states}, chunk-size metadata, and
-\texttt{symlink\_policy} so the demo evidence shows which matching and traversal
-paths were used.
+JSON report records \texttt{hash\_filter}, \texttt{hash\_filter\_policy},
+\texttt{pattern\_engine}, \texttt{pattern\_count}, \texttt{automaton\_states},
+chunk-size metadata, and \texttt{symlink\_policy} so the demo evidence shows
+which matching and traversal paths were used.
 
 The benchmark in \texttt{reports/pattern-benchmark.json} is safe and synthetic.
 It compares the automaton with a naive per-pattern \texttt{bytes} search. The
@@ -229,9 +227,10 @@ Sentinel includes \texttt{VERSION}, \texttt{CHANGELOG.md}, \texttt{Makefile},
 and \texttt{scripts/check\_release.py}. The release check is intended to be run
 before moving the package into the required private repository and again after
 the move. It validates version consistency, standards alignment, EICAR reference
-hashes, full demo regeneration, expected demo counts, Aho-Corasick report
-metadata, symbolic-link policy, benchmark match-set equivalence,
-evidence-manifest safety flags, and final-report PDF presence.
+hashes, full demo regeneration, expected demo counts, Bloom-filter metadata,
+Aho-Corasick metadata, symbolic-link policy, benchmark equivalence,
+evidence-manifest safety flags, private-repository export boundaries, and
+final-report PDF presence.
 
 \begin{lstlisting}[style=sentinel]
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/check_release.py
@@ -260,17 +259,19 @@ MD5, SHA-256, and hex-pattern evidence. The suspicious file is the API-name
 fixture; it is marked suspicious because it contains API-name indicators, not
 because it matches a confirmed malware signature.
 
-The demo report records \texttt{aho-corasick-byte-automaton} as the pattern
-engine, with one configured pattern and 30 automaton states for the current
-signature database.
+The demo report records \texttt{bloom-filter} as the hash pre-check and states
+that possible hits are verified by the exact hash map. It also records
+\texttt{aho-corasick-byte-automaton} as the pattern engine, with one configured
+pattern and 30 automaton states for the current signature database.
 
 \subsection{Test Result}
 
-The current standard-library test suite contains 22 tests. It covers signature
-validation, hash matching, Aho-Corasick byte-pattern matching, overlapping
-pattern outputs, stream/chunk-boundary pattern detection, scanner behavior,
-symbolic-link skipping, EICAR reference hash validation, report generation,
-Markdown output, evidence manifest generation, CLI paths, and the version flag.
+The current standard-library test suite contains 25 tests. It covers signature
+validation, Bloom-filter hash pre-checks, exact hash matching, Aho-Corasick
+byte-pattern matching, overlapping pattern outputs, stream/chunk-boundary
+pattern detection, scanner behavior, symbolic-link skipping, EICAR reference
+hash validation, report generation, Markdown output, evidence manifest
+generation, private-repo export boundaries, CLI paths, and the version flag.
 
 \begin{lstlisting}[style=sentinel]
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -v
@@ -278,29 +279,26 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -
 
 \section{Reproduction Commands}
 
-\begin{lstlisting}[style=sentinel]
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel validate-signatures signatures/malware-signatures.json
-\end{lstlisting}
+The main reproducibility path is:
 
 \begin{lstlisting}[style=sentinel]
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel scan demo/demo-tree --signatures signatures/malware-signatures.json --report reports/demo-report.json --format json
+python3 demo/run_demo.py
 \end{lstlisting}
+
+This command runs the tests, validates both signature files, regenerates JSON and
+Markdown scan reports, regenerates the synthetic benchmark, and regenerates the
+evidence manifest. The final consistency check is:
 
 \begin{lstlisting}[style=sentinel]
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel scan demo/demo-tree --signatures signatures/malware-signatures.json --report reports/demo-report.md --format markdown
+python3 scripts/check_release.py
 \end{lstlisting}
+
+Before moving the package into the required private repository, the curated
+handoff folder can be generated with:
 
 \begin{lstlisting}[style=sentinel]
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/benchmark_patterns.py
+python3 scripts/export_private_repo.py --clean
 \end{lstlisting}
-
-\begin{lstlisting}[style=sentinel]
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m sentinel write-evidence --target demo/demo-tree --signatures signatures/malware-signatures.json --report reports/demo-report.json --report reports/demo-report.md --report reports/pattern-benchmark.json --report reports/pattern-benchmark.md --output reports/demo-evidence-manifest.json
-\end{lstlisting}
-
-For convenience, the project also includes \texttt{demo/run\_demo.py}, which runs
-the tests, validates signatures, regenerates both scan reports, regenerates the
-benchmark artifacts, and regenerates the evidence manifest.
 
 The project includes \texttt{pyproject.toml}, so it can also be installed in
 editable mode with \texttt{python3 -m pip install -e .}. After installation, the
@@ -323,11 +321,13 @@ antivirus performance claim.
 \begin{enumerate}[leftmargin=*]
   \item Confirm whether Project I is required alongside Project II.
   \item Confirm team members.
+  \item Run \texttt{scripts/export\_private\_repo.py} to create the curated
+        handoff package.
   \item Move or mirror the implementation into the required private GitHub or
         GitLab repository.
   \item Record the final private repository URL and commit hash.
-  \item Run the private-repository handoff checks from
-        \texttt{report/private-repo-handoff.md}.
+  \item Run the private-repository verification commands from
+        \texttt{report/submission-package.md}.
   \item Decide whether the final demo must use the literal EICAR test file.
   \item Record a short demo video or prepare for a live demo.
 \end{enumerate}

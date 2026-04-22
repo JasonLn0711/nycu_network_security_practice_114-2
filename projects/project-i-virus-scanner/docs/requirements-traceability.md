@@ -25,7 +25,7 @@ Use it to decide whether the scanner, report, and demo are complete enough for s
 | R5 | Add basic heuristic analysis. | Phase III - Heuristic Analysis | At least one documented low-risk heuristic flags a safe suspicious fixture without claiming it is confirmed malware. | Heuristic rules table, sample report row |
 | R6 | Generate a security report. | Phase IV - Reporting and UI | Report includes scanned paths, infected or suspicious paths, threat names, severity, match reason, and timestamps. | JSON or Markdown report artifact |
 | R7 | Host well-documented source code in a private GitHub or GitLab repository. | Deliverable 1 | Private repo exists, README explains setup/run/test, and final source has no live malware or secrets. | Private repo URL, commit hash |
-| R8 | Write a project report explaining data-structure choices. | Deliverable 2 | Report explains why hash maps, pattern lists, and any optional Bloom filter were or were not used. | Report source/PDF |
+| R8 | Write a project report explaining data-structure choices. | Deliverable 2 | Report explains the implemented hash map, Bloom filter, and Aho-Corasick structures without production-antivirus claims. | Report source/PDF |
 | R9 | Demonstrate detection inside a complex folder structure. | Deliverable 3 | Demo tree contains clean files plus a hidden safe mock-virus file; scanner finds the mock virus and leaves clean files clean. | Video or live-demo script, demo report |
 
 ## Minimal Valid Scope
@@ -45,7 +45,7 @@ The minimum project that satisfies the brief is:
 
 Only add these after the minimum project works:
 
-- Bloom filter pre-check before hash-map lookup.
+- Bloom filter pre-check before hash-map lookup. `Implemented locally in v0.3.0 with exact hash-map verification after the filter.`
 - Chunked pattern scanning for large files. `Implemented locally with an Aho-Corasick byte-pattern engine.`
 - Multiple report formats such as JSON plus Markdown. `Implemented locally.`
 - A small text UI or web UI for demonstration only.
@@ -86,22 +86,23 @@ As of `2026-04-22`, the local course-repo package covers the scanner core, evide
 | --- | --- | --- |
 | R1 | Implemented locally | `src/sentinel/scanner.py`, `tests/test_scanner.py`; symlink-skip tests cover links inside the target tree and a symlink target path |
 | R2 | Implemented locally | `signatures/malware-signatures.json`, `signatures/eicar-reference-signature.json`, `tests/test_signatures.py` |
-| R3 | Implemented locally | safe mock-virus fixture detected in `reports/demo-report.json`; EICAR reference hashes validated in memory by `tests/test_eicar_reference.py` |
+| R3 | Implemented locally | safe mock-virus fixture detected in `reports/demo-report.json`; Bloom-filter hash pre-check plus exact hash-map verification tested in `tests/test_matchers.py`; EICAR reference hashes validated in memory by `tests/test_eicar_reference.py` |
 | R4 | Implemented locally | Aho-Corasick `hex_pattern` matcher in `src/sentinel/matchers.py`; overlapping-pattern, stream-boundary, and chunk-boundary tests in `tests/test_matchers.py`; benchmark artifacts in `reports/pattern-benchmark.*` |
 | R5 | Implemented locally | `src/sentinel/heuristics.py`, suspicious fixture in demo report |
 | R6 | Implemented locally | `src/sentinel/reporting.py`, scan metadata in reports, `reports/demo-report.json`, `reports/demo-report.md`, `reports/demo-evidence-manifest.json` |
-| R7 | Pending | private GitHub/GitLab repo not chosen |
-| R8 | Drafted and compiled locally | `report/report-draft.md`, `report/final-report.tex`, `report/final-report.pdf` |
+| R7 | Export package implemented; private remote pending | `scripts/export_private_repo.py`, `report/submission-package.md`; private GitHub/GitLab repo not chosen |
+| R8 | Drafted and compiled locally | `report/final-report.tex`, `report/final-report.pdf` |
 | R9 | Locally reproducible; final recording/live demo pending | local demo works, `demo/demo-transcript.md` exists, `demo/run_demo.py` regenerates evidence, and `reports/demo-evidence-manifest.json` captures reproducibility evidence |
 
 ## Release-Readiness Gate
 
 `scripts/check_release.py` is the local submission-candidate gate. It checks:
 
-- `VERSION`, `pyproject.toml`, `src/sentinel/version.py`, and `sentinel --version` agree on `0.2.0`
+- `VERSION`, `pyproject.toml`, `src/sentinel/version.py`, and `sentinel --version` agree on `0.4.0`
 - `docs/standards-alignment.md` and EICAR reference hashes are present
 - the full demo regeneration path passes
-- the JSON report has the expected safe-demo summary, Aho-Corasick metadata, and `symlink_policy: skip`
+- the JSON report has the expected safe-demo summary, Bloom-filter metadata, Aho-Corasick metadata, and `symlink_policy: skip`
 - the safe synthetic benchmark has equal match sets versus the naive baseline
 - the evidence manifest has safe flags and the expected report artifacts
+- the private-repo export dry-run includes the curated package and excludes the official brief, LaTeX build artifacts, removed draft, and literal EICAR files
 - `report/final-report.pdf` exists and has at least `5` pages when `pdfinfo` is available; the current compiled report is `6` pages

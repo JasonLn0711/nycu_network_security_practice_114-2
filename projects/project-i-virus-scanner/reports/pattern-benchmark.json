@@ -10,25 +10,25 @@
   },
   "interpretation": "Aho-Corasick scans the payload once with automaton state carried across bytes. For small Python-only demos, CPython's C-backed bytes search may remain competitive; the professional value here is deterministic multi-pattern behavior and explainable scaling.",
   "results": {
-    "aho_corasick_best_ms": 42.825632999665686,
+    "aho_corasick_best_ms": 42.68208699977549,
     "aho_corasick_matches": 8,
     "aho_corasick_runs_ms": [
-      43.973,
-      42.826,
-      43.239,
-      44.238,
-      44.17
+      44.477,
+      42.973,
+      42.728,
+      42.982,
+      42.682
     ],
     "automaton_states": 1001,
     "match_sets_equal": true,
-    "naive_best_ms": 18.787659999361495,
+    "naive_best_ms": 18.638604000443593,
     "naive_matches": 8,
     "naive_runs_ms": [
-      19.005,
-      18.916,
-      18.788,
-      18.989,
-      19.0
+      18.892,
+      19.215,
+      18.639,
+      18.978,
+      19.232
     ]
   },
   "tool": "Sentinel"

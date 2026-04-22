@@ -18,8 +18,8 @@ Safe synthetic benchmark only. No live malware, no network activity, and no scan
 
 | Matcher | Best ms | Matches |
 | --- | ---: | ---: |
-| Aho-Corasick byte automaton | 42.826 | 8 |
-| Naive per-pattern bytes search | 18.788 | 8 |
+| Aho-Corasick byte automaton | 42.682 | 8 |
+| Naive per-pattern bytes search | 18.639 | 8 |
 
 - Match sets equal: `True`
 - Interpretation: Aho-Corasick scans the payload once with automaton state carried across bytes. For small Python-only demos, CPython's C-backed bytes search may remain competitive; the professional value here is deterministic multi-pattern behavior and explainable scaling.

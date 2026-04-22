@@ -5,11 +5,15 @@
 - Tool: `Sentinel`
 - Target: `demo/demo-tree`
 - Signature schema: `1.0`
-- Started: `2026-04-22T05:21:49+00:00`
-- Finished: `2026-04-22T05:21:49+00:00`
+- Started: `2026-04-22T05:47:42+00:00`
+- Finished: `2026-04-22T05:47:42+00:00`
 
 ## Scan Engine
 
+- Hash pre-check: `bloom-filter`
+- Hash filter items: `2`
+- Hash filter bits: `128`
+- Hash filter policy: `precheck-then-exact-hash-map`
 - Pattern engine: `aho-corasick-byte-automaton`
 - Pattern count: `1`
 - Automaton states: `30`

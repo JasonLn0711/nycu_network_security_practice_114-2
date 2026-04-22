@@ -84,7 +84,7 @@ class CliTests(unittest.TestCase):
                 main(["--version"])
 
         self.assertEqual(exc.exception.code, 0)
-        self.assertIn("sentinel 0.2.0", stdout.getvalue())
+        self.assertIn("sentinel 0.4.0", stdout.getvalue())
 
     def test_scan_command_can_write_markdown_report(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -2,6 +2,8 @@
 
 This folder contains safe local demo fixtures for the Network Security Project I scanner.
 
+Use `runbook.md` for the live-demo sequence and `demo-transcript.md` for the current observed command output.
+
 The current mock-virus file is not real malware and does not use the literal EICAR string.
 It exists so the scanner can demonstrate signature matching without storing a file that might be flagged by host antivirus tooling.
 

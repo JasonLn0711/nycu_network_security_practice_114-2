@@ -4,7 +4,7 @@
 
 Build a small, explainable, safe signature-based virus scanner that satisfies the course brief without pretending to be production antivirus software.
 
-The strongest default implementation is a Python 3 command-line tool because it is easy to run, easy to review, and enough for the required scanner/report/demo workflow. The team can still choose another language before implementation starts.
+The implementation is a Python 3 command-line tool because it is easy to run, easy to review, and enough for the required scanner/report/demo workflow.
 
 ## System Boundary
 
@@ -18,7 +18,7 @@ It should not:
 - fetch remote signatures automatically
 - process live malware
 
-## Proposed CLI
+## Core Commands
 
 ```bash
 python3 -m sentinel scan demo/demo-tree \
@@ -36,7 +36,7 @@ python3 -m sentinel scan demo/demo-tree \
   --format markdown
 ```
 
-Optional commands after the core works:
+Supporting commands:
 
 ```bash
 python3 -m sentinel validate-signatures signatures/malware-signatures.json
@@ -48,42 +48,6 @@ python3 -m sentinel write-evidence \
   --report reports/demo-report.md \
   --output reports/demo-evidence-manifest.json
 ```
-
-## Proposed Repository Layout
-
-```text
-project-i-virus-scanner/
-  README.md
-  project-spec.pdf
-  requirements-traceability.md
-  technical-design.md
-  demo-and-report-plan.md
-  src/
-    sentinel/
-      __init__.py
-      __main__.py
-      cli.py
-      evidence.py
-      scanner.py
-      signatures.py
-      matchers.py
-      heuristics.py
-      reporting.py
-  signatures/
-    malware-signatures.json
-  demo/
-    README.md
-    demo-tree/
-  reports/
-    .gitkeep
-  tests/
-    test_signatures.py
-    test_matchers.py
-    test_scanner.py
-    test_reporting.py
-```
-
-If the deliverable source must live in a separate private repository, keep this folder as the course-repo index and link to the private repo, final report, demo evidence, and submission package.
 
 ## Data Model
 
@@ -106,7 +70,7 @@ Use JSON first. It is readable, easy to validate with the standard library, and 
         },
         {
           "type": "hex_pattern",
-          "value": "safe-fixture-pattern-as-hex"
+          "value": "534146455f4d4f434b5f4d41524b4552"
         }
       ],
       "notes": "Safe local demo signature only; not live malware."
@@ -115,21 +79,21 @@ Use JSON first. It is readable, easy to validate with the standard library, and 
 }
 ```
 
-Recommended in-memory structures:
+Implemented in-memory structures:
 
 | Structure | Use | Why |
 | --- | --- | --- |
 | `dict[str, Signature]` | Signature lookup by ID. | Stable report references and simple validation. |
 | `dict[str, list[SignatureMatcher]]` | Hash lookup by algorithm and digest. | Exact hash checks become constant-time dictionary lookups. |
+| `HashBloomFilter` | Hash-signature membership pre-check. | Gives a reportable scalable data structure while preserving exact hash-map verification. |
 | `PatternScanEngine` | Byte or hex pattern scan. | Builds an Aho-Corasick automaton once per scan run and reuses it for streamed file scans. |
 | `PatternStreamScanner` | Per-file byte-pattern scan state. | Preserves automaton state across chunks without loading the whole file. |
 | `list[HeuristicRule]` | Suspicious-file rules. | Keeps confirmed malware signatures separate from weaker signals. |
 
-Optional report-only discussion:
-
-- A Bloom filter can reduce unnecessary hash-map lookups when the signature set is large.
-- Do not claim a Bloom filter was used unless it is actually implemented and tested.
-- For this course project, a hash map is enough for a small signature database and is easier to verify.
+The Bloom filter stores normalized `algorithm:digest` keys for configured hash
+matchers. During scanning it answers only "might contain"; every possible hit is
+then confirmed against the exact hash index. This keeps the usual Bloom-filter
+false-positive limitation from producing infected findings.
 
 ## Scan Pipeline
 
@@ -141,7 +105,8 @@ Optional report-only discussion:
    - record file path, size, and read status
    - read file content in chunks
    - compute MD5 and SHA-256 incrementally
-   - check hash signatures through lookup maps
+   - pre-check hash signatures through the Bloom filter
+   - confirm possible hash hits through lookup maps
    - scan chunks with the Aho-Corasick byte-pattern automaton
    - preserve automaton state across chunks to catch split patterns
    - run heuristic rules against a bounded sample
@@ -241,7 +206,7 @@ Heuristic output should use wording such as `suspicious` or `review`, not `infec
 
 ## Release Gate
 
-`scripts/check_release.py` is the local submission-candidate gate. It runs the full demo regeneration path, then validates version consistency, standards alignment, EICAR reference hashes, expected demo counts, Aho-Corasick scan metadata, symbolic-link traversal policy, benchmark equivalence, evidence-manifest safety flags, and final-report PDF presence. Use it before mirroring the project into the required private repository and again after the private-repo move.
+`scripts/check_release.py` is the local submission-candidate gate. It runs the full demo regeneration path, then validates version consistency, standards alignment, EICAR reference hashes, expected demo counts, Bloom-filter scan metadata, Aho-Corasick scan metadata, symbolic-link traversal policy, benchmark equivalence, evidence-manifest safety flags, private-repo export boundaries, and final-report PDF presence. Use it before mirroring the project into the required private repository and again after the private-repo move.
 
 ## Test Plan
 
@@ -252,6 +217,7 @@ Heuristic output should use wording such as `suspicious` or `review`, not `infec
 | Clean file remains clean. | Avoid false positive in the simplest case. |
 | Safe mock-virus file is detected. | Prove the core requirement. |
 | EICAR reference hashes match in memory. | Use an international anti-malware test reference without storing the test file. |
+| Bloom-filter pre-check still uses exact hash-map verification. | Prove the scalable data structure does not create infected false positives. |
 | Nested folder scan finds hidden fixture. | Prove directory traversal. |
 | Symbolic links are skipped by default. | Keep scans inside the explicit target tree unless the policy is deliberately changed. |
 | Pattern split case across chunk boundary. | Prove bitwise comparison is not only whole-file search. |
@@ -261,29 +227,8 @@ Heuristic output should use wording such as `suspicious` or `review`, not `infec
 | Report contains required fields. | Protect report/demo stability. |
 | Evidence manifest records demo tree and report hashes. | Keep the final demo reproducible. |
 | Pattern benchmark matches naive baseline. | Keep algorithmic-hardening evidence honest and reproducible. |
+| Private-repo export excludes official brief, LaTeX build files, removed drafts, and literal EICAR files. | Make the required private repository handoff repeatable before the remote exists. |
 
-## Milestone Plan
+## Current Status
 
-| Milestone | Output | Done when |
-| --- | --- | --- |
-| M0 - Team and repo lock | Team members, language, private repo URL, Project I/II status | README open decisions are resolved or explicitly deferred. |
-| M1 - Signature database | JSON schema and safe mock-virus fixture signature | Signature validation and hash-match test pass. |
-| M2 - Scanner core | Directory traversal, hash match, pattern match | Nested safe fixture is detected from CLI. |
-| M3 - Heuristic and report | Suspicious rules plus JSON report | Demo report has infected, suspicious, and clean examples. |
-| M4 - Demo package | Demo tree, run script, captured report | A teammate can reproduce the demo from README commands. |
-| M5 - Final report | PDF/report source | Report explains data structures and limitations honestly. |
-
-Current local status as of `2026-04-22`: M1-M5 are locally implemented or drafted in the course repo, including chunked hashing, Aho-Corasick byte-pattern matching, symbolic-link skipping, EICAR reference-hash validation, standards alignment notes, chunk-boundary pattern tests, reproducible demo reports, synthetic benchmark evidence, evidence manifest, demo runner, report source, and compiled PDF. M0 is still open because team/private repo/Project I-vs-II status is not locked; final submission still needs the private repo URL, final commit hash, and demo video or live-demo decision.
-
-## Team Split
-
-For a team of four:
-
-| Owner | Workstream |
-| --- | --- |
-| A | Scanner CLI, traversal, and exit codes |
-| B | Signature schema, hash/pattern matchers, validation |
-| C | Heuristic rules, report schema, demo evidence |
-| D | Final report, video/live-demo script, submission checklist |
-
-For a solo version, implement M1-M3 first and keep the report/demo short.
+As of `2026-04-22`, scanner core, report generation, demo evidence, synthetic benchmark evidence, standards notes, private-repo export tooling, release gate, and compiled report are implemented locally. Final submission still needs team confirmation, private repository URL, final commit hash, Project I/II clarification, and demo video or live-demo decision.
