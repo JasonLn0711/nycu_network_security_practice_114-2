@@ -1,108 +1,61 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import os
 from pathlib import Path
 import subprocess
-import sys
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-PYTHON = sys.executable
+RUST_ROOT = PROJECT_ROOT / "rust"
 
 
 COMMANDS = [
+    ["cargo", "fmt", "--check"],
+    ["cargo", "test"],
+    ["cargo", "clippy", "--all-targets", "--", "-D", "warnings"],
+    ["cargo", "run", "--", "validate-signatures", "--signatures", "../signatures/malware-signatures.json"],
+    ["cargo", "run", "--", "prepare-eicar-demo", "--target", "../demo/demo-tree"],
+    ["cargo", "run", "--", "verify-demo", "--target", "../demo/demo-tree", "--signatures", "../signatures/malware-signatures.json"],
     [
-        PYTHON,
-        "-m",
-        "unittest",
-        "discover",
-        "-s",
-        "python/tests",
-        "-v",
-    ],
-    [
-        PYTHON,
-        "-m",
-        "sentinel",
-        "validate-signatures",
-        "signatures/malware-signatures.json",
-    ],
-    [
-        PYTHON,
-        "-m",
-        "sentinel",
-        "validate-signatures",
-        "signatures/eicar-reference-signature.json",
-    ],
-    [
-        PYTHON,
-        "-m",
-        "sentinel",
+        "cargo",
+        "run",
+        "--",
         "scan",
-        "demo/demo-tree",
+        "--target",
+        "../demo/demo-tree",
         "--signatures",
-        "signatures/malware-signatures.json",
-        "--report",
-        "reports/demo-report.json",
-        "--format",
-        "json",
+        "../signatures/malware-signatures.json",
+        "--json",
+        "../reports/demo-report.json",
+        "--markdown",
+        "../reports/demo-report.md",
     ],
     [
-        PYTHON,
-        "-m",
-        "sentinel",
-        "scan",
-        "demo/demo-tree",
-        "--signatures",
-        "signatures/malware-signatures.json",
-        "--report",
-        "reports/demo-report.md",
-        "--format",
-        "markdown",
-    ],
-    [
-        PYTHON,
-        "scripts/benchmark_patterns.py",
-        "--json-output",
-        "reports/pattern-benchmark.json",
-        "--markdown-output",
-        "reports/pattern-benchmark.md",
-    ],
-    [
-        PYTHON,
-        "-m",
-        "sentinel",
+        "cargo",
+        "run",
+        "--",
         "write-evidence",
         "--target",
-        "demo/demo-tree",
+        "../demo/demo-tree",
         "--signatures",
-        "signatures/malware-signatures.json",
+        "../signatures/malware-signatures.json",
         "--report",
-        "reports/demo-report.json",
+        "../reports/demo-report.json",
         "--report",
-        "reports/demo-report.md",
-        "--report",
-        "reports/pattern-benchmark.json",
-        "--report",
-        "reports/pattern-benchmark.md",
+        "../reports/demo-report.md",
         "--output",
-        "reports/demo-evidence-manifest.json",
+        "../reports/demo-evidence-manifest.json",
     ],
 ]
 
 
 def main() -> int:
-    env = os.environ.copy()
-    env["PYTHONDONTWRITEBYTECODE"] = "1"
-    env["PYTHONPATH"] = "python/src"
-
     for command in COMMANDS:
         print()
         print("$ " + " ".join(command), flush=True)
-        completed = subprocess.run(command, cwd=PROJECT_ROOT, env=env, check=False)
+        completed = subprocess.run(command, cwd=RUST_ROOT, check=False)
         if _allowed_detection_exit(command, completed.returncode):
-            print("note: scan returned 1 because the safe mock-virus fixture was detected.")
+            print("note: scan returned 1 because the generated EICAR safe test file was detected.")
             continue
         if completed.returncode != 0:
             return completed.returncode
@@ -111,8 +64,6 @@ def main() -> int:
     print("Demo artifacts regenerated:")
     print("- reports/demo-report.json")
     print("- reports/demo-report.md")
-    print("- reports/pattern-benchmark.json")
-    print("- reports/pattern-benchmark.md")
     print("- reports/demo-evidence-manifest.json")
     return 0
 

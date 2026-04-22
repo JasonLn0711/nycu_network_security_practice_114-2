@@ -2,186 +2,169 @@
 
 ## Purpose
 
-This transcript records the current local demo path for the Network Security Project I virus scanner.
-It can be used as the base for a live demo script or a short recorded video.
+This transcript records the Rust demo path for the Network Security Project I
+virus scanner. It can be used as the base for a live demo script or short
+recorded video.
 
 ## Safety Note
 
-The current demo uses a local safe mock-virus fixture. It is not live malware and does not contain the literal EICAR string.
-The scanner is read-only: it does not execute, delete, quarantine, upload, or modify scanned files. It skips symbolic links by default so the demo scan stays inside the explicit target tree.
-Final demo decision: literal EICAR is not required for the current final demo. Use the safe mock fixture plus EICAR reference hashes unless the instructor explicitly requires literal EICAR later.
+The current demo generates the official EICAR safe anti-malware test file in a
+controlled local demo folder before scanning it. EICAR is not live malware. The
+scanner is read-only: it does not execute, delete, quarantine, upload, or modify
+scanned files. It skips symbolic links by default so the demo scan stays inside
+the explicit target tree.
+
+Final demo decision: because the instructor wording asks for a safe EICAR test
+file, the Rust demo must generate and detect EICAR. The generated
+`eicar.com.txt` file is ignored by Git and excluded from private-repo export.
 
 ## Commands
 
-From `projects/project-i-virus-scanner/`:
+From `projects/project-i-virus-scanner/rust/`:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m unittest discover -s python/tests -v
+cargo fmt --check
 ```
 
 Observed result:
 
 ```text
-Ran 25 tests in 0.071s
+Finished successfully with no formatting diff.
+```
 
-OK
+Run the Rust test suite:
+
+```bash
+cargo test
+```
+
+Observed result:
+
+```text
+running 13 tests
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+```
+
+Run the Rust lint gate:
+
+```bash
+cargo clippy --all-targets -- -D warnings
+```
+
+Observed result:
+
+```text
+Finished successfully with warnings denied.
 ```
 
 Validate the signature database:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel validate-signatures signatures/malware-signatures.json
-```
-
-Validate the EICAR reference-hash profile:
-
-```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel validate-signatures signatures/eicar-reference-signature.json
+cargo run -- validate-signatures --signatures ../signatures/malware-signatures.json
 ```
 
 Observed result:
 
 ```text
-Signature database valid: schema=1.0 signatures=1 patterns=1
-Signature database valid: schema=1.0 signatures=1 patterns=0
+signature database ok: schema=1.0 signatures=1 hash_matchers=2 patterns=1
 ```
 
-Generate the JSON report:
+Prepare the official EICAR safe test file for the demo:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel scan demo/demo-tree \
-  --signatures signatures/malware-signatures.json \
-  --report reports/demo-report.json \
-  --format json
+cargo run -- prepare-eicar-demo --target ../demo/demo-tree
 ```
 
 Observed result:
 
 ```text
-Sentinel scan complete: scanned=5 infected=1 suspicious=1 clean=3 errors=0 report=reports/demo-report.json
+EICAR demo fixture written: ../demo/demo-tree/nested/level-1/level-2/eicar.com.txt bytes=68
 ```
 
-The command returns exit code `1` because an infected safe mock-virus fixture was intentionally detected.
-
-Generate the Markdown report:
+Verify the expected Project I demo summary:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel scan demo/demo-tree \
-  --signatures signatures/malware-signatures.json \
-  --report reports/demo-report.md \
-  --format markdown
+cargo run -- verify-demo \
+  --target ../demo/demo-tree \
+  --signatures ../signatures/malware-signatures.json
 ```
 
 Observed result:
 
 ```text
-Sentinel scan complete: scanned=5 infected=1 suspicious=1 clean=3 errors=0 report=reports/demo-report.md
+Rust demo verification passed: scanned=5 infected=1 suspicious=1 clean=3 skipped=0 errors=0
 ```
 
-Summarize the JSON report:
+Generate the Rust JSON and Markdown reports:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel summarize-report reports/demo-report.json
+cargo run -- scan \
+  --target ../demo/demo-tree \
+  --signatures ../signatures/malware-signatures.json \
+  --json ../reports/demo-report.json \
+  --markdown ../reports/demo-report.md
 ```
 
 Observed result:
 
 ```text
-Sentinel report summary: scanned=5 infected=1 suspicious=1 clean=3 errors=0
+Sentinel v2 Rust scan complete: scanned=5 infected=1 suspicious=1 clean=3 errors=0 json=../reports/demo-report.json markdown=../reports/demo-report.md
 ```
 
-Generate the evidence manifest:
+The scan command returns exit code `1` because the generated EICAR safe test
+file was intentionally detected.
+
+Generate the Rust evidence manifest:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel write-evidence \
-  --target demo/demo-tree \
-  --signatures signatures/malware-signatures.json \
-  --report reports/demo-report.json \
-  --report reports/demo-report.md \
-  --report reports/pattern-benchmark.json \
-  --report reports/pattern-benchmark.md \
-  --output reports/demo-evidence-manifest.json
+cargo run -- write-evidence \
+  --target ../demo/demo-tree \
+  --signatures ../signatures/malware-signatures.json \
+  --report ../reports/demo-report.json \
+  --report ../reports/demo-report.md \
+  --output ../reports/demo-evidence-manifest.json
 ```
 
 Observed result:
 
 ```text
-Evidence manifest written: files=5 reports=4 output=reports/demo-evidence-manifest.json
-```
-
-Generate the safe synthetic pattern benchmark:
-
-```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 scripts/benchmark_patterns.py
-```
-
-Observed result:
-
-```text
-Pattern benchmark complete: patterns=128 payload_size=524288
-```
-
-Validate the private-repo export package without copying files:
-
-```bash
-python3 scripts/export_private_repo.py --dry-run
-```
-
-Observed result:
-
-```text
-"manifest_type": "private-repo-export"
-"file_count": 50
-```
-
-Run the release-readiness gate:
-
-```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 scripts/check_release.py
-```
-
-Observed result:
-
-```text
-[ ok ] version files agree
-[ ok ] standards alignment is present
-[ ok ] EICAR reference hashes are consistent
-[ ok ] demo regeneration passes
-[ ok ] demo report is consistent
-[ ok ] benchmark evidence is consistent
-[ ok ] evidence manifest is consistent
-[ ok ] private repo export plan is consistent
-[ ok ] final report PDF exists
-
-Release check passed for Sentinel 0.4.0.
+Rust evidence manifest written: ../reports/demo-evidence-manifest.json
 ```
 
 ## Expected Demo Talking Points
 
-1. Show the signature database and explain that it has MD5, SHA-256, and hex-pattern matchers.
+1. Show the signature database and explain that it has MD5, SHA-256, and
+   hex-pattern matchers.
 2. Show the demo folder tree.
-3. Run the tests briefly or state that the 25-test suite passed.
-4. Run the JSON or Markdown scan command.
+3. Run or summarize the Rust formatting, test, lint, signature-validation, and
+   demo-verification commands.
+4. Run the Rust scan command.
 5. Explain the exit code: `1` means an infected file was intentionally detected.
 6. Open `reports/demo-report.md`.
-7. Point out the `bloom-filter` hash pre-check metadata and the exact hash-map verification policy.
-8. Open `reports/pattern-benchmark.md` and explain that the Aho-Corasick matcher has the same match set as the naive baseline on safe synthetic data.
-9. Open `docs/standards-alignment.md` and explain that EICAR, NIST, OWASP, and MITRE were used as external calibration references.
-10. Run or show `scripts/check_release.py` as the final consistency gate.
-11. Open `reports/demo-evidence-manifest.json` and show that the demo tree, signature database, reports, and benchmark artifacts have SHA-256 hashes.
-12. Run or show `scripts/export_private_repo.py --dry-run` and explain that this is the package checklist for the required private repo.
-13. Point to the safe mock-virus fixture:
-   - path: `nested/level-1/level-2/sentinel-safe-mock-virus.txt`
-   - status: `infected`
-   - evidence: MD5, SHA-256, and hex-pattern match
-14. Point to the heuristic-only file:
-   - path: `suspicious/api-names-fixture.txt`
-   - status: `suspicious`
-   - evidence: suspicious API-name strings
-15. Close by saying the scanner is educational and read-only, not production antivirus.
+7. Open `reports/demo-evidence-manifest.json` and show the demo-tree
+   hashes, report hashes, safety flags, and Rust reproduction commands.
+8. Point out the `bloom-filter` hash pre-check metadata and the exact hash-map
+   verification policy.
+9. Point out the `aho-corasick-byte-automaton` pattern engine and explain that
+   byte-pattern state is preserved across chunks.
+10. Point out the heuristic rules recorded in scan metadata:
+   `api-name-indicator`, `magic-mismatch`, and `high-entropy-sample`.
+11. Open `docs/standards-alignment.md` and explain that EICAR, NIST, OWASP, and
+    MITRE were used as external calibration references.
+12. Point to the generated EICAR safe test file:
+    `nested/level-1/level-2/eicar.com.txt`.
+13. Point to the heuristic-only file:
+    `suspicious/api-names-fixture.txt`.
+14. Close by saying the scanner is educational and read-only, not production
+    antivirus.
 
 ## Final Submission Fields
 
-- Team members: `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen)
-- Private repository URL: not created or moved in this pass, per instruction.
-- Local demo source-baseline commit hash: `2be51a0f003834e58795efcdd4b9224a730b90e7`
+- Team members: `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中
+  (Ching-Chung Chen)
+- LMS submission: `final-report-513559004-313264012.pdf`, submitted for
+  grading on `2026-04-22 17:30`.
+- Private repository URL: not created or moved in this pass; keep the source
+  package ready only if the instructor requests it after grading starts.
+- Pre-commit local source-baseline observed before packaging commits:
+  `fd945f850bca755bc3fe4ae90584c72a5fe443f9`

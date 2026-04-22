@@ -1,4 +1,18 @@
 {
+  "tool": "Sentinel v2 Rust",
+  "manifest_type": "rust-demo-evidence",
+  "generated_at": "2026-04-22T09:34:23Z",
+  "inputs": {
+    "target": {
+      "path": "demo/demo-tree",
+      "kind": "directory"
+    },
+    "signature_database": {
+      "path": "signatures/malware-signatures.json",
+      "sha256": "52b9e887c48fb223db3736e2aba7485868baccc881535b1f886ed1ada2914a3c",
+      "size_bytes": 960
+    }
+  },
   "demo_tree": [
     {
       "path": "clean/image-placeholder.bin",
@@ -16,9 +30,9 @@
       "size_bytes": 1
     },
     {
-      "path": "nested/level-1/level-2/sentinel-safe-mock-virus.txt",
-      "sha256": "569f58884e12c423aa9442c7b220c2814ea0febb66278e61f4b8b0bd35dad122",
-      "size_bytes": 139
+      "path": "nested/level-1/level-2/eicar.com.txt",
+      "sha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+      "size_bytes": 68
     },
     {
       "path": "suspicious/api-names-fixture.txt",
@@ -26,38 +40,13 @@
       "size_bytes": 149
     }
   ],
-  "generated_at": "2026-04-22T07:36:44+00:00",
-  "inputs": {
-    "signature_database": {
-      "path": "signatures/malware-signatures.json",
-      "sha256": "564b6a9f82cbf03089955b16a22a8cdee8e0979ce3be0597e078b80b4eddadfa",
-      "size_bytes": 790
-    },
-    "target": {
-      "kind": "directory",
-      "path": "demo/demo-tree"
-    }
-  },
-  "manifest_type": "demo-evidence",
   "reports": [
     {
       "path": "reports/demo-report.json",
-      "scan_metadata": {
-        "automaton_states": 30,
-        "chunk_size_bytes": 1048576,
-        "hash_filter": "bloom-filter",
-        "hash_filter_bits": 128,
-        "hash_filter_hash_functions": 3,
-        "hash_filter_items": 2,
-        "hash_filter_policy": "precheck-then-exact-hash-map",
-        "heuristic_sample_limit_bytes": 1048576,
-        "pattern_count": 1,
-        "pattern_engine": "aho-corasick-byte-automaton",
-        "symlink_policy": "skip",
-        "traversal_policy": "deterministic-rglob-files"
-      },
-      "sha256": "5b94248bd26fd2a21e2d64282a951c6dcc7c69197b8d1c7f606e93fa6c63a7dd",
-      "size_bytes": 5029,
+      "sha256": "549efb78c2e7e21b61b38a4986c83fbcf3dd4c54b5961e0a68df854a8d6f62d3",
+      "size_bytes": 5286,
+      "tool": "Sentinel v2 Rust",
+      "target": "../demo/demo-tree",
       "summary": {
         "clean": 3,
         "error": 0,
@@ -67,41 +56,49 @@
         "suspicious": 1,
         "total_results": 5
       },
-      "target": "demo/demo-tree",
-      "tool": "Sentinel"
+      "scan_metadata": {
+        "automaton_states": 69,
+        "chunk_size_bytes": 1048576,
+        "hash_filter": "bloom-filter",
+        "hash_filter_bits": 128,
+        "hash_filter_hash_functions": 3,
+        "hash_filter_items": 2,
+        "hash_filter_policy": "precheck-then-exact-hash-map",
+        "heuristic_engine": "bounded-static-byte-sample",
+        "heuristic_rules": [
+          "api-name-indicator",
+          "magic-mismatch",
+          "high-entropy-sample"
+        ],
+        "heuristic_sample_limit_bytes": 1048576,
+        "pattern_count": 1,
+        "pattern_engine": "aho-corasick-byte-automaton",
+        "symlink_policy": "skip",
+        "traversal_policy": "deterministic-rglob-files"
+      }
     },
     {
       "path": "reports/demo-report.md",
-      "sha256": "3d4567c5b2dc733b53676c1f4a013c9be02a2ee8390353cd57a967d1ec40a4f8",
-      "size_bytes": 1805
-    },
-    {
-      "path": "reports/pattern-benchmark.json",
-      "scan_metadata": {},
-      "sha256": "488a70e5425de705add8c66e28fc1644fe584f0009354cecf30a986ac7bf690d",
-      "size_bytes": 968,
-      "summary": {},
-      "target": null,
-      "tool": "Sentinel"
-    },
-    {
-      "path": "reports/pattern-benchmark.md",
-      "sha256": "7aa8d4dafb6056bc2766f9069b34524939f7914867ef738411a0ff1ad6bf3d61",
-      "size_bytes": 801
+      "sha256": "914d1bd89e05e3dd66a6659f967ef8678e1a781040a5de5cb9041917e74ab5f1",
+      "size_bytes": 1979
     }
   ],
   "reproducibility": {
-    "json_scan_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel scan demo/demo-tree --signatures signatures/malware-signatures.json --report reports/demo-report.json --format json",
-    "markdown_scan_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel scan demo/demo-tree --signatures signatures/malware-signatures.json --report reports/demo-report.md --format markdown",
-    "signature_validation_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m sentinel validate-signatures signatures/malware-signatures.json",
-    "test_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m unittest discover -s python/tests -v"
+    "format_command": "cargo fmt --check",
+    "test_command": "cargo test",
+    "lint_command": "cargo clippy --all-targets -- -D warnings",
+    "signature_validation_command": "cargo run -- validate-signatures --signatures ../signatures/malware-signatures.json",
+    "eicar_preparation_command": "cargo run -- prepare-eicar-demo --target ../demo/demo-tree",
+    "demo_verification_command": "cargo run -- verify-demo --target ../demo/demo-tree --signatures ../signatures/malware-signatures.json",
+    "scan_command": "cargo run -- scan --target ../demo/demo-tree --signatures ../signatures/malware-signatures.json --json ../reports/demo-report.json --markdown ../reports/demo-report.md",
+    "evidence_manifest_command": "cargo run -- write-evidence --target ../demo/demo-tree --signatures ../signatures/malware-signatures.json --report ../reports/demo-report.json --report ../reports/demo-report.md --output ../reports/demo-evidence-manifest.json"
   },
   "safety": {
-    "executes_scanned_files": false,
-    "fixture_note": "Current local demo uses a safe mock-virus marker, not live malware.",
-    "network_actions": false,
     "read_only_scanner": true,
-    "uses_live_malware": false
-  },
-  "tool": "Sentinel"
+    "uses_live_malware": false,
+    "executes_scanned_files": false,
+    "mutates_scanned_files": false,
+    "network_actions": false,
+    "fixture_note": "Current Rust demo uses the official EICAR safe anti-malware test file generated by the Rust prepare-eicar-demo command; no live malware is used."
+  }
 }

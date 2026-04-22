@@ -48,35 +48,72 @@ impl PatternEngine {
         self.nodes.len()
     }
 
+    #[cfg(test)]
     pub fn scan(&self, data: &[u8]) -> Vec<PatternMatch> {
-        let mut state = 0;
-        let mut seen = HashSet::new();
-        let mut matches = Vec::new();
+        let mut scanner = self.stream();
+        scanner.feed(data);
+        scanner.finish()
+    }
 
-        for (position, byte) in data.iter().enumerate() {
-            while state != 0 && !self.nodes[state].transitions.contains_key(byte) {
-                state = self.nodes[state].failure;
-            }
-            state = self.nodes[state].transitions.get(byte).copied().unwrap_or(0);
+    pub fn stream(&self) -> PatternStreamScanner<'_> {
+        PatternStreamScanner {
+            engine: self,
+            state: 0,
+            seen: HashSet::new(),
+            offset: 0,
+            matches: Vec::new(),
+        }
+    }
 
-            for pattern_index in self.nodes[state].outputs.iter().copied() {
-                if !seen.insert(pattern_index) {
-                    continue;
+    fn transition(&self, mut state: usize, byte: u8) -> usize {
+        while state != 0 && !self.nodes[state].transitions.contains_key(&byte) {
+            state = self.nodes[state].failure;
+        }
+        self.nodes[state]
+            .transitions
+            .get(&byte)
+            .copied()
+            .unwrap_or(0)
+    }
+}
+
+pub struct PatternStreamScanner<'a> {
+    engine: &'a PatternEngine,
+    state: usize,
+    seen: HashSet<usize>,
+    offset: usize,
+    matches: Vec<PatternMatch>,
+}
+
+impl PatternStreamScanner<'_> {
+    pub fn feed(&mut self, data: &[u8]) {
+        for (chunk_position, byte) in data.iter().copied().enumerate() {
+            self.state = self.engine.transition(self.state, byte);
+            let absolute_position = self.offset + chunk_position;
+
+            for pattern_index in self.engine.nodes[self.state].outputs.iter().copied() {
+                if self.seen.insert(pattern_index) {
+                    let pattern = &self.engine.patterns[pattern_index];
+                    let offset = absolute_position + 1 - pattern.pattern.len();
+                    self.matches.push(PatternMatch {
+                        signature: pattern.signature.clone(),
+                        matcher: pattern.matcher_type.clone(),
+                        pattern_offset: offset,
+                        pattern_bytes: pattern.pattern.len(),
+                    });
                 }
-                let pattern = &self.patterns[pattern_index];
-                let offset = position + 1 - pattern.pattern.len();
-                matches.push(PatternMatch {
-                    signature: pattern.signature.clone(),
-                    matcher: pattern.matcher_type.clone(),
-                    pattern_offset: offset,
-                    pattern_bytes: pattern.pattern.len(),
-                });
             }
         }
 
-        matches
+        self.offset += data.len();
     }
 
+    pub fn finish(self) -> Vec<PatternMatch> {
+        self.matches
+    }
+}
+
+impl PatternEngine {
     fn build_trie(&mut self) {
         for (pattern_index, pattern) in self.patterns.iter().enumerate() {
             let mut state = 0;
@@ -150,11 +187,33 @@ mod tests {
                 severity: "critical".to_string(),
             },
             matcher_type: "hex_pattern".to_string(),
-            value: "414243".to_string(),
             pattern: b"ABC".to_vec(),
         };
         let engine = PatternEngine::new(vec![pattern]);
         let matches = engine.scan(b"xxABCxx");
+        assert_eq!(matches.len(), 1);
+        assert_eq!(matches[0].pattern_offset, 2);
+    }
+
+    #[test]
+    fn stream_preserves_state_between_chunks() {
+        let pattern = PatternSignatureMatcher {
+            signature: SignatureSummary {
+                id: "sig".to_string(),
+                name: "Signature".to_string(),
+                category: "safe".to_string(),
+                severity: "critical".to_string(),
+            },
+            matcher_type: "hex_pattern".to_string(),
+            pattern: b"ABCDE".to_vec(),
+        };
+        let engine = PatternEngine::new(vec![pattern]);
+        let mut scanner = engine.stream();
+
+        scanner.feed(b"xxAB");
+        scanner.feed(b"CDEyy");
+        let matches = scanner.finish();
+
         assert_eq!(matches.len(), 1);
         assert_eq!(matches[0].pattern_offset, 2);
     }

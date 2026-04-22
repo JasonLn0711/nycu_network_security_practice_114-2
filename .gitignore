@@ -19,6 +19,10 @@ ehthumbs.db
 # Build artifacts (if any)
 build/
 dist/
+target/
+
+# Generated safe antivirus test fixture
+projects/project-i-virus-scanner/demo/demo-tree/**/eicar.com.txt
 
 # LaTeX build artifacts
 *.aux

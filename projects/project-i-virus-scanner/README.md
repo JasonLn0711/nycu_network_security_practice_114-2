@@ -8,22 +8,22 @@
 - Official brief: `project-spec.pdf`
 - Planning locator: `../../../planning-everything-track/data/projects/2026-06-network-security-virus-scanner.md`
 - Current local package: Sentinel `v0.4.0`
-- Status: scanner, tests, demo evidence, report source/PDF, export package, and live-demo script are working locally; team identity is recorded; private repo move is intentionally not performed in this pass.
+- Status: LMS submission uploaded and marked `Submitted for grading`; scanner, tests, demo evidence, report source/PDF, export package, and live-demo script are working locally.
 - Team: `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen)
-- Private repository URL: not created or moved in this pass, per instruction.
-- Local demo source-baseline commit hash: `2be51a0f003834e58795efcdd4b9224a730b90e7`
+- LMS submission: `final-report-513559004-313264012.pdf`, last modified `Wednesday, 22 April 2026, 5:30 PM`; grading status `Not graded`.
+- Private repository URL: not created or moved in this pass; keep source package ready if the instructor requests it after LMS submission.
+- Pre-commit local source-baseline observed before packaging commits: `fd945f850bca755bc3fe4ae90584c72a5fe443f9`
 
 ## Deliverables
 
 | Deliverable | Local state | Source of truth |
 | --- | --- | --- |
-| Source code | Python 3 CLI package under `python/src/sentinel/` | `python/src/sentinel/`, `python/pyproject.toml` |
-| Optional Rust companion | Rust v2 scanner prototype for systems-language comparison | `rust/`, `docs/rust/README.md` |
+| Source code | Rust scanner implementation; builds and tests locally | `rust/`, `docs/rust/README.md` |
 | Signature database | Safe JSON signatures with MD5, SHA-256, and hex-pattern matchers | `signatures/malware-signatures.json` |
-| Report | LaTeX source, compiled PDF, and screenshot-evidence copy | `report/final-report.tex`, `report/final-report.pdf`, `report/final-report-v2.tex`, `report/final-report-v2.pdf` |
-| Demo evidence | Regenerated JSON/Markdown reports, benchmark, and manifest | `reports/`, `demo/demo-transcript.md` |
-| Submission gate | Local release check passes | `scripts/check_release.py` |
-| Private repo export | Curated handoff package and manifest | `scripts/export_private_repo.py`, `dist/sentinel-private-repo/` |
+| Report | Canonical LaTeX source/PDF for the Rust submission | `report/final-report.tex`, `report/final-report.pdf` |
+| Demo evidence | Rust JSON/Markdown scan reports, Rust evidence manifest, and screenshots | `reports/demo-report.*`, `reports/demo-evidence-manifest.json`, `report/evidence-screenshots/` |
+| Submission gate | Rust verification passes | `make rust-verify`, `cargo run -- verify-demo ...` |
+| Private repo export | Curated handoff package and manifest, generated only when needed | `scripts/export_private_repo.py`, `dist/sentinel-private-repo/` |
 | Submission package | Final checklist plus private repo handoff | `report/submission-package.md` |
 
 ## Current Implementation
@@ -37,55 +37,64 @@ Implemented detection and evidence paths:
 - Aho-Corasick byte-pattern matching with streamed chunk state.
 - Heuristic-only suspicious findings for weak signals.
 - JSON and Markdown reports with scan metadata.
-- Safe synthetic pattern benchmark.
-- Evidence manifest with file/report hashes and safety flags.
+- Rust `verify-demo` gate for the expected Project I demo summary.
+- Rust `write-evidence` command for reproducibility hashes and safety flags.
+- Rust `prepare-eicar-demo` command that materializes the official 68-byte
+  EICAR safe anti-malware test file in the nested demo tree before scanning.
 - Private-repository export dry-run and local package builder.
+- Git history preserves the older Python prototype; the live working tree now keeps only the Rust submission path.
 
-Optional companion path:
+Rust implementation path:
 
-- `rust/` mirrors the scanner design in Rust with JSON signatures, MD5/SHA-256 matching, Bloom-filter pre-checks, Aho-Corasick byte-pattern matching, heuristic-only suspicious findings, and JSON/Markdown reports.
-- Rust is not installed on this machine in the current pass, so `rust` is included as source-ready companion work rather than the primary verified submission path.
+- `rust/` implements the scanner design in Rust with JSON signatures, MD5/SHA-256 matching, Bloom-filter pre-checks, Aho-Corasick byte-pattern matching, heuristic-only suspicious findings, and JSON/Markdown reports.
+- The Rust path now builds with `rustc 1.95.0` / `cargo 1.95.0`, passes `cargo fmt --check`, passes `cargo test` with `13` tests, passes `cargo clippy --all-targets -- -D warnings`, matches the demo summary through `cargo run -- verify-demo`, and writes the Rust evidence manifest through `cargo run -- write-evidence`.
+- The Rust heuristic layer includes process-injection API names, executable-magic/file-extension mismatch, and high-entropy byte-sample rules.
 
-Current verified demo result: `5` files scanned, `1` infected safe mock fixture, `1` suspicious heuristic fixture, `3` clean files, `0` skipped files, and `0` errors. The test suite currently has `25` standard-library tests.
+Current verified Rust demo result: `5` files scanned, `1` infected EICAR safe test file, `1` suspicious heuristic fixture, `3` clean files, `0` skipped files, and `0` errors.
 
 ## Commands
 
-Run the full local release gate:
+Run the Rust verification gate:
 
 ```bash
-python3 scripts/check_release.py
+make rust-verify
 ```
 
 Regenerate demo artifacts:
 
 ```bash
-python3 demo/run_demo.py
+make rust-evidence
 ```
 
-Build the private-repo export package:
+Run the Rust checks:
 
 ```bash
-python3 scripts/export_private_repo.py --clean
+make rust-verify
+make rust-test
+make rust-lint
 ```
 
-Run the scanner manually:
+Run the Rust scanner manually:
 
 ```bash
-PYTHONPATH=python/src python3 -m sentinel scan demo/demo-tree \
-  --signatures signatures/malware-signatures.json \
-  --report reports/demo-report.json \
-  --format json
+cd rust
+cargo run -- prepare-eicar-demo --target ../demo/demo-tree
+cargo run -- scan \
+  --target ../demo/demo-tree \
+  --signatures ../signatures/malware-signatures.json \
+  --json ../reports/demo-report.json \
+  --markdown ../reports/demo-report.md
 ```
 
-The scan command returns exit code `1` when the safe mock-virus fixture is detected. That is expected for the demo.
+The scan command returns exit code `1` when the generated EICAR safe test file
+is detected. That is expected for the demo.
 
 ## File Routing
 
 | Need | File |
 | --- | --- |
 | Requirement coverage | `docs/requirements-traceability.md` |
-| Architecture and data structures | `docs/python/technical-design.md` |
-| Optional Rust companion notes | `docs/rust/README.md` |
+| Rust architecture and data structures | `docs/rust/README.md` |
 | Demo runbook | `demo/runbook.md` |
 | Terminal/live-demo transcript | `demo/demo-transcript.md` |
 | External standards notes | `docs/standards-alignment.md` |
@@ -97,7 +106,11 @@ The scan command returns exit code `1` when the safe mock-virus fixture is detec
 
 ## Final Submission State
 
-- Private GitHub/GitLab move: not performed in this pass by instruction.
-- Literal EICAR: not required for the current final demo; use the safe mock fixture plus EICAR reference hashes unless the instructor explicitly requires literal EICAR later.
+- LMS submission: completed on `2026-04-22 17:30`, status `Submitted for grading`, file `final-report-513559004-313264012.pdf`, submitted `46 days 6 hours` early.
+- Private GitHub/GitLab move: not performed in this pass; treat as a follow-up only if the instructor requests source URL verification after grading starts.
+- EICAR demo: required for the final demo. The literal EICAR file is generated
+  by the Rust `prepare-eicar-demo` command at demo time, scanned by Sentinel,
+  and excluded from Git/private-repo export to avoid antivirus quarantine and
+  repository hygiene problems.
 - Demo format: live-demo script/runbook prepared; short video not recorded in this pass.
-- Export verification: `dist/sentinel-private-repo/` passed no-install verification with `PYTHONPATH=python/src`; editable install was blocked on this machine because `/usr/bin/python3` has no `pip` or `ensurepip`.
+- Export verification: run `make private-export` when the handoff package is needed. The generated `dist/` folder is ignored and not part of the canonical course archive.

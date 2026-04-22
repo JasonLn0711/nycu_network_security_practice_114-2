@@ -5,8 +5,12 @@ use crate::scanner::{FileResult, Report, SignatureMatch};
 
 pub fn write_json_report(report: &Report, path: &Path) -> Result<(), String> {
     if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)
-            .map_err(|err| format!("could not create report directory {}: {err}", parent.display()))?;
+        fs::create_dir_all(parent).map_err(|err| {
+            format!(
+                "could not create report directory {}: {err}",
+                parent.display()
+            )
+        })?;
     }
     let text = serde_json::to_string_pretty(report)
         .map_err(|err| format!("could not serialize JSON report: {err}"))?;
@@ -16,8 +20,12 @@ pub fn write_json_report(report: &Report, path: &Path) -> Result<(), String> {
 
 pub fn write_markdown_report(report: &Report, path: &Path) -> Result<(), String> {
     if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)
-            .map_err(|err| format!("could not create report directory {}: {err}", parent.display()))?;
+        fs::create_dir_all(parent).map_err(|err| {
+            format!(
+                "could not create report directory {}: {err}",
+                parent.display()
+            )
+        })?;
     }
     fs::write(path, render_markdown_report(report))
         .map_err(|err| format!("could not write Markdown report {}: {err}", path.display()))
@@ -41,16 +49,47 @@ fn render_markdown_report(report: &Report) -> String {
         "## Scan Engine".to_string(),
         String::new(),
         format!("- Hash pre-check: `{}`", report.scan_metadata.hash_filter),
-        format!("- Hash filter items: `{}`", report.scan_metadata.hash_filter_items),
-        format!("- Hash filter bits: `{}`", report.scan_metadata.hash_filter_bits),
+        format!(
+            "- Hash filter items: `{}`",
+            report.scan_metadata.hash_filter_items
+        ),
+        format!(
+            "- Hash filter bits: `{}`",
+            report.scan_metadata.hash_filter_bits
+        ),
         format!(
             "- Hash filter policy: `{}`",
             report.scan_metadata.hash_filter_policy
         ),
-        format!("- Pattern engine: `{}`", report.scan_metadata.pattern_engine),
+        format!(
+            "- Pattern engine: `{}`",
+            report.scan_metadata.pattern_engine
+        ),
         format!("- Pattern count: `{}`", report.scan_metadata.pattern_count),
-        format!("- Automaton states: `{}`", report.scan_metadata.automaton_states),
-        format!("- Symlink policy: `{}`", report.scan_metadata.symlink_policy),
+        format!(
+            "- Automaton states: `{}`",
+            report.scan_metadata.automaton_states
+        ),
+        format!(
+            "- Chunk size bytes: `{}`",
+            report.scan_metadata.chunk_size_bytes
+        ),
+        format!(
+            "- Heuristic sample limit bytes: `{}`",
+            report.scan_metadata.heuristic_sample_limit_bytes
+        ),
+        format!(
+            "- Heuristic engine: `{}`",
+            md(&report.scan_metadata.heuristic_engine)
+        ),
+        format!(
+            "- Heuristic rules: `{}`",
+            md(&report.scan_metadata.heuristic_rules.join(", "))
+        ),
+        format!(
+            "- Symlink policy: `{}`",
+            report.scan_metadata.symlink_policy
+        ),
         String::new(),
         "## Summary".to_string(),
         String::new(),

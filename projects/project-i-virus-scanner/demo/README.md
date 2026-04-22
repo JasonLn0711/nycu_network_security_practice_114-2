@@ -4,7 +4,14 @@ This folder contains safe local demo fixtures for the Network Security Project I
 
 Use `runbook.md` for the live-demo sequence and `demo-transcript.md` for the current observed command output.
 
-The current mock-virus file is not real malware and does not use the literal EICAR string.
-It exists so the scanner can demonstrate signature matching without storing a file that might be flagged by host antivirus tooling.
+The official EICAR safe anti-malware test file is generated at demo time by the
+Rust command below:
 
-If the instructor requires the exact EICAR test file in the final demo, create it only inside the private submission/demo environment and record that decision in the report.
+```bash
+cd ../rust
+cargo run -- prepare-eicar-demo --target ../demo/demo-tree
+```
+
+The generated `demo-tree/nested/level-1/level-2/eicar.com.txt` file is ignored
+by Git and excluded from private-repo export. This lets the live demo satisfy
+the EICAR requirement without storing a literal EICAR file in the repository.

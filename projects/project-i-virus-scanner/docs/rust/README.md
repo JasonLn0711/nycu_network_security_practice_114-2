@@ -1,40 +1,57 @@
-# Rust v2 Companion Implementation
+# Rust v2 Implementation
 
 ## Purpose
 
-`rust/` is a companion implementation of the Project I scanner in Rust. It
-does not replace the Python Sentinel package used by the release gate and final
-report. Its purpose is to show that the same signature-scanner design can be
-implemented in a systems language if the instructor or team later wants that
-direction.
+`rust/` is the Rust implementation path for the Project I scanner. It contains
+the CLI scanner, signature database loader, matching engines, heuristic layer,
+report writers, and Rust verification command used for the course submission.
 
 ## Current Local Status
 
 - Rust source and Cargo metadata have been added under `rust/`.
-- The implementation mirrors the Python scanner's core behavior:
+- `Cargo.lock` is included so the binary has reproducible dependency resolution.
+- The implementation covers the required scanner behavior:
   - JSON signature loading and validation
   - MD5 and SHA-256 matching
   - Bloom-filter pre-check with exact hash-map verification
-  - Aho-Corasick byte-pattern matching
+  - streamed file reading with Aho-Corasick byte-pattern matching across chunk
+    boundaries
   - deterministic directory traversal
   - symbolic-link skipping
-  - heuristic-only suspicious API-name findings
+  - heuristic-only suspicious findings for process-injection API names,
+    executable-magic/file-extension mismatch, and high-entropy byte samples
   - JSON and Markdown report output
-- This machine currently does not have `rustc` or `cargo` installed, so the Rust
-  version was not compiled locally in this pass.
+  - Rust evidence manifest with SHA-256 hashes and safety flags
+  - Rust EICAR demo preparation command for the official 68-byte safe test file
+- Verified locally with `rustc 1.95.0`, `cargo 1.95.0`, `cargo fmt --check`,
+  `cargo test` with `13` tests, `cargo clippy --all-targets -- -D warnings`,
+  signature validation, `prepare-eicar-demo`, `verify-demo`, `write-evidence`,
+  and the EICAR demo scan.
 
 ## Verification Commands
 
 Run these from `rust/` on a Rust-capable machine:
 
 ```bash
+cargo fmt --check
 cargo test
+cargo clippy --all-targets -- -D warnings
 cargo run -- validate-signatures --signatures ../signatures/malware-signatures.json
+cargo run -- prepare-eicar-demo --target ../demo/demo-tree
+cargo run -- verify-demo \
+  --target ../demo/demo-tree \
+  --signatures ../signatures/malware-signatures.json
 cargo run -- scan \
   --target ../demo/demo-tree \
   --signatures ../signatures/malware-signatures.json \
-  --json ../reports/demo-report-rust.json \
-  --markdown ../reports/demo-report-rust.md
+  --json ../reports/demo-report.json \
+  --markdown ../reports/demo-report.md
+cargo run -- write-evidence \
+  --target ../demo/demo-tree \
+  --signatures ../signatures/malware-signatures.json \
+  --report ../reports/demo-report.json \
+  --report ../reports/demo-report.md \
+  --output ../reports/demo-evidence-manifest.json
 ```
 
 Expected scan result:
@@ -43,14 +60,14 @@ Expected scan result:
 scanned=5 infected=1 suspicious=1 clean=3 errors=0
 ```
 
-The scan command returns exit code `1` when the safe mock-virus fixture is found.
-That is expected and matches the Python implementation's demo behavior.
+The scan command returns exit code `1` when the generated EICAR safe test file is found.
+That is expected for this demo.
 
 ## Submission Guidance
 
-Keep Python as the primary submission path unless the instructor explicitly asks
-for C++/Rust or the team chooses to present this as an optional companion
-implementation. The official Project I brief focuses on scanner behavior,
-signature database design, data structures, report, and demo. The Rust version is
-therefore useful as an extra implementation artifact, not a reason to reset the
-already verified Python package.
+Use `report/final-report.pdf` as the canonical final report,
+`reports/demo-report.json` and `reports/demo-report.md` as generated scan
+evidence, and `reports/demo-evidence-manifest.json` as the reproducibility
+manifest. The official Project I brief focuses on scanner behavior, signature
+database design, data structures, report, and demo; these are all covered by
+the Rust path.

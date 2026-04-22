@@ -1,3 +1,0 @@
-Sentinel safe mock-virus fixture.
-This is not malware and is not the literal EICAR string.
-Signature marker: SENTINEL_SAFE_MOCK_VIRUS_2026

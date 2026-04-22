@@ -12,21 +12,21 @@ Use it to decide whether the scanner, report, and demo are complete enough for s
 - Due date tracked in planning: `2026-06-07 23:59`
 - Team members: `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen)
 - Required output: functional signature-based virus scanner, source code, report, and demo
-- Safety input: safe mock virus such as the EICAR test file
+- Safety input: official EICAR safe anti-malware test file generated for the demo
 
 ## Requirement Matrix
 
 | ID | Requirement | Source phase / deliverable | Minimum acceptance check | Evidence to keep |
 | --- | --- | --- | --- | --- |
 | R1 | Scan a directory tree of files. | Phase II - Scanning Engine | CLI accepts a directory, visits nested regular files deterministically, and reports symbolic links as skipped by default. | Demo command, tree listing, test result |
-| R2 | Maintain a structured malware-signature repository. | Phase I - Database Design | JSON or CSV signature database stores at least name, severity, hash type/value, and optional byte or hex pattern. | Signature file, schema note |
-| R3 | Compare scanned files against known signatures. | Phase II - Scanning Engine | Known safe mock-virus fixture is detected by exact hash or pattern match. | Unit test, demo report |
-| R4 | Implement bitwise or byte-pattern comparison. | Phase II - Scanning Engine | Hex or byte patterns are converted to bytes and searched inside target files with stream-safe matching. | Matcher test, report metadata, benchmark evidence |
+| R2 | Maintain a structured malware-signature repository. | Phase I - Database Design | JSON or CSV signature database stores at least name, severity, hash type/value, and byte or hex pattern evidence. | Signature file, schema note |
+| R3 | Compare scanned files against known signatures. | Phase II - Scanning Engine | The generated official EICAR safe test file is detected by exact hash or pattern match. | Unit test, demo report |
+| R4 | Implement bitwise or byte-pattern comparison. | Phase II - Scanning Engine | Hex or byte patterns are converted to bytes and searched inside target files with stream-safe matching. | Matcher test and report metadata |
 | R5 | Add basic heuristic analysis. | Phase III - Heuristic Analysis | At least one documented low-risk heuristic flags a safe suspicious fixture without claiming it is confirmed malware. | Heuristic rules table, sample report row |
 | R6 | Generate a security report. | Phase IV - Reporting and UI | Report includes scanned paths, infected or suspicious paths, threat names, severity, match reason, and timestamps. | JSON or Markdown report artifact |
 | R7 | Host well-documented source code in a private GitHub or GitLab repository. | Deliverable 1 | Private repo exists, README explains setup/run/test, and final source has no live malware or secrets. | Private repo URL, commit hash |
-| R8 | Write a project report explaining data-structure choices. | Deliverable 2 | Report explains the implemented hash map, Bloom filter, and Aho-Corasick structures without production-antivirus claims. | Report source/PDF, screenshot-evidence report copy |
-| R9 | Demonstrate detection inside a complex folder structure. | Deliverable 3 | Demo tree contains clean files plus a hidden safe mock-virus file; scanner finds the mock virus and leaves clean files clean. | Video or live-demo script, demo report |
+| R8 | Write a project report explaining data-structure choices. | Deliverable 2 | Report explains the implemented hash map, Bloom filter, and Aho-Corasick structures without production-antivirus claims. | Report source/PDF |
+| R9 | Demonstrate detection inside a complex folder structure. | Deliverable 3 | Demo tree contains clean files plus a nested generated EICAR safe test file; scanner finds EICAR and leaves clean files clean. | Video or live-demo script, demo report |
 
 ## Minimal Valid Scope
 
@@ -35,10 +35,10 @@ The minimum project that satisfies the brief is:
 1. A command-line scanner.
 2. A JSON or CSV signature database.
 3. Exact hash matching using MD5 and SHA-256.
-4. Byte or hex pattern matching for at least one safe mock-virus signature.
+4. Byte or hex pattern matching for the EICAR safe test signature.
 5. A small heuristic layer that produces suspicious, not infected, findings.
 6. A timestamped report.
-7. A demo folder with clean files and a safe mock-virus fixture.
+7. A demo folder with clean files and a generated EICAR safe test fixture.
 8. A report that explains the data structures honestly.
 
 ## Stretch Scope
@@ -57,7 +57,7 @@ Only add these after the minimum project works:
 - Production antivirus claims.
 - Scanning personal home directories or third-party files for the demo.
 - Network scanning.
-- Exploitation, detonation, or malware reverse engineering beyond safe fixtures.
+- Exploitation, detonation, or malware reverse engineering beyond the EICAR safe test fixture and benign local fixtures.
 - Broad UI polish before the scanner core, report, and demo are complete.
 
 ## Open Decisions
@@ -65,8 +65,8 @@ Only add these after the minimum project works:
 | Decision | Default recommendation | Owner / status |
 | --- | --- | --- |
 | Team members | `513559004` Jsaon Chia-Sheng Lin and `313264012` 陳靖中 (Ching-Chung Chen) are recorded. | Recorded |
-| Language | Python 3 CLI is the current local implementation; team can override only with a strong reason. | Local default chosen; team confirmation open |
-| Private repo location | Do not move the implementation into a private GitHub/GitLab repository in this pass. | Explicitly deferred by instruction |
+| Language | Rust CLI is the current submission implementation. | Rust path chosen |
+| Private repo location | LMS PDF submission is complete; keep the source package ready if the instructor asks for private-repo URL verification later. | Follow-up only if requested |
 | Minimum heuristic | Current local implementation uses safe suspicious API-name indicators as suspicious-only findings. | Implemented locally; final acceptance open |
 
 ## Completion Gate
@@ -79,34 +79,55 @@ Before submission, every row in the requirement matrix should have:
 
 ## Current Local Package Snapshot
 
-As of `2026-04-22`, the local course-repo package covers the scanner core, evidence artifacts, report package, export package, and live-demo script. The private-repo move is intentionally not performed in this pass.
+As of `2026-04-22`, the local course-repo package covers the scanner core, evidence artifacts, report package, export package, and live-demo script. LMS shows `Submitted for grading` with `final-report-513559004-313264012.pdf` uploaded at `2026-04-22 17:30`; private-repo mirroring remains a follow-up only if requested.
 
 | Requirement | Prototype state | Evidence |
 | --- | --- | --- |
-| R1 | Implemented locally | `python/src/sentinel/scanner.py`, `python/tests/test_scanner.py`; symlink-skip tests cover links inside the target tree and a symlink target path |
-| R2 | Implemented locally | `signatures/malware-signatures.json`, `signatures/eicar-reference-signature.json`, `python/tests/test_signatures.py` |
-| R3 | Implemented locally | safe mock-virus fixture detected in `reports/demo-report.json`; Bloom-filter hash pre-check plus exact hash-map verification tested in `python/tests/test_matchers.py`; EICAR reference hashes validated in memory by `python/tests/test_eicar_reference.py` |
-| R4 | Implemented locally | Aho-Corasick `hex_pattern` matcher in `python/src/sentinel/matchers.py`; overlapping-pattern, stream-boundary, and chunk-boundary tests in `python/tests/test_matchers.py`; benchmark artifacts in `reports/pattern-benchmark.*` |
-| R5 | Implemented locally | `python/src/sentinel/heuristics.py`, suspicious fixture in demo report |
-| R6 | Implemented locally | `python/src/sentinel/reporting.py`, scan metadata in reports, `reports/demo-report.json`, `reports/demo-report.md`, `reports/demo-evidence-manifest.json` |
-| R7 | Export package implemented; private remote not moved by instruction | `scripts/export_private_repo.py`, `report/submission-package.md`; private repository URL recorded as not created/moved in this pass |
-| R8 | Drafted and compiled locally | `report/final-report.tex`, `report/final-report.pdf` |
-| R9 | Live-demo script prepared | local demo works, `demo/runbook.md` and `demo/demo-transcript.md` exist, `demo/run_demo.py` regenerates evidence, and `reports/demo-evidence-manifest.json` captures reproducibility evidence |
+| R1 | Implemented locally | `rust/src/scanner.rs`, `cargo test`; symlink-skip policy is recorded in Rust scan metadata |
+| R2 | Implemented locally | `signatures/malware-signatures.json`, `signatures/eicar-reference-signature.json`, `rust/src/signatures.rs` |
+| R3 | Implemented locally | generated EICAR safe test file detected in `reports/demo-report.json`; Bloom-filter hash pre-check plus exact hash-map verification implemented in `rust/src/bloom.rs` and `rust/src/scanner.rs` |
+| R4 | Implemented locally | Aho-Corasick `hex_pattern` matcher in `rust/src/patterns.rs`; stream-boundary tests in `cargo test` |
+| R5 | Implemented locally | heuristic rules in `rust/src/scanner.rs`, suspicious fixture in Rust demo report |
+| R6 | Implemented locally | `rust/src/reporting.rs`, scan metadata in `reports/demo-report.json` and `reports/demo-report.md`, reproducibility evidence in `reports/demo-evidence-manifest.json` |
+| R7 | Export package implemented; private remote follow-up only if requested | `scripts/export_private_repo.py`, `report/submission-package.md`; LMS submission completed without a private URL field shown in the captured submission screen |
+| R8 | Drafted, compiled, and submitted to LMS | `report/final-report.tex`, `report/final-report.pdf`, `report/final-report-513559004-313264012.pdf` |
+| R9 | Live-demo script prepared | local Rust demo works, `demo/runbook.md` and `demo/demo-transcript.md` exist, and `reports/demo-report.*` captures scan evidence |
 
-Optional systems-language companion: `rust/` now mirrors the scanner design in
-Rust with its own Cargo project. It is useful if the instructor asks about C++ or
-Rust, but Python remains the primary verified submission path because this local
-machine does not currently have `rustc` / `cargo` installed.
+The Rust implementation now builds, passes its test suite, passes Clippy, and
+matches the safe demo summary through `cargo run -- verify-demo`.
 
 ## Release-Readiness Gate
 
-`scripts/check_release.py` is the local submission-candidate gate. It checks:
+The Rust submission-candidate gate is:
 
-- `VERSION`, `python/pyproject.toml`, `python/src/sentinel/version.py`, and `sentinel --version` agree on `0.4.0`
-- `docs/standards-alignment.md` and EICAR reference hashes are present
-- the full demo regeneration path passes
-- the JSON report has the expected safe-demo summary, Bloom-filter metadata, Aho-Corasick metadata, and `symlink_policy: skip`
-- the safe synthetic benchmark has equal match sets versus the naive baseline
-- the evidence manifest has safe flags and the expected report artifacts
-- the private-repo export dry-run includes the curated package and excludes the official brief, LaTeX build artifacts, removed draft, and literal EICAR files
-- `report/final-report.pdf` exists and has at least `5` pages when `pdfinfo` is available; the current compiled report is `6` pages
+```bash
+cd rust
+cargo fmt --check
+cargo test
+cargo clippy --all-targets -- -D warnings
+cargo run -- validate-signatures --signatures ../signatures/malware-signatures.json
+cargo run -- verify-demo \
+  --target ../demo/demo-tree \
+  --signatures ../signatures/malware-signatures.json
+cargo run -- scan \
+  --target ../demo/demo-tree \
+  --signatures ../signatures/malware-signatures.json \
+  --json ../reports/demo-report.json \
+  --markdown ../reports/demo-report.md
+cargo run -- write-evidence \
+  --target ../demo/demo-tree \
+  --signatures ../signatures/malware-signatures.json \
+  --report ../reports/demo-report.json \
+  --report ../reports/demo-report.md \
+  --output ../reports/demo-evidence-manifest.json
+```
+
+It checks:
+
+- Rust formatting, tests, and linting
+- JSON signature loading and validation
+- the expected safe-demo summary
+- Bloom-filter metadata, Aho-Corasick metadata, heuristic-rule metadata, and
+  `symlink_policy: skip`
+- generated Rust JSON, Markdown, and evidence-manifest artifacts
+- compiled Rust report PDF under `report/`

@@ -2,29 +2,27 @@
 
 ## Purpose
 
-This file is the single last-mile source for final submission. It combines the
-local package checklist, private-repository handoff, verification commands, and
-safety checks so submission state does not split across multiple notes.
+This file is the last-mile source for the Rust Project I submission. It records
+the package checklist, private-repository handoff status, verification commands,
+and safety checks so the final state is easy to review.
 
 ## Current Local State
 
 | Area | State | Evidence |
 | --- | --- | --- |
-| Scanner package | Working | `python/src/sentinel/`, `python/pyproject.toml` |
+| Scanner package | Working Rust CLI | `rust/`, `rust/Cargo.toml`, `rust/Cargo.lock` |
 | Signature database | Working | `signatures/malware-signatures.json` |
 | Demo tree | Working | `demo/demo-tree/` |
-| Tests | Passing, `25` tests | `python3 demo/run_demo.py` |
+| Tests | Passing, `13` Rust tests | `cd rust && cargo test` |
 | Reports | Generated | `reports/demo-report.json`, `reports/demo-report.md` |
-| Benchmark | Generated | `reports/pattern-benchmark.json`, `reports/pattern-benchmark.md` |
 | Evidence manifest | Generated | `reports/demo-evidence-manifest.json` |
-| Private repo export | Working | `scripts/export_private_repo.py` |
-| Rust companion | Source-ready; compile pending Rust toolchain | `rust/`, `docs/rust/README.md` |
-| Final report | Compiled, `6` pages; screenshot-evidence copy compiled as `12` pages | `report/` |
-| Release gate | Passing locally | `python3 scripts/check_release.py` |
+| Rust verification | Passing | `cd rust && cargo run -- verify-demo ...` |
+| Final report | Compiled canonical Rust report | `report/final-report.pdf` |
+| Demo script | Prepared | `demo/runbook.md`, `demo/demo-transcript.md` |
 
-Latest verified result on `2026-04-22`: Sentinel `v0.4.0`, `5` files scanned,
-`1` infected safe mock fixture, `1` suspicious fixture, `3` clean files,
-`0` skipped files, and `0` errors.
+Latest verified Rust result on `2026-04-22`: Sentinel `v0.4.0`, `5` files
+scanned, `1` infected generated EICAR safe test file, `1` suspicious fixture,
+`3` clean files, `0` skipped files, and `0` errors.
 
 ## Final Project Decisions
 
@@ -32,66 +30,49 @@ Latest verified result on `2026-04-22`: Sentinel `v0.4.0`, `5` files scanned,
 | --- | --- |
 | Project package | Project I - Virus Scanner final submission package. |
 | Team members | `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen) |
-| Private repository URL | Not created or moved in this pass, per instruction. |
-| Local demo source-baseline commit hash | `2be51a0f003834e58795efcdd4b9224a730b90e7` |
-| Literal EICAR decision | Not required for the current final demo. Use the safe mock fixture plus EICAR reference hashes; create literal EICAR only if the instructor explicitly requires it later. |
+| LMS submission status | `Submitted for grading`; grading status `Not graded`. |
+| LMS submission file | `final-report-513559004-313264012.pdf`, last modified `Wednesday, 22 April 2026, 5:30 PM`; submitted `46 days 6 hours` early. |
+| Private repository URL | Not created or moved in this pass; keep source package ready if the instructor requests it after LMS submission. |
+| Pre-commit local source-baseline observed before packaging commits | `fd945f850bca755bc3fe4ae90584c72a5fe443f9` |
+| EICAR demo decision | Required for the final demo. The Rust `prepare-eicar-demo` command generates the official 68-byte EICAR safe anti-malware test file at demo time; the generated file is not committed or exported. |
 | Demo format | Live-demo script/runbook prepared; short video not recorded in this pass. |
 
 ## Verification Record
 
-Verification was run against the curated export package at
-`dist/sentinel-private-repo/` on `2026-04-22`.
-
 | Command | Result |
 | --- | --- |
-| `python3 -m pip install -e python` | Blocked by local environment: `/usr/bin/python3: No module named pip`. |
-| `python3 -m ensurepip --upgrade --user` | Blocked by local environment: `/usr/bin/python3: No module named ensurepip`. |
-| `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s python/tests -v` | Failed before install because `sentinel` was not importable without package installation. |
-| `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python/src python3 -m unittest discover -s python/tests -v` | Passed: `25` tests. |
-| `python3 demo/run_demo.py` | Passed; regenerated reports, benchmark, and evidence manifest. |
-| `python3 scripts/check_release.py` | Passed for Sentinel `0.4.0`. |
-| `PYTHONPATH=python/src python3 -m sentinel validate-signatures signatures/malware-signatures.json` | Passed. |
-| `PYTHONPATH=python/src python3 scripts/benchmark_patterns.py` | Passed. |
+| `cd rust && cargo fmt --check` | Passed. |
+| `cd rust && cargo test` | Passed: `13` tests. |
+| `cd rust && cargo clippy --all-targets -- -D warnings` | Passed. |
+| `cd rust && cargo run -- validate-signatures --signatures ../signatures/malware-signatures.json` | Passed with schema `1.0`, `1` signature, `2` hash matchers, and `1` pattern. |
+| `cd rust && cargo run -- verify-demo --target ../demo/demo-tree --signatures ../signatures/malware-signatures.json` | Passed with summary `scanned=5 infected=1 suspicious=1 clean=3 skipped=0 errors=0`. |
+| `cd rust && cargo run -- scan --target ../demo/demo-tree --signatures ../signatures/malware-signatures.json --json ../reports/demo-report.json --markdown ../reports/demo-report.md` | Passed with expected detection exit code `1` and regenerated Rust reports. |
+| `cd rust && cargo run -- write-evidence --target ../demo/demo-tree --signatures ../signatures/malware-signatures.json --report ../reports/demo-report.json --report ../reports/demo-report.md --output ../reports/demo-evidence-manifest.json` | Passed; regenerated the Rust evidence manifest. |
+| `cd report && latexmk -pdf -interaction=nonstopmode -halt-on-error final-report.tex` | Passed; compiled `report/final-report.pdf`. |
 
-Interpretation: the export package verifies correctly in no-install mode. The
-editable-install command still needs a Python environment with `pip` available.
+## Private Repository Handoff
 
-## Private Repository Export
-
-The official brief requires well-documented source code in a private GitHub or
-GitLab repository. This pass intentionally does not move the implementation into
-a private repository. Build the curated local handoff package first:
-
-```bash
-python3 scripts/export_private_repo.py --clean
-```
-
-The export writes:
-
-- `dist/sentinel-private-repo/`
-- `dist/sentinel-private-repo-manifest.json`
-
-Copy the contents of `dist/sentinel-private-repo/` into the private repository
-root. The manifest records file hashes and safety boundaries. It intentionally
-excludes the official project PDF, LaTeX build artifacts, removed drafts, and
-literal EICAR files.
-
-## Exported Contents
+The LMS submission is complete with the compiled report PDF. The official brief
+also mentions well-documented source code in a private GitHub or GitLab
+repository, so keep this Rust source package ready if the instructor requests
+source URL verification after grading starts. For handoff, include these Rust
+submission artifacts:
 
 | Path | Purpose |
 | --- | --- |
-| `README.md` | Reviewer entrypoint |
-| `python/`, `VERSION`, `CHANGELOG.md`, `Makefile` | Python package metadata, tests, and release controls |
-| `python/src/sentinel/` | Scanner implementation |
-| `python/tests/` | Standard-library test suite |
-| `signatures/` | Safe mock-virus signatures and EICAR reference hashes |
-| `demo/` | Demo tree, runbook, transcript, and runner |
-| `reports/` | Generated demo, benchmark, and evidence artifacts |
-| `docs/` | Traceability, technical design, and standards notes |
-| `rust/` | Optional Rust companion scanner implementation |
-| `scripts/` | Benchmark, release-check, and export commands |
-| `report/final-report.tex`, `report/final-report.pdf` | Final report source and PDF |
-| `report/submission-package.md` | This final submission note |
+| `README.md` | Reviewer entrypoint. |
+| `rust/` | Rust scanner implementation and Cargo lockfile. |
+| `signatures/` | EICAR demo signatures and EICAR reference hashes. |
+| `demo/` | Demo tree, runbook, and transcript. |
+| `reports/demo-report.json` | Machine-readable Rust scan evidence. |
+| `reports/demo-report.md` | Instructor-friendly Rust scan evidence. |
+| `reports/demo-evidence-manifest.json` | Rust-generated hashes, safety flags, and reproduction commands. |
+| `docs/rust/README.md` | Rust architecture and verification notes. |
+| `docs/requirements-traceability.md` | Mapping from official requirements to artifacts. |
+| `docs/standards-alignment.md` | Safety and standards calibration. |
+| `report/final-report.tex`, `report/final-report.pdf` | Canonical report source and PDF. |
+| `report/evidence-screenshots/` | Rust command, validation, scan, report, and package screenshots. |
+| `report/submission-package.md` | This final submission note. |
 
 Keep `project-spec.pdf` in the course repo unless the team is explicitly allowed
 to store official handouts in the private repository.
@@ -101,17 +82,26 @@ to store official handouts in the private repository.
 From the private repository root:
 
 ```bash
-python3 -m pip install -e python
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s python/tests -v
-python3 demo/run_demo.py
-python3 scripts/check_release.py
-```
-
-Optional smoke checks:
-
-```bash
-sentinel validate-signatures signatures/malware-signatures.json
-PYTHONPATH=python/src python3 scripts/benchmark_patterns.py
+cd rust
+cargo fmt --check
+cargo test
+cargo clippy --all-targets -- -D warnings
+cargo run -- validate-signatures --signatures ../signatures/malware-signatures.json
+cargo run -- prepare-eicar-demo --target ../demo/demo-tree
+cargo run -- verify-demo \
+  --target ../demo/demo-tree \
+  --signatures ../signatures/malware-signatures.json
+cargo run -- scan \
+  --target ../demo/demo-tree \
+  --signatures ../signatures/malware-signatures.json \
+  --json ../reports/demo-report.json \
+  --markdown ../reports/demo-report.md
+cargo run -- write-evidence \
+  --target ../demo/demo-tree \
+  --signatures ../signatures/malware-signatures.json \
+  --report ../reports/demo-report.json \
+  --report ../reports/demo-report.md \
+  --output ../reports/demo-evidence-manifest.json
 ```
 
 Expected demo summary:
@@ -120,46 +110,46 @@ Expected demo summary:
 scanned=5 infected=1 suspicious=1 clean=3 errors=0
 ```
 
-The scan command returns exit code `1` when the safe mock-virus fixture is
-detected. That is expected behavior for this demo.
-
-## Fields To Fill
-
-- Private repository URL: not created or moved in this pass, per instruction.
-- Local demo source-baseline commit hash: `2be51a0f003834e58795efcdd4b9224a730b90e7`
-- Team members: `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen)
-- Project package: Project I - Virus Scanner final submission package.
-- Whether the final demo must use the literal EICAR test file: no for the current final demo; use safe mock fixture plus EICAR reference hashes unless the instructor explicitly requires literal EICAR later.
+The scan command returns exit code `1` when the generated EICAR safe test file
+is detected. That is expected behavior for this demo.
 
 ## Final Checklist
 
 - [x] Confirm Project I package identity and team members.
 - [x] Confirm team members.
-- [ ] Create or choose the required private GitHub/GitLab repository. Not performed in this pass by instruction.
-- [x] Run `python3 scripts/export_private_repo.py --clean`.
-- [ ] Mirror the export package into the private repository. Not performed in this pass by instruction.
-- [x] Record private repository URL in `README.md`.
+- [x] Upload `final-report-513559004-313264012.pdf` to LMS.
+- [x] Confirm LMS status is `Submitted for grading`.
+- [ ] Create or choose the private GitHub/GitLab repository only if the
+  instructor requests source URL verification after LMS submission.
+- [ ] Mirror the Rust submission artifacts into the private repository only if
+  requested after LMS submission.
+- [x] Record private repository URL state in `README.md`.
 - [x] Record final commit hash used for the demo.
-- [x] Run the private-repository verification commands. Editable install was blocked by missing `pip`; no-install verification passed with `PYTHONPATH=python/src`.
-- [x] Confirm whether the final demo must use literal EICAR.
-- [x] If EICAR is required, create it only in the controlled final demo environment. Current decision: not required unless instructor overrides.
-- [x] Recompile `report/final-report.pdf` after final team/repo/EICAR decisions.
-- [x] Record a short demo video or finalize the live-demo script.
-- [x] Ensure the final report, demo transcript, generated reports, evidence manifest, private repo URL, and final commit hash all agree.
+- [x] Run Rust formatting, tests, linting, signature validation, demo
+  verification, demo scan, and Rust evidence-manifest generation.
+- [x] Confirm whether the final demo must use EICAR.
+- [x] Generate the EICAR safe test file with Rust at demo time and exclude the
+  generated literal file from Git/private-repo export.
+- [x] Recompile the Rust report.
+- [x] Finalize the live-demo script.
+- [x] Ensure the Rust report, demo transcript, generated Rust reports, private
+  repo URL state, and final commit hash all agree.
 
 ## Safety Check
 
-- [ ] No live malware is stored in the repository.
-- [ ] The scanner does not execute scanned files.
-- [ ] The scanner does not delete, quarantine, upload, or mutate scanned files.
-- [ ] Symbolic links remain skipped by default unless the team deliberately changes and documents the policy.
-- [ ] The demo target is `demo/demo-tree/`, not a personal home directory.
-- [ ] The final report clearly states the mock-virus and EICAR-reference limitations.
-- [ ] The benchmark is described as safe synthetic evidence, not production antivirus performance.
-- [ ] The evidence manifest was regenerated after the final demo reports.
+- [x] No live malware is stored in the repository.
+- [x] The scanner does not execute scanned files.
+- [x] The scanner does not delete, quarantine, upload, or mutate scanned files.
+- [x] Symbolic links remain skipped by default unless the team deliberately
+  changes and documents the policy.
+- [x] The demo target is `demo/demo-tree/`, not a personal home directory.
+- [x] The final report clearly states that the demo generates and detects the
+  official EICAR safe test file without using live malware.
+- [x] The report is described as safe educational evidence, not production
+  antivirus performance.
 
 ## Cut Rule
 
-If time is short, keep the CLI scanner, signature database, JSON/Markdown report,
-demo tree, final report, export package, and release gate. Cut UI polish and
-extra heuristics first.
+If time is short, keep the Rust CLI scanner, signature database, JSON/Markdown
+Rust report, demo tree, final report, and Cargo verification gate. Cut UI polish
+and extra heuristics first.

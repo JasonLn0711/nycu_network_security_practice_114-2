@@ -22,20 +22,18 @@ EXPORT_PATHS = (
     "README.md",
     "docs",
     "rust",
-    "python",
     "signatures/malware-signatures.json",
     "signatures/eicar-reference-signature.json",
     "demo",
     "reports/demo-report.json",
     "reports/demo-report.md",
-    "reports/pattern-benchmark.json",
-    "reports/pattern-benchmark.md",
     "reports/demo-evidence-manifest.json",
-    "scripts",
+    "reports/README.md",
+    "scripts/check_release.py",
+    "scripts/export_private_repo.py",
+    "report/README.md",
     "report/final-report.tex",
     "report/final-report.pdf",
-    "report/final-report-v2.tex",
-    "report/final-report-v2.pdf",
     "report/evidence-screenshots",
     "report/submission-package.md",
 )
@@ -47,14 +45,22 @@ EXCLUDED_SUFFIXES = (
     ".log",
     ".out",
     ".pyc",
+    ".synctex.gz",
 )
 EXCLUDED_DIRS = {"__pycache__", ".pytest_cache", ".mypy_cache", "dist", "build", "target"}
-EXCLUDED_NAMES = {"project-spec.pdf", "report-draft.md", ".DS_Store", "Thumbs.db", ".gitkeep"}
+EXCLUDED_NAMES = {
+    "project-spec.pdf",
+    "report-draft.md",
+    "eicar.com.txt",
+    ".DS_Store",
+    "Thumbs.db",
+    ".gitkeep",
+}
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Export the Sentinel project files that should be mirrored into the private submission repo."
+        description="Export the Rust Sentinel files that should be mirrored into the private submission repo."
     )
     parser.add_argument(
         "--output",
@@ -126,9 +132,8 @@ def _selected_files() -> list[Path]:
             continue
         if path.is_dir():
             files.extend(_iter_directory_files(path))
-        else:
-            if _is_allowed_file(path):
-                files.append(path)
+        elif _is_allowed_file(path):
+            files.append(path)
 
     if missing:
         joined = ", ".join(missing)
@@ -160,23 +165,19 @@ def _is_allowed_file(path: Path) -> bool:
 
 def _assert_export_boundaries(files: list[Path]) -> None:
     relative_paths = {path.relative_to(PROJECT_ROOT).as_posix() for path in files}
-    forbidden = {
-        "project-spec.pdf",
-        "report/report-draft.md",
-        "report/private-repo-handoff.md",
-        "report/submission-checklist.md",
-        "report/final-report.aux",
-        "report/final-report.fdb_latexmk",
-        "report/final-report.fls",
-        "report/final-report.log",
-        "report/final-report.out",
-        "report/final-report-v2.aux",
-        "report/final-report-v2.fdb_latexmk",
-        "report/final-report-v2.fls",
-        "report/final-report-v2.log",
-        "report/final-report-v2.out",
-    }
-    leaked = sorted(relative_paths & forbidden)
+    forbidden_prefixes = ("python/", "docs/python/")
+    forbidden_suffixes = EXCLUDED_SUFFIXES
+    forbidden_names = {"project-spec.pdf"}
+
+    leaked = sorted(
+        path
+        for path in relative_paths
+        if path in forbidden_names
+        or path.startswith(forbidden_prefixes)
+        or path.endswith(forbidden_suffixes)
+        or "/target/" in path
+        or path.startswith("dist/")
+    )
     if leaked:
         raise AssertionError(f"forbidden export paths selected: {', '.join(leaked)}")
 
@@ -194,15 +195,14 @@ def _build_manifest(files: list[Path], output: Path) -> dict[str, Any]:
         "safety": {
             "excludes_project_spec_pdf": True,
             "excludes_latex_build_artifacts": True,
+            "excludes_legacy_python_path": True,
             "excludes_live_malware": True,
             "literal_eicar_file_stored": False,
         },
         "next_steps": [
             "Create or choose the private GitHub/GitLab repository.",
             "Copy the export package contents into the private repository root.",
-            "Run python3 -m pip install -e python.",
-            "Run python3 scripts/check_release.py.",
-            "If using the optional Rust companion implementation, install Rust and run cargo test from rust/.",
+            "Run make release-check.",
             "Record the private repository URL and final commit hash.",
         ],
         "files": entries,

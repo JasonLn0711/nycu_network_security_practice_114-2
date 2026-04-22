@@ -18,14 +18,12 @@ pub struct SignatureSummary {
 pub struct HashSignatureMatcher {
     pub signature: SignatureSummary,
     pub matcher_type: String,
-    pub value: String,
 }
 
 #[derive(Debug, Clone)]
 pub struct PatternSignatureMatcher {
     pub signature: SignatureSummary,
     pub matcher_type: String,
-    pub value: String,
     pub pattern: Vec<u8>,
 }
 
@@ -72,8 +70,12 @@ impl SignatureDatabase {
 }
 
 pub fn load_signature_database(path: &Path) -> Result<SignatureDatabase, String> {
-    let text = fs::read_to_string(path)
-        .map_err(|err| format!("could not read signature database {}: {err}", path.display()))?;
+    let text = fs::read_to_string(path).map_err(|err| {
+        format!(
+            "could not read signature database {}: {err}",
+            path.display()
+        )
+    })?;
     let raw: RawDatabase = serde_json::from_str(&text)
         .map_err(|err| format!("invalid signature database JSON {}: {err}", path.display()))?;
     parse_signature_database(raw)
@@ -90,7 +92,10 @@ fn parse_signature_database(raw: RawDatabase) -> Result<SignatureDatabase, Strin
     let mut seen_ids = HashSet::new();
     let mut signatures = Vec::new();
     let mut hash_index: HashMap<String, HashMap<String, Vec<HashSignatureMatcher>>> =
-        HashMap::from([("md5".to_string(), HashMap::new()), ("sha256".to_string(), HashMap::new())]);
+        HashMap::from([
+            ("md5".to_string(), HashMap::new()),
+            ("sha256".to_string(), HashMap::new()),
+        ]);
     let mut patterns = Vec::new();
     let mut bloom_keys = Vec::new();
 
@@ -118,7 +123,6 @@ fn parse_signature_database(raw: RawDatabase) -> Result<SignatureDatabase, Strin
                         .push(HashSignatureMatcher {
                             signature: summary.clone(),
                             matcher_type: matcher_type.clone(),
-                            value: value.clone(),
                         });
                     bloom_keys.push(format!("{matcher_type}:{value}"));
                 }
@@ -130,7 +134,6 @@ fn parse_signature_database(raw: RawDatabase) -> Result<SignatureDatabase, Strin
                     patterns.push(PatternSignatureMatcher {
                         signature: summary.clone(),
                         matcher_type,
-                        value: compact,
                         pattern,
                     });
                 }
@@ -172,7 +175,10 @@ fn validate_signature(raw: &RawSignature, seen_ids: &mut HashSet<String>) -> Res
         raw.severity.trim().to_lowercase().as_str(),
         "info" | "low" | "medium" | "high" | "critical"
     ) {
-        return Err(format!("{} has invalid severity {}", signature_id, raw.severity));
+        return Err(format!(
+            "{} has invalid severity {}",
+            signature_id, raw.severity
+        ));
     }
     if raw.matchers.is_empty() {
         return Err(format!("{signature_id} requires at least one matcher"));
@@ -195,7 +201,7 @@ fn validate_hash(signature_id: &str, matcher_type: &str, value: &str) -> Result<
 }
 
 fn validate_hex_pattern(signature_id: &str, value: &str) -> Result<(), String> {
-    if value.len() < 4 || value.len() % 2 != 0 || !is_hex(value) {
+    if value.len() < 4 || !value.len().is_multiple_of(2) || !is_hex(value) {
         return Err(format!(
             "{signature_id} hex_pattern must be even-length hex with at least 2 bytes"
         ));
