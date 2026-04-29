@@ -8,7 +8,7 @@ Use this folder for project briefs, provided lab bundles, implementation notes, 
 
 | Project | Due | Canonical folder | Current objective | Status |
 | --- | --- | --- | --- | --- |
-| Project I - Virus Scanner | `2026-06-07 23:59` | `project-i-virus-scanner/` | Build a functional signature-based virus scanner with source code, report, and demo. | LMS PDF submitted for grading on `2026-04-22 17:30`; Rust `v0.4.0` package/report/demo evidence preserved |
+| Project I - Virus Scanner | `2026-06-07 23:59` | `project-i-virus-scanner/` | Build a functional signature-based virus scanner with source code, report, and demo. | LMS PDF submitted for grading on `2026-04-22 17:30`; Rust `v0.4.0` package/report/demo evidence preserved; product continuation split to `../../sentinel-virus-scanner/` |
 | Project II - Autonomous APT Agent | `2026-06-07 23:59` | `project-ii-apt-agent/` | Prepare an external-container grading artifact with runnable `/exploit` and `/triage` paths. | Relationship to Project I unclear |
 
 ## Routing Rule
@@ -21,6 +21,7 @@ Use this folder for project briefs, provided lab bundles, implementation notes, 
 | Weekly and daily next actions | No | Yes |
 | Capacity tradeoffs and cut rules | No | Yes |
 | Distilled reusable concepts | Promote only when useful | `data/knowledge/` |
+| Productized continuation | No, link only | Status / capacity locator only |
 
 ## Active Ambiguity
 
@@ -29,3 +30,11 @@ Both saved project briefs currently point to the same course and the same deadli
 ## Safety Boundary
 
 Project work must stay inside the provided course lab, local test files, or explicit safe demo inputs. Do not aim project code, exploit logic, scanner tests, or backdoor behavior at real systems, personal files, third-party networks, or live malware.
+
+## Product Continuation
+
+Project I is frozen here as a submitted course artifact. Future product work for
+the scanner lives in `../../sentinel-virus-scanner/` under the Sentinel product
+family prefix. Keep official course PDFs, LMS status, grading notes, and
+submission evidence in this course repo; keep product roadmap, target audience,
+and product implementation evolution in the product repo.

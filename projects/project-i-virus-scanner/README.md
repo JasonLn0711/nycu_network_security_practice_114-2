@@ -7,12 +7,34 @@
 - Due: `2026-06-07 23:59`
 - Official brief: `project-spec.pdf`
 - Planning locator: `../../../planning-everything-track/data/projects/2026-06-network-security-virus-scanner.md`
+- Product continuation: `../../../sentinel-virus-scanner/`
 - Current local package: Sentinel `v0.4.0`
 - Status: LMS submission uploaded and marked `Submitted for grading`; scanner, tests, demo evidence, report source/PDF, export package, and live-demo script are working locally.
 - Team: `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen)
 - LMS submission: `final-report-513559004-313264012.pdf`, last modified `Wednesday, 22 April 2026, 5:30 PM`; grading status `Not graded`.
 - Private repository URL: not created or moved in this pass; keep source package ready if the instructor requests it after LMS submission.
 - Pre-commit local source-baseline observed before packaging commits: `fd945f850bca755bc3fe4ae90584c72a5fe443f9`
+
+## Product Continuation Boundary
+
+This folder remains the submitted course archive. Productization continues in
+`../../../sentinel-virus-scanner/` under the Sentinel product-family prefix.
+
+Keep here:
+
+- official project brief
+- final report source and PDFs
+- LMS/submission evidence
+- grading-follow-up records
+- course-specific demo/report evidence
+
+Keep in the product repo:
+
+- product README and roadmap
+- target-audience notes
+- product safety boundary
+- future CLI/package/release work
+- implementation changes that are not needed for course grading
 
 ## Deliverables
 

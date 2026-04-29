@@ -68,7 +68,7 @@ misc/        Temporary parking only when no better folder fits
 
 | Project | Start Here | Current note |
 | --- | --- | --- |
-| Project I - Virus Scanner | `projects/project-i-virus-scanner/` | Build a signature-based scanner with source code, report, and demo. |
+| Project I - Virus Scanner | `projects/project-i-virus-scanner/` | Submitted course archive for the signature-based scanner; product continuation lives in `../sentinel-virus-scanner/`. |
 | Project II - Autonomous APT Agent | `projects/project-ii-apt-agent/` | Prepare the external-container `/exploit` and `/triage` grading artifact. |
 
 The planning repository should track schedule, capacity, and next actions. This course repository owns the project briefs, lab bundles, implementation notes, report assets, and demo evidence.
