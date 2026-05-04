@@ -1,0 +1,28 @@
+==================================================
+  TAINT ANALYSIS WITH TRITON
+==================================================
+  Source: user_input @ 0x404040
+  Sink:   output_buf @ 0x4040e0
+  Track length: 16 bytes
+==================================================
+
+[TAINTED] byte 0 at 0x4040e0
+[TAINTED] byte 1 at 0x4040e1
+[TAINTED] byte 2 at 0x4040e2
+[TAINTED] byte 3 at 0x4040e3
+[TAINTED] byte 4 at 0x4040e4
+[TAINTED] byte 5 at 0x4040e5
+[TAINTED] byte 6 at 0x4040e6
+[TAINTED] byte 7 at 0x4040e7
+[TAINTED] byte 8 at 0x4040e8
+[TAINTED] byte 9 at 0x4040e9
+[TAINTED] byte 10 at 0x4040ea
+[TAINTED] byte 11 at 0x4040eb
+[TAINTED] byte 12 at 0x4040ec
+[TAINTED] byte 13 at 0x4040ed
+[TAINTED] byte 14 at 0x4040ee
+[TAINTED] byte 15 at 0x4040ef
+
+Result: 16 / 16 bytes tainted at sink
+
+Done.

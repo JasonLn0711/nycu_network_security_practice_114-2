@@ -1,0 +1,129 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\title{HW3 Taint Analysis Report}
+\author{Jason Chia-Sheng Lin\\Student ID: 513559004}
+\date{May 2026}
+
+\begin{document}
+\maketitle
+
+\section*{Run Summary}
+
+The completed analyzer emulates the provided \texttt{vuln} binary with Triton,
+marks the first 16 bytes of \texttt{user\_input} as tainted, propagates taint
+through the implemented \texttt{strncpy} hook, and checks the first 16 bytes of
+\texttt{output\_buf}. The observed result in \texttt{output.txt} is:
+
+\begin{lstlisting}
+Result: 16 / 16 bytes tainted at sink
+\end{lstlisting}
+
+This means every tracked byte that started from the attacker-controlled source
+reached the sink.
+
+\section*{Question 1: Taint Propagation Path}
+
+The program's data path has five stages:
+
+\begin{lstlisting}
+user_input -> process_data() -> processed -> strncpy -> output_buf
+\end{lstlisting}
+
+The array \texttt{user\_input} is the taint source, so the analyzer marks its
+first 16 bytes as attacker-controlled before emulation starts. During
+\texttt{process\_data()}, each byte of \texttt{processed} is computed from the
+corresponding byte of \texttt{user\_input}:
+
+\begin{lstlisting}
+processed[i] = user_input[i] ^ 0x42;
+\end{lstlisting}
+
+The XOR operation changes the concrete byte value, but the result still depends
+directly on attacker-controlled input. XOR with a constant is a deterministic
+transformation, not a validation or sanitization step. If an attacker controls
+\texttt{user\_input[i]}, then the attacker also influences
+\texttt{processed[i]}, even though the byte value is transformed. For that
+reason, taint should propagate from \texttt{user\_input[i]} to
+\texttt{processed[i]}.
+
+After \texttt{process\_data()}, \texttt{copy\_to\_output()} calls
+\texttt{strncpy(output\_buf, processed, 16)}. This copies the transformed bytes
+from \texttt{processed} into \texttt{output\_buf}. Because those source bytes are
+tainted, the corresponding sink bytes in \texttt{output\_buf} should also be
+tainted. The final output confirms that all 16 tracked sink bytes are tainted.
+
+\section*{Question 2: Why the \texttt{strncpy} Hook Propagates Taint Manually}
+
+Triton automatically propagates taint through instructions that it emulates.
+However, this assignment does not load or emulate the real libc implementation
+of \texttt{strncpy}. Instead, the script redirects that library call to a Python
+hook. The hook changes Triton's concrete memory state directly, outside the
+normal emulated instruction stream.
+
+Because of that boundary, the hook must copy both the concrete byte value and
+the taint state for each byte. In my implementation, each \texttt{src + i} byte
+is read, written to \texttt{dest + i}, and then the destination byte is tainted
+or untainted to match the source byte.
+
+If the hook copied only concrete bytes and did not copy taint, the analyzer
+would produce a false negative. The program would still move attacker-controlled
+data into \texttt{output\_buf}, but Triton would not know that the Python hook
+preserved the data dependency. The sink could incorrectly appear clean.
+
+\section*{Question 3: Real-World Vulnerability Scenario}
+
+A common real-world scenario is SQL injection in a web application. The taint
+source could be an HTTP request parameter such as \texttt{name} or
+\texttt{user\_id}. The application might URL-decode the parameter, trim
+whitespace, concatenate it into a SQL string, and then pass the final string to
+a database execution function.
+
+In this case, the taint sink is the database query execution call, such as
+\texttt{execute(query)}. The expected propagation path is:
+
+\begin{lstlisting}
+HTTP request parameter -> parsing/decoding -> string concatenation -> SQL query -> execute()
+\end{lstlisting}
+
+Dynamic taint analysis can help by showing whether attacker-controlled bytes
+from the request reach the query execution sink without being safely handled. If
+tainted bytes are present in SQL syntax positions, such as operators, quotes, or
+conditions, the result is a strong signal that the code needs parameterized
+queries or stricter input handling. Taint analysis does not by itself prove
+every exploit, but it points reviewers to dangerous source-to-sink flows.
+
+\section*{Question 4: Limitations and Complementary Techniques}
+
+First, dynamic taint analysis only observes paths that actually execute. If a
+test input does not reach a vulnerable branch, the analyzer may miss a real
+problem. Fuzzing, unit tests with security assertions, and symbolic execution
+can improve path coverage by generating more inputs and exercising more control
+flow.
+
+Second, runtime overhead and environment complexity can be high. Instruction
+emulation, taint metadata, and library hooks can make analysis slower than
+normal execution, and missing hooks can create false negatives or inaccurate
+results. Static analysis, code review, and focused integration tests can help
+cover library behavior and larger application structure without emulating every
+instruction.
+
+Third, implicit flows are difficult. Data may influence control decisions rather
+than being copied directly, such as a tainted condition choosing which clean
+constant to write. Basic byte-level taint tracking can miss or over-approximate
+these cases. Complementary manual review and policy-aware static analysis are
+useful for deciding whether such control dependencies matter for the security
+property being checked.
+
+\end{document}
