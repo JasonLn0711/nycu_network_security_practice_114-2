@@ -45,7 +45,22 @@ def hook_strncpy(ctx):
     #   ctx.taintMemory, ctx.untaintMemory
     #
     # =============================================================
-    pass
+    dest = ctx.getConcreteRegisterValue(ctx.registers.rdi)
+    src  = ctx.getConcreteRegisterValue(ctx.registers.rsi)
+    size = ctx.getConcreteRegisterValue(ctx.registers.rdx)
+
+    for i in range(size):
+        src_addr = src + i
+        dest_addr = dest + i
+        byte = ctx.getConcreteMemoryValue(src_addr)
+
+        ctx.setConcreteMemoryValue(dest_addr, byte)
+        if ctx.isMemoryTainted(src_addr):
+            ctx.taintMemory(dest_addr)
+        else:
+            ctx.untaintMemory(dest_addr)
+
+    return dest
 
 def hook_printf(ctx):
     """Simulates printf (simplified)."""
@@ -116,6 +131,8 @@ def emulate(ctx, pc, source_addr, sink_addr, track_length):
     # ===== TODO 2: Mark taint source (10 pts) =====
     # Mark 'track_length' bytes starting from 'source_addr' as tainted.
     # ==============================================
+    for i in range(track_length):
+        ctx.taintMemory(source_addr + i)
 
     count = 0
     while pc:
@@ -143,6 +160,16 @@ def emulate(ctx, pc, source_addr, sink_addr, track_length):
     # and print the total count of tainted bytes.
 
     # =============================================
+    tainted_count = 0
+    for i in range(track_length):
+        addr = sink_addr + i
+        if ctx.isMemoryTainted(addr):
+            print(f"[TAINTED] byte {i} at 0x{addr:x}")
+            tainted_count += 1
+        else:
+            print(f"[CLEAN] byte {i} at 0x{addr:x}")
+
+    print(f"\nResult: {tainted_count} / {track_length} bytes tainted at sink")
 
 # ============================================================
 # Main
