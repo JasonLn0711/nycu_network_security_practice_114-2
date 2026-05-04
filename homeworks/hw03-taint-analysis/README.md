@@ -13,6 +13,13 @@
 - Status: intake archived; local environment verified; implementation not started
 - Submission file target: `513559004_taint_hw.zip`
 - Planning/project locator from the course repo root: `../planning-everything-track/data/projects/2026-05-network-security-hw3-taint-analysis.md`
+- Detailed execution plan: `work-plan.md`
+
+## Ownership Boundary
+
+- This folder is the canonical home for HW3 planning, implementation notes, report evidence, and submission packaging.
+- The planning repo should keep only deadline, capacity, current status, and locator links for this homework.
+- If the plan changes, update `work-plan.md` here first, then refresh only the lightweight planning locator if needed.
 
 ## What This Project Must Prove
 
@@ -93,7 +100,7 @@ By Friday `2026-05-08`, the project is done if:
 
 ## Next Action
 
-Implement TODO 1 and TODO 2 in `solution/taint_analysis.py`, then rerun with:
+Follow Gate 1 and Gate 2 in `work-plan.md`: implement TODO 1 and TODO 2 in `solution/taint_analysis.py`, then rerun with:
 
 ```sh
 ../.venv/bin/python taint_analysis.py
