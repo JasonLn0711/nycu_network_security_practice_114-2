@@ -10,7 +10,7 @@
 - Opened: `2026-05-01 00:00`
 - Due: `2026-05-20 23:59`
 - Internal finish target: Friday `2026-05-08`
-- Status: intake archived; local environment verified; implementation not started
+- Status: ready to upload; analyzer, output evidence, report PDF, and submission zip are built
 - Submission file target: `513559004_taint_hw.zip`
 - Planning/project locator from the course repo root: `../planning-everything-track/data/projects/2026-05-network-security-hw3-taint-analysis.md`
 - Detailed execution plan: `work-plan.md`
@@ -41,8 +41,9 @@ The final submission must prove:
 | `starter/taint_analysis.py` | Original starter script with TODOs | tracked source asset |
 | `starter/vuln.c` | Original target C program | tracked source asset |
 | `work-plan.md` | Friday-finish execution plan and report outline | tracked |
-| `report/` | Report notes, draft, and final PDF when produced | tracked for source and final submission PDF |
-| `solution/` | Modified script, compiled-run output, and submission staging once implementation begins | tracked for allowed homework deliverables |
+| `requirements-traceability.md` | Virus-scanner-style acceptance matrix for HW3 | tracked |
+| `report/` | Report source, final PDF, and submission package notes | tracked for source and final submission PDF |
+| `solution/` | Modified script, compiled-run output, copied report PDF, and final submission zip | tracked for allowed homework deliverables |
 
 ## Required Commands
 
@@ -100,10 +101,18 @@ By Friday `2026-05-08`, the project is done if:
 
 ## Next Action
 
-Follow Gate 1 and Gate 2 in `work-plan.md`: implement TODO 1 and TODO 2 in `solution/taint_analysis.py`, then rerun with:
+Upload `solution/513559004_taint_hw.zip` to the LMS after one final human
+sanity check of `report/report.pdf`.
+
+The final local verification command is:
 
 ```sh
-../.venv/bin/python taint_analysis.py
+cd /home/jnln3799/every_on_git_ubuntu/nycu_network_security_practice_114-2/homeworks/hw03-taint-analysis/solution
+unzip -l 513559004_taint_hw.zip
 ```
 
-Baseline check on `2026-05-04`: Triton and LIEF import successfully in `.venv/`, `solution/vuln.c` compiles, and the untouched starter script runs but prints no sink taint report yet because TODO 3 is still empty.
+Completion check on `2026-05-04`: Triton and LIEF import successfully in
+`.venv/`, `solution/vuln.c` compiles, `solution/taint_analysis.py` reports
+`Result: 16 / 16 bytes tainted at sink`, `report/report.pdf` compiles, and
+`solution/513559004_taint_hw.zip` contains exactly `taint_analysis.py`,
+`output.txt`, and `report.pdf`.

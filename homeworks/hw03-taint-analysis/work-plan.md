@@ -10,6 +10,41 @@
 - Official due date: `2026-05-20 23:59`.
 - Internal finish target: Friday `2026-05-08`.
 
+## Capacity Verdict
+
+verdict: `fit`
+
+why: HW3 was small enough to finish inside the available near-term coursework
+capacity, and the local package is now complete. The remaining work is not a
+technical block; it is LMS upload plus receipt capture.
+
+recommendations:
+
+- Upload `solution/513559004_taint_hw.zip` to LMS.
+- Confirm the LMS-displayed filename is exactly `513559004_taint_hw.zip`.
+- Capture LMS receipt/status in `report/submission-package.md` and keep any
+  optional screenshots outside the submission zip.
+
+## Ready-To-Upload State
+
+Upload file:
+
+```text
+homeworks/hw03-taint-analysis/solution/513559004_taint_hw.zip
+```
+
+SHA-256:
+
+```text
+3c2d94836794fe08d39dcf319c0c602af58fed6a7ffa5dcbf2504a507a120910
+```
+
+The zip has exactly the three files required by the spec:
+
+- `taint_analysis.py`
+- `output.txt`
+- `report.pdf`
+
 ## Ownership Boundary
 
 - This file is the canonical detailed plan for HW3.
@@ -30,21 +65,24 @@
 - Working files are staged in `solution/`.
 - Local `.venv/` imports Triton and LIEF successfully.
 - `solution/vuln.c` compiles into the ignored `solution/vuln` binary.
-- Untouched starter run prints the assignment header and `Done.`, which means the remaining blocker is implementation, not environment setup.
-- Next technical gate: complete TODO 1 and TODO 2 before trying to make the report look final.
+- `solution/taint_analysis.py` implements all three TODO sections.
+- `solution/output.txt` was regenerated from a fresh run and shows `Result: 16 / 16 bytes tainted at sink`.
+- `report/report.pdf` compiles from `report/report.tex` and answers the four assigned report questions.
+- `solution/513559004_taint_hw.zip` contains exactly the three required files.
+- Next technical gate: upload the ready zip to LMS after a final human sanity check of the PDF.
 
 ## Implementation Checklist
 
 - [x] Copy `starter/taint_analysis.py` and `starter/vuln.c` into `solution/`.
 - [x] Verify Linux dependency path: `gcc`, `triton-library`, and `lief`.
 - [x] Compile `vuln.c` with `gcc -o vuln vuln.c -no-pie -fno-stack-protector -fcf-protection=none`.
-- [ ] TODO 1: implement `hook_strncpy(dest, src, n)` byte copying plus taint propagation.
-- [ ] TODO 2: mark `track_length` bytes starting at `source_addr` as tainted.
-- [ ] TODO 3: inspect `track_length` bytes at `sink_addr`, print each byte status, and print total tainted count.
-- [ ] Run `python3 taint_analysis.py`.
-- [ ] Save fresh terminal output to `solution/output.txt`.
-- [ ] Confirm output says `Result: 16 / 16 bytes tainted at sink`.
-- [ ] Package final zip with only the three required files.
+- [x] TODO 1: implement `hook_strncpy(dest, src, n)` byte copying plus taint propagation.
+- [x] TODO 2: mark `track_length` bytes starting at `source_addr` as tainted.
+- [x] TODO 3: inspect `track_length` bytes at `sink_addr`, print each byte status, and print total tainted count.
+- [x] Run `python3 taint_analysis.py`.
+- [x] Save fresh terminal output to `solution/output.txt`.
+- [x] Confirm output says `Result: 16 / 16 bytes tainted at sink`.
+- [x] Package final zip with only the three required files.
 
 ## Detailed Execution Plan
 
@@ -270,11 +308,11 @@ Use short blocks because this week also contains CYBERSEC delivery.
 
 | Block | Target | Max time | Stop condition |
 | --- | --- | ---: | --- |
-| A | TODO 1 + TODO 2 | 45-60 min | source marking and hook logic written |
-| B | first full run | 25-40 min | either `16 / 16` or one exact error captured |
-| C | TODO 3 + `output.txt` | 45 min | byte-status report and clean output captured |
-| D | report draft | 60-75 min | four questions answered from observed output |
-| E | package check | 20 min | zip inspected and ready |
+| A | TODO 1 + TODO 2 | 45-60 min | done |
+| B | first full run | 25-40 min | done: `16 / 16` observed |
+| C | TODO 3 + `output.txt` | 45 min | done |
+| D | report draft | 60-75 min | done |
+| E | package check | 20 min | done: zip inspected and ready |
 
 If Block A fails, do not start the report. Capture the error and resume at the code gate.
 If Block D runs long, keep the answers direct and grader-facing; polish is secondary.
