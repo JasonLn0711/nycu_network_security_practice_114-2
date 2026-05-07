@@ -42,6 +42,7 @@ The final submission must prove:
 | `starter/vuln.c` | Original target C program | tracked source asset |
 | `work-plan.md` | Friday-finish execution plan and report outline | tracked |
 | `requirements-traceability.md` | Virus-scanner-style acceptance matrix for HW3 | tracked |
+| `grading-rubric.md` | Strict quantitative rubric and current self-assessment | tracked |
 | `report/` | Report source, final PDF, and submission package notes | tracked for source and final submission PDF |
 | `solution/` | Modified script, compiled-run output, copied report PDF, and final submission zip | tracked for allowed homework deliverables |
 
