@@ -12,6 +12,11 @@
 - Official brief: `project-brief.pdf`
 - Provided lab bundle: `lab.zip`
 - Lab manifest: `lab-manifest.md`
+- Presentation scheduling evidence: `../report-scheduling/`
+- Presentation intent: Jason presents this or the other non-Project-I item while 陳靖中 presents Project I.
+- Booked presentation slot: `2026-05-27 10:50`
+- Travel logistics: paid HSR tickets are booked for same-day Taipei <-> Hsinchu
+  travel; see `../report-scheduling/2026-05-12-hsr-booking-2026-05-27.md`.
 
 ## Objective
 

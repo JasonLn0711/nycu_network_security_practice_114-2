@@ -4,18 +4,32 @@ This folder is the canonical course-repo home for Network Security term-project 
 
 Use this folder for project briefs, provided lab bundles, implementation notes, report assets, demo evidence, and submission packaging. Keep daily scheduling, capacity decisions, and carry-forward planning in `../../planning-everything-track/`.
 
+## Presentation Scheduling
+
+- Report scheduling archive: `report-scheduling/`
+- Instructor notice captured from E3/Gmail on `2026-05-12`.
+- Confirmed Doodle booking: `2026-05-27 10:50`.
+- Earlier preferred slot from teammate coordination: `2026-05-27 10:40`.
+- Travel logistics: paid HSR student tickets are booked for Taipei `09:11` ->
+  Hsinchu `09:45`, return Hsinchu `14:08` -> Taipei `14:39`.
+- Presentation format: in-class presentation, `10` minutes; Project I / II are separate reports.
+- Presenter split currently recorded:
+  - Project I - Virus Scanner: 陳靖中 presents the already-built Sentinel package.
+  - Project II / other project item: Jason presents, unless the instructor's final registration flow changes the split.
+
 ## Current Project Briefs
 
 | Project | Due | Canonical folder | Current objective | Status |
 | --- | --- | --- | --- | --- |
-| Project I - Virus Scanner | `2026-06-07 23:59` | `project-i-virus-scanner/` | Build a functional signature-based virus scanner with source code, report, and demo. | LMS PDF submitted for grading on `2026-04-22 17:30`; Rust `v0.4.0` package/report/demo evidence preserved; product continuation split to `../../sentinel-virus-scanner/` |
-| Project II - Autonomous APT Agent | `2026-06-07 23:59` | `project-ii-apt-agent/` | Prepare an external-container grading artifact with runnable `/exploit` and `/triage` paths. | Relationship to Project I unclear |
+| Project I - Virus Scanner | `2026-06-07 23:59` | `project-i-virus-scanner/` | Build a functional signature-based virus scanner with source code, report, and demo. | LMS PDF submitted for grading on `2026-04-22 17:30`; Rust `v0.4.0` package/report/demo evidence preserved; 陳靖中 should present Project I; product continuation split to `../../sentinel-virus-scanner/` |
+| Project II - Autonomous APT Agent | `2026-06-07 23:59` | `project-ii-apt-agent/` | Prepare an external-container grading artifact with runnable `/exploit` and `/triage` paths. | Active; Jason should present the other project item; Doodle booked for `2026-05-27 10:50` |
 
 ## Routing Rule
 
 | Material | Keep here | Keep in planning repo |
 | --- | --- | --- |
 | Official project PDFs | Yes | Link only |
+| Instructor presentation notices and teammate coordination | Yes | Status/date link only |
 | Lab bundles and supplied challenge files | Yes | Link only |
 | Source code, scripts, reports, demo assets | Yes | Status link only |
 | Weekly and daily next actions | No | Yes |

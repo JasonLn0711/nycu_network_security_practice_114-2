@@ -12,6 +12,8 @@
 - Status: LMS submission uploaded and marked `Submitted for grading`; scanner, tests, demo evidence, report source/PDF, export package, and live-demo script are working locally.
 - Team: `513559004` Jsaon Chia-Sheng Lin; `313264012` 陳靖中 (Ching-Chung Chen)
 - LMS submission: `final-report-513559004-313264012.pdf`, last modified `Wednesday, 22 April 2026, 5:30 PM`; grading status `Not graded`.
+- Presentation assignment: 陳靖中 should present Project I because Jason built and owns the package and will present the other project item.
+- Presentation scheduling evidence: `../report-scheduling/`
 - Private repository URL: not created or moved in this pass; keep source package ready if the instructor requests it after LMS submission.
 - Pre-commit local source-baseline observed before packaging commits: `fd945f850bca755bc3fe4ae90584c72a5fe443f9`
 
@@ -135,4 +137,5 @@ is detected. That is expected for the demo.
   and excluded from Git/private-repo export to avoid antivirus quarantine and
   repository hygiene problems.
 - Demo format: live-demo script/runbook prepared; short video not recorded in this pass.
+- In-class presentation: booked slot is `2026-05-27 10:50`; Project I presenter should show system function and system features only unless the instructor asks for more.
 - Export verification: run `make private-export` when the handoff package is needed. The generated `dist/` folder is ignored and not part of the canonical course archive.
