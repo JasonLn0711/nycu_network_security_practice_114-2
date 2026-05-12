@@ -22,7 +22,7 @@ Use this folder for project briefs, provided lab bundles, implementation notes, 
 | Project | Due | Canonical folder | Current objective | Status |
 | --- | --- | --- | --- | --- |
 | Project I - Virus Scanner | `2026-06-07 23:59` | `project-i-virus-scanner/` | Build a functional signature-based virus scanner with source code, report, and demo. | LMS PDF submitted for grading on `2026-04-22 17:30`; Rust `v0.4.0` package/report/demo evidence preserved; 陳靖中 should present Project I; product continuation split to `../../sentinel-virus-scanner/` |
-| Project II - Autonomous APT Agent | `2026-06-07 23:59` | `project-ii-apt-agent/` | Prepare an external-container grading artifact with runnable `/exploit` and `/triage` paths. | Active; Jason should present the other project item; Doodle booked for `2026-05-27 10:50` |
+| Project II - Autonomous APT Agent | `2026-06-07 23:59` | `project-ii-apt-agent/` | Prepare an external-container grading artifact with runnable `/exploit` and `/triage` paths. | Active; student-facing docs live in `project-ii-apt-agent/docs/`, local SPEC/SDD/rubric are drafted, and a classroom-safe runnable scaffold lives in `project-ii-apt-agent/project2-agent-scaffold/`; Jason should present the other project item; Doodle booked for `2026-05-27 10:50` |
 
 ## Routing Rule
 

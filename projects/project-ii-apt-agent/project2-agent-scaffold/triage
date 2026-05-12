@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+set -eu
+export PYTHONDONTWRITEBYTECODE=1
+SCRIPT_PATH="$0"
+if command -v readlink >/dev/null 2>&1; then
+  SCRIPT_PATH="$(readlink -f "$0")"
+fi
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$SCRIPT_PATH")" && pwd)"
+cd "$SCRIPT_DIR"
+exec python3 -m src.triage_runner

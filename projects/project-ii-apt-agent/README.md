@@ -81,7 +81,16 @@ Before implementation, confirm:
 
 | Path | Purpose |
 | --- | --- |
+| `docs/SPEC.md` | Student-facing assignment specification, deliverables, FR/NFR, test cases, and grading-readiness guidance |
+| `docs/SDD.md` | Student-facing software design document for the EC workflow, components, state, logs, error handling, and safety |
+| `docs/STUDENT_CHECKLIST.md` | Pre-submission checklist for container, entry points, state/logs, report, and safety |
+| `docs/SAFETY_BOUNDARY.md` | Lab-only safety boundary, forbidden behavior, safe wording, and self-checks |
+| `project2-agent-scaffold/` | Runnable classroom-safe EC scaffold with `/exploit`, `/triage`, mock grader, tests, state/logging, and docs; does not implement a real exploit |
+| `project2-agent-scaffold/docs/CORE_WORKFLOW.md` | Step-by-step explanation of the safe round-based feedback loop: action, execution, evidence, triage, state update, next action |
+| `SPEC.md` | Local audit-oriented requirements, deliverables, functional requirements, acceptance tests, and grading interface |
+| `SDD.md` | Local audit-oriented software design document for the EC workflow, state files, logging, safety guards, and grader design |
 | `project-brief.pdf` | Official project brief |
 | `lab.zip` | Provided lab bundle |
 | `lab-manifest.md` | Plain-text inventory of the lab bundle |
+| `grading-rubric-phase-ii.md` | Strict local 100-point grading spec for Project II / Phase II Medium |
 | `README.md` | Local routing, objective, deliverables, and guardrails |
