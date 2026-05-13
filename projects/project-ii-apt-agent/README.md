@@ -32,6 +32,9 @@ Current course-repo state:
 - protocol scaffolding, state/logging, static checks, readiness report, clean
   source packaging, and optional image export are implemented under
   `project2-agent-scaffold/`;
+- machine-handoff state for continuation is compressed in
+  `../../HANDOFF_PHASE2.md`; start there before any new Phase II continuation
+  run so verified facts, dead ends, and theory do not get mixed;
 - the completion audit and traceability matrix explicitly state that official
   Phase II IC-side success has **not** been observed yet;
 - the current honest submission mode is therefore a protocol-ready/partial
@@ -110,9 +113,11 @@ Before implementation, confirm:
 | `project2-agent-scaffold/` | Runnable classroom-safe EC scaffold with `/exploit`, `/triage`, mock grader, tests, state/logging, and docs; does not implement a real exploit |
 | `project2-agent-scaffold/docs/CORE_WORKFLOW.md` | Step-by-step explanation of the safe round-based feedback loop: action, execution, evidence, triage, state update, next action |
 | `project2-agent-scaffold/docs/COMPLETION_AUDIT.md` | Honest completion audit: implemented protocol pieces, current Phase II probe status, and remaining full-credit success evidence gap |
+| `project2-agent-scaffold/docs/PHASE2_SUCCESS_VALIDATION.md` | Latest official-IC validation log for the current Phase II candidate; records observed non-success without fabricating `/shared/success.txt` |
 | `project2-agent-scaffold/docs/REQUIREMENTS_TRACEABILITY.md` | Requirement-by-requirement compliance matrix against the official brief and local rubric |
 | `project2-agent-scaffold/docs/SUBMISSION_GUIDE.md` | Recommended packaging, build, smoke-test, and submission workflow |
 | `project2-agent-scaffold/scripts/build_submission_package.sh` | Builds a clean zip submission package under `project2-agent-scaffold/dist/` while excluding generated runtime state |
+| `../../HANDOFF_PHASE2.md` | Machine handoff for the next Phase II agent: objective, verified facts, important symbols, failed/explored paths, current hypothesis, exact environment, useful commands, and FACT/THEORY separation |
 | `SPEC.md` | Local audit-oriented requirements, deliverables, functional requirements, acceptance tests, and grading interface |
 | `SDD.md` | Local audit-oriented software design document for the EC workflow, state files, logging, safety guards, and grader design |
 | `project-brief.pdf` | Official project brief |

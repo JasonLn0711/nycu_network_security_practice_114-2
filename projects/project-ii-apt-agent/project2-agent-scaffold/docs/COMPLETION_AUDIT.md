@@ -59,6 +59,18 @@ Observed against the local Phase II IC lab:
 Therefore this probe is useful evidence for protocol and control-flow work, but
 it is **not** a final success claim.
 
+
+## 2026-05-13 Final Phase II Validation Pass
+
+A final validation pass was run against the official local Phase II IC. The EC
+probe wrote the intended ret-to-maintenance candidate and IC consumed
+`/shared/exploit_done`, but `/shared/success.txt` did not appear. The result is
+recorded in `docs/PHASE2_SUCCESS_VALIDATION.md`.
+
+The submission therefore remains **not full-credit complete**. The honest final
+state is a protocol-complete scaffold plus an unsuccessful Phase II candidate; no
+EC-side fake success file was created.
+
 ## Remaining Work For A Full-Credit Submission
 
 1. Finish the instructor-approved Phase II candidate-generation logic in

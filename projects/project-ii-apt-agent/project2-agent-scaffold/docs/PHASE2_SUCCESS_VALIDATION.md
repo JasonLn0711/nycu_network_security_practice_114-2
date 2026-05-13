@@ -1,0 +1,95 @@
+# Phase II Success Validation Log
+
+Date: 2026-05-13
+Scope: supplied Project II Phase II IC (`server_2`) running from the official
+local Docker lab bundle.
+
+## Direct Result
+
+**Not full-credit complete yet.** The latest EC candidate still does **not** make
+the official IC create `/shared/success.txt`.
+
+This file is intentionally explicit so a reader who did not see the live debug
+session can tell what was tried, what was observed, and why the submission must
+not claim Phase II success yet.
+
+## Candidate Under Test
+
+The current Phase II probe in `src/phase2_payload.py` writes a byte-exact
+`user_input=` line with:
+
+- a lab-only command-injection-shaped prefix: `'; /backdoor; #`
+- padding to the observed `log_message` saved-return-address offset (`97`
+  bytes of `user_input` value)
+- a non-PIE partial return overwrite to `maintenance_task+5` (`0x401475`)
+
+The candidate keeps the EC protocol correct: it writes `/shared/config.data`,
+then creates `/shared/exploit_done`, and it does not create
+`/shared/success.txt` from the EC.
+
+## Official IC Validation Command
+
+Executed from the scaffold directory with the official Phase II IC already
+running and the lab shared directory mounted:
+
+```sh
+PROJECT2_SHARED_DIR=/tmp/p2lab2/lab/shared \
+  PROJECT2_ENABLE_PHASE2_PROBE=1 \
+  python3 -m src.exploit_runner
+```
+
+Then the runner waited for IC to consume `/shared/exploit_done` and checked the
+shared directory.
+
+## Observed Evidence
+
+Latest observed result:
+
+```text
+success_exists=no
+coredumps=
+server_log_tail= |  |  |  |
+```
+
+Interpretation:
+
+- IC consumed `/shared/exploit_done`.
+- No `/shared/success.txt` appeared.
+- No new coredump appeared for this candidate.
+- The maintenance path appears to run only the empty `echo '' >> /tmp/server.log`
+  form, not the intended `/backdoor` command.
+
+## Debug Findings
+
+A crash probe with a long marker string confirmed the vulnerable return-address
+control point and register state at the end of `log_message`:
+
+```text
+rip = 0x40146f <log_message(char const*)+89>
+rsp = 0x7fffffffec48
+rbp = marker-controlled bytes
+rdi = 0x7ffff7d00710 (_IO_stdfile_1_lock, zero bytes)
+user_input = 0x404340
+```
+
+This explains why simply returning to `maintenance_task+5` is not enough in the
+validated Ubuntu 24.04 IC: by the time `log_message` returns, the `rdi` register
+no longer points at `user_input`; it points at a glibc stdout lock area whose
+bytes are zero. As a result, `maintenance_task` formats and runs an empty echo
+instead of the intended command-injection value.
+
+A bounded sweep over observed instruction-start addresses in `server_2` did not
+find a text-section partial-return target that created `/shared/success.txt`.
+The sweep used the same `'; /backdoor; #` prefix and did not create the success
+file from the EC.
+
+## Current Blocker
+
+The remaining blocker is a Phase II control-flow target that both:
+
+1. survives NX / non-executable stack constraints, and
+2. makes the IC execute `/backdoor` or otherwise legitimately reach the official
+   success condition from IC-side control flow.
+
+Do **not** mark this assignment complete until `/shared/success.txt` is observed
+from the official IC flow. Do **not** create `/shared/success.txt` from `/exploit`.

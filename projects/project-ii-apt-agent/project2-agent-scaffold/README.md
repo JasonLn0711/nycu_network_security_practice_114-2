@@ -218,7 +218,8 @@ PROJECT2_SHARED_DIR=/path/to/lab/shared \
 The current probe is not a success claim. It is a lab-only candidate-generation
 step that keeps the EC protocol honest: it writes `config.data`, signals
 `exploit_done`, and does not fabricate `/shared/success.txt`. See
-`docs/COMPLETION_AUDIT.md` for the current missing full-credit item.
+`docs/COMPLETION_AUDIT.md` and `docs/PHASE2_SUCCESS_VALIDATION.md` for the
+current missing full-credit item and the latest official-IC validation evidence.
 
 ## What Students Must Implement
 
@@ -248,6 +249,7 @@ Before submission, read:
 - `docs/REQUIREMENTS_TRACEABILITY.md`
 - `docs/SUBMISSION_GUIDE.md`
 - `docs/COMPLETION_AUDIT.md`
+- `docs/PHASE2_SUCCESS_VALIDATION.md`
 
 Build a clean source package with:
 

