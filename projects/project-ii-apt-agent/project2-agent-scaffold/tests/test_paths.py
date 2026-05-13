@@ -7,6 +7,8 @@ def test_path_constants_exist():
     assert path_config.SHARED_DIR.name
     assert path_config.CONFIG_PATH.name == "config.data"
     assert path_config.BLOGIC_COPY_PATH.name == "blogic.copy"
+    assert path_config.BLOGIC_FALLBACK_PATH.name == "blogic"
+    assert path_config.resolve_blogic_path().name in {"blogic.copy", "blogic"}
     assert path_config.EXPLOIT_DONE_PATH.name == "exploit_done"
     assert path_config.COREDUMP_DIR.name == "coredump"
     assert path_config.STATE_PATH.name == "triage_state.json"

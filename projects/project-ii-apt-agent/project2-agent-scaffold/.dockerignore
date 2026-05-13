@@ -1,6 +1,9 @@
+.git
+.gitignore
 __pycache__/
 *.py[cod]
 .pytest_cache/
 mock_shared/
-
 dist/
+*.core
+.DS_Store

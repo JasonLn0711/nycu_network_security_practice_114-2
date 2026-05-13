@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import os
 from typing import Any
+
+from .phase2_payload import build_control_flow_probe
 
 
 MAX_PLACEHOLDER_FIELD_LENGTH = 256
@@ -18,6 +21,14 @@ def plan_candidate_config(state: dict[str, Any]) -> dict[str, Any]:
     TODO: Student implements course-lab-specific candidate generation here. Do
     not use this scaffold outside the controlled Docker lab.
     """
+
+    if os.environ.get("PROJECT2_ENABLE_PHASE2_PROBE") == "1":
+        candidate = build_control_flow_probe()
+        return {
+            "strategy_id": candidate.strategy_id,
+            "content_bytes": candidate.content,
+            "input_profile": candidate.input_profile,
+        }
 
     round_number = int(state.get("round", 0))
     next_action = state.get("next_action", {})

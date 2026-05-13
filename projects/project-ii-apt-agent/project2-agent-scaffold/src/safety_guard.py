@@ -44,6 +44,7 @@ def run_safety_checks() -> None:
         path_config.SHARED_DIR,
         path_config.CONFIG_PATH,
         path_config.BLOGIC_COPY_PATH,
+        path_config.BLOGIC_FALLBACK_PATH,
         path_config.EXPLOIT_DONE_PATH,
         path_config.COREDUMP_DIR,
         path_config.STATE_PATH,

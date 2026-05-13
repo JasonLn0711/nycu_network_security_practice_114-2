@@ -18,6 +18,7 @@ class EnvironmentStatus:
     blogic_copy_exists: bool
     coredump_dir_exists: bool
     shared_writable: bool
+    blogic_path: str = ""
 
 
 def check_shared_dir() -> None:
@@ -36,17 +37,21 @@ def check_required_paths_for_exploit() -> EnvironmentStatus:
     missing: list[str] = []
     if not path_config.CONFIG_PATH.exists():
         missing.append(str(path_config.CONFIG_PATH))
-    if not path_config.BLOGIC_COPY_PATH.exists():
-        missing.append(str(path_config.BLOGIC_COPY_PATH))
+    blogic_path = path_config.resolve_blogic_path()
+    if not blogic_path.exists():
+        missing.append(
+            " or ".join(str(path) for path in path_config.BLOGIC_CANDIDATE_PATHS)
+        )
     if missing:
         raise EnvironmentCheckError("missing required exploit path(s): " + ", ".join(missing))
     ensure_coredump_dir()
     return EnvironmentStatus(
         shared_exists=True,
         config_exists=True,
-        blogic_copy_exists=True,
+        blogic_copy_exists=blogic_path.exists(),
         coredump_dir_exists=path_config.COREDUMP_DIR.exists(),
         shared_writable=True,
+        blogic_path=str(blogic_path),
     )
 
 
@@ -56,8 +61,9 @@ def check_required_paths_for_triage() -> EnvironmentStatus:
     return EnvironmentStatus(
         shared_exists=True,
         config_exists=path_config.CONFIG_PATH.exists(),
-        blogic_copy_exists=path_config.BLOGIC_COPY_PATH.exists(),
+        blogic_copy_exists=path_config.resolve_blogic_path().exists(),
         coredump_dir_exists=path_config.COREDUMP_DIR.exists(),
         shared_writable=True,
+        blogic_path=str(path_config.resolve_blogic_path()),
     )
 

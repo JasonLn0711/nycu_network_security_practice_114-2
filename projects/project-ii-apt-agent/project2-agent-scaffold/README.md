@@ -26,7 +26,7 @@ Use this scaffold only inside the controlled course Docker lab or the local
 mock shared directory. Do not use it against real systems, external networks,
 host machines, or third-party targets.
 
-The only candidate config generated here is a safe placeholder:
+By default the candidate config is a safe placeholder:
 
 ```text
 PROJECT2_SAFE_PLACEHOLDER_CONFIG
@@ -34,8 +34,10 @@ round=X
 strategy=safe-placeholder
 ```
 
-The course-lab-specific candidate generation hook is intentionally left as a
-TODO in `src/config_planner.py`.
+For controlled local Phase II lab experiments, `PROJECT2_ENABLE_PHASE2_PROBE=1`
+enables the current byte-exact probe writer. That mode is **not** a completion
+claim: it still requires official IC-side `/backdoor` validation and must not
+fabricate `/shared/success.txt` from the EC.
 
 ## Repository Structure
 
@@ -81,19 +83,21 @@ It:
 
 1. logs start;
 2. runs safety checks;
-3. checks `/shared/config.data` and `/shared/blogic.copy`;
+3. checks `/shared`, existing `config.data`, and the observable `blogic` artifact
+   (`blogic.copy` from the brief or `blogic` from the supplied lab script);
 4. loads `/shared/triage_state.json` if present;
 5. increments the round;
-6. calls the state-driven safe placeholder config planner;
+6. calls the state-driven config planner;
 7. writes `/shared/config.data` through a temp file and rename;
 8. computes a SHA-256 hash;
 9. updates and saves state;
 10. creates `/shared/exploit_done`;
 11. exits with a meaningful status.
 
-It does not contain real exploit logic. The planner demonstrates baseline,
-length-sweep, boundary-search, and stability-check states with safe placeholder
-content only.
+The default planner demonstrates baseline, length-sweep, boundary-search, and
+stability-check states with safe placeholder content. Phase II probe mode writes
+byte-exact lab candidate bytes but is still an unfinished validation step until
+IC-side `/shared/success.txt` is observed.
 
 ## How `/triage` Works
 
@@ -175,24 +179,87 @@ The image exposes:
 The Dockerfile does not install unnecessary packages and does not require
 runtime network access.
 
+
+## Generate A Readiness Report
+
+Before replacing the candidate-generation hook, run a protocol-readiness gate:
+
+```sh
+./scripts/generate_readiness_report.sh
+```
+
+This starts from a clean mock shared directory, runs two safe mock rounds, runs
+static checks, and writes:
+
+```text
+mock_shared/readiness_report.json
+```
+
+The report verifies wrapper executability, required docs/modules, parseable
+state, round logs, external-network safety state, and safe metadata for the
+observable `blogic` artifact. It supports both names seen in the course material:
+`/shared/blogic.copy` from the brief and `/shared/blogic` from the supplied lab
+script. The report is a protocol-readiness check only; it does not claim exploit
+success.
+
+
+## Phase II Probe Mode
+
+The scaffold now supports byte-exact candidate writing for controlled local lab
+experiments. To run the current Phase II control-flow probe against a shared
+volume:
+
+```sh
+PROJECT2_SHARED_DIR=/path/to/lab/shared \
+  PROJECT2_ENABLE_PHASE2_PROBE=1 \
+  ./scripts/run_phase2_probe_against_shared.sh
+```
+
+The current probe is not a success claim. It is a lab-only candidate-generation
+step that keeps the EC protocol honest: it writes `config.data`, signals
+`exploit_done`, and does not fabricate `/shared/success.txt`. See
+`docs/COMPLETION_AUDIT.md` for the current missing full-credit item.
+
 ## What Students Must Implement
 
-Students must replace only the safe candidate-generation hook with
-course-lab-specific logic allowed by the instructor:
+Students must finish or replace the candidate-generation hook with
+instructor-approved course-lab-specific logic:
 
 ```text
 src/config_planner.py
 ```
 
-The scaffold deliberately leaves this TODO:
+The safe default path deliberately keeps this TODO boundary visible:
 
 ```text
 TODO: Student implements course-lab-specific candidate generation here. Do not
 use this scaffold outside the controlled Docker lab.
 ```
 
-Do not add payload details to the docs. Keep reports focused on interfaces,
-state, logs, reproducibility, and lab-only safety.
+Do not add general-purpose exploitation guidance to the docs. Keep reports
+focused on interfaces, state, logs, reproducibility, the lab-only boundary, and
+whether the official IC-side success condition has actually been observed.
+
+
+## Submission Packaging
+
+Before submission, read:
+
+- `docs/REQUIREMENTS_TRACEABILITY.md`
+- `docs/SUBMISSION_GUIDE.md`
+- `docs/COMPLETION_AUDIT.md`
+
+Build a clean source package with:
+
+```sh
+./scripts/build_submission_package.sh
+# Optional if a prebuilt Docker image is required:
+./scripts/build_submission_image.sh
+```
+
+The package helper excludes generated runtime state such as `mock_shared/` and writes a
+zip archive under `dist/`. The image helper writes a gzipped `docker save` tarball
+under `dist/`.
 
 ## Grading Readiness Checklist
 
@@ -206,3 +273,5 @@ state, logs, reproducibility, and lab-only safety.
 - [ ] Logs are written to `/shared/round_log.jsonl`.
 - [ ] No external network dependency exists during grading.
 - [ ] No host, grader, or IC image tampering exists.
+- [ ] Official IC-side `/backdoor` creates `/shared/success.txt` before any
+      full-credit completion claim is made.

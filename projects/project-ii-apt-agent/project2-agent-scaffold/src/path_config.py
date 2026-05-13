@@ -21,9 +21,28 @@ else:
 
 CONFIG_PATH = SHARED_DIR / "config.data"
 BLOGIC_COPY_PATH = SHARED_DIR / "blogic.copy"
+# The brief names /shared/blogic.copy, while the provided lab/docker.sh also
+# places the observable binary at /shared/blogic. Support both to keep the EC
+# protocol robust across instructor harness variants.
+BLOGIC_FALLBACK_PATH = SHARED_DIR / "blogic"
+BLOGIC_CANDIDATE_PATHS = (BLOGIC_COPY_PATH, BLOGIC_FALLBACK_PATH)
 EXPLOIT_DONE_PATH = SHARED_DIR / "exploit_done"
 COREDUMP_DIR = SHARED_DIR / "coredump"
 STATE_PATH = SHARED_DIR / "triage_state.json"
 ROUND_LOG_PATH = SHARED_DIR / "round_log.jsonl"
 AGENT_LOG_PATH = SHARED_DIR / "project2_agent.log"
 
+
+
+def resolve_blogic_path():
+    """Return the first available shared blogic artifact path.
+
+    Prefer /shared/blogic.copy from the project brief, but accept /shared/blogic
+    from the supplied lab script. If neither exists, return the preferred path
+    so callers can produce a stable error message.
+    """
+
+    for candidate in BLOGIC_CANDIDATE_PATHS:
+        if candidate.exists():
+            return candidate
+    return BLOGIC_COPY_PATH
