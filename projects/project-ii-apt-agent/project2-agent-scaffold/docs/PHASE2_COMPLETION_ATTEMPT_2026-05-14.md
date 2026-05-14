@@ -193,3 +193,31 @@ Do not spend more time on these as if they are untested:
 
 The project should remain marked partial until an IC-side `/shared/success.txt`
 is observed.
+
+## Next Agent Direction
+
+The next Codex run should start from `../../../../HANDOFF_PHASE2.md`, not from a
+fresh binary survey.
+
+Immediate start checks:
+
+1. Verify `docker context show` is still `colima-phase2`.
+2. Verify `IC_PHASE2` still has `/runserver.sh` and `/blogic` running.
+3. Verify `/proc/sys/kernel/randomize_va_space` is still `0`.
+4. Verify `/shared/success.txt` is still absent before trying a new candidate.
+5. Re-check `/proc/<blogic-pid>/maps` if using libc or libstdc++ addresses.
+
+Best next direction:
+
+- Focus on argument control or stack pivot feasibility under C-string/NUL-byte
+  constraints.
+- Do not run another broad `.text` sweep unless the prefix set, offset model, or
+  success condition changes.
+- Treat libc/libstdc++ gadget work as useful only after a pivot or first-argument
+  setup is clearly specified.
+
+Stop condition for the next block:
+
+- one candidate path has a clear result, either a new IC-side
+  `/shared/success.txt`, a register/core artifact that explains failure, or a
+  documented reason that the path is infeasible.

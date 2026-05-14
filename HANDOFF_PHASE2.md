@@ -11,6 +11,62 @@ Primary paired validation log:
 Latest deep attempt:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`.
 
+## 0. Start Here - Latest Codex Snapshot
+
+Timestamp: 2026-05-14 08:20 Asia/Taipei.
+
+Current local repo:
+`/Users/iKev/Desktop/02_Projects_and_Code/everything_on_git/nycu_114-2_network_security_practices`
+
+Latest course-repo commit:
+
+```text
+ab319c056925a4f8c946af55f8f4f53e721e4d7d
+projects: record Project II phase2 validation attempt
+```
+
+This commit is already pushed to GitHub remote `main`.
+
+Planning repo sync:
+
+```text
+4ca5194b501baf9dfd6d25eebba95f4a3c296eef
+planning: record Project II phase2 proof gate
+```
+
+That commit records the planning-side status and is also pushed to remote
+`main`.
+
+Current local validation environment:
+
+```text
+docker context: colima-phase2
+Colima profile: phase2
+architecture: x86_64
+runtime: docker
+container: IC_PHASE2
+container image: ic_image
+mount: /Users/iKev/.cache/codex-phase2-complete/lab/shared -> /shared
+processes: /bin/bash /runserver.sh and /blogic are running
+ASLR: 0
+success artifact: /shared/success.txt does not exist
+current /shared/config.data size: 112 bytes
+current /shared/config.data sha256: 1e970e62906ba73deddfef62121ea341cb5bf84d0d85623b561f6a7a6e2d6cd2
+current /shared/coredump/: empty
+```
+
+The current `config.data` is the final tiny sweep-smoke candidate:
+
+```text
+user_input=/backdoor # + padding + low bytes for 0x401475
+```
+
+It is **not** success evidence. It is just the last local smoke-test state after
+the IC loop was restored.
+
+Do not restart with broad binary reconnaissance. Start by checking whether this
+live environment has drifted, then choose one bounded path from section 9.
+
 Evidence standard:
 
 - `FACT` means verified in this handoff pass from local files, Docker state, binary tools, or coredump evidence.
@@ -64,7 +120,7 @@ sweep harness. It did not observe `/shared/success.txt`.
   - Name: `IC_PHASE2`
   - Image: `ic_image`
   - Privileged: `true`
-  - Mount: `/tmp/p2lab2/lab/shared -> /shared`
+  - Latest local mount: `/Users/iKev/.cache/codex-phase2-complete/lab/shared -> /shared`
   - Ubuntu userland: Ubuntu 24.04
   - glibc: `ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39`
   - ASLR: `/proc/sys/kernel/randomize_va_space` is `0`
@@ -116,25 +172,28 @@ sprintf(local_buffer, "[LOG]: %s", user_input)
 
 ### Current Live Shared State
 
-- Treat `/tmp/p2lab2/lab/shared` as volatile runtime state. Re-check before
-  acting; do not assume it still represents the latest official validation
-  attempt.
-- Current live shared directory: `/tmp/p2lab2/lab/shared`
-- Current coredump exists: `/tmp/p2lab2/lab/shared/coredump/blogic-45.core`
+- Treat `/Users/iKev/.cache/codex-phase2-complete/lab/shared` as volatile
+  runtime state. Re-check before acting; do not assume it still represents the
+  latest official validation attempt.
+- Current live shared directory:
+  `/Users/iKev/.cache/codex-phase2-complete/lab/shared`
+- Current coredump directory is empty after the latest smoke validation.
 - Current `/shared/success.txt` does not exist.
-- Current live `config.data` is `214` bytes, SHA-256:
+- Current live `config.data` is `112` bytes, SHA-256:
 
 ```text
-b0b0bc877e24d78818d1d83890576e6e1ab03021dd67b47588b8bff45853859f
+1e970e62906ba73deddfef62121ea341cb5bf84d0d85623b561f6a7a6e2d6cd2
 ```
 
 - Current live `config.data` begins with:
 
 ```text
-user_input=JNCLAWCMD_/backdoor_#_BBBB...
+user_input=/backdoor #AAAA...
 ```
 
-- `triage_state.json` does not match that live `config.data`; it records an earlier `112` byte `phase2-medium-control-flow-probe` candidate. Do not trust `triage_state.json` alone as the latest input source.
+- `triage_state.json` does not necessarily match that live `config.data`; it
+  records an earlier `phase2-medium-control-flow-probe` candidate. Do not trust
+  `triage_state.json` alone as the latest input source.
 - The paired validation log records a later explicit ret-to-maintenance
   validation pass where IC consumed `/shared/exploit_done`, no
   `/shared/success.txt` appeared, and no EC-side fake success file was created.
@@ -272,6 +331,9 @@ Re-check libc base if the container is restarted.
   `projects/project-ii-apt-agent/project2-agent-scaffold/scripts/run_phase2_one_shot_sweep.py`.
   The full run tried `10328` one-shot candidates over `0x401000..0x401a20`
   with four prefixes and found no `/shared/success.txt`.
+- Direct stack shellcode was verified as blocked by NX: execution reached the
+  intended stack address (`rip = 0x7fffffffeb97` in the recorded local run),
+  but the stack was non-executable.
 - Binary gadget search did not find `pop rdi; ret` in `server_2`.
 - libc has `pop rdi; ret` gadgets, but using them requires solving the C-string/NUL-byte and pivot/control constraints.
 
@@ -279,7 +341,6 @@ Re-check libc base if the container is restarted.
 
 These were mentioned in the handoff request as already explored or likely dead-end categories, but this pass did not find local evidence logs for each one:
 
-- direct stack shellcode
 - simple RET smash
 - naive ret2libc chain
 - one_gadget attempts
@@ -317,6 +378,22 @@ Current non-fact:
 
 ## 6. Exact Environment Reproduction
 
+Current macOS / Colima path from the latest Codex pass:
+
+```sh
+colima start --profile phase2 --arch x86_64 --vm-type qemu --cpu 2 --memory 4 --disk 20 --mount-type 9p
+docker context use colima-phase2
+docker ps --format '{{.Names}} {{.Status}}'
+docker inspect IC_PHASE2 --format 'Name={{.Name}} Image={{.Config.Image}} Privileged={{.HostConfig.Privileged}} Mounts={{range .Mounts}}{{.Source}}->{{.Destination}} {{end}}'
+docker exec IC_PHASE2 sh -lc 'ps -eo pid,args | grep -E "(/runserver.sh|/blogic)" | grep -v grep || true; cat /proc/sys/kernel/randomize_va_space; test -e /shared/success.txt && echo success_exists=yes || echo success_exists=no'
+```
+
+The most recent working extraction lives at:
+
+```text
+/Users/iKev/.cache/codex-phase2-complete/lab
+```
+
 From a clean extraction:
 
 ```sh
@@ -331,6 +408,9 @@ docker build -t ic_image IC
 Important notes:
 
 - The zip extracted with host mode `664` in this pass, so `chmod +x docker.sh grader.sh` was needed for direct host execution.
+- The `/tmp/p2lab2` path below is the earlier Linux-style reproduction path.
+  On the current Mac, prefer the Colima cache path above unless rebuilding the
+  environment from scratch is necessary.
 - `docker.sh 2` already runs these inside the container:
 
 ```sh
@@ -466,7 +546,8 @@ PY
 - libc `system` offset is `0x58750`.
 - libc `"/bin/sh"` offset is `0x1cb42f`.
 - Main binary has no byte-scan `pop rdi; ret`.
-- Current live shared state has coredump evidence and no success.
+- Current live shared state has no success; the coredump directory is empty
+  after the latest smoke validation.
 - The ret-to-`maintenance_task+5` candidate did not produce official IC-side
   success in the recorded validation pass.
 
@@ -496,10 +577,35 @@ Avoid repeating previous dead-end explorations.
 
 Recommended immediate next steps:
 
-1. Re-check live container drift with `docker ps`, `/proc/sys/kernel/randomize_va_space`, `/proc/<blogic-pid>/maps`, and current `/shared/config.data`.
+1. Re-check live container drift with `docker ps`,
+   `/proc/sys/kernel/randomize_va_space`, `/proc/<blogic-pid>/maps`, and
+   current `/shared/config.data`.
 2. Keep `/backdoor` untouched and never invoke it manually.
-3. Read `docs/PHASE2_SUCCESS_VALIDATION.md` before trying another candidate.
+3. Read `docs/PHASE2_SUCCESS_VALIDATION.md` and
+   `docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md` before trying another
+   candidate.
 4. Focus on reliable pivot/argument-control that survives `strcpy`/`sprintf`
    NUL-byte constraints; do not repeat direct ret-to-`maintenance_task+5` as if
    untested.
-5. Only after IC-side `/shared/success.txt` appears, update completion evidence and final packaging.
+5. Choose **one** bounded investigation track before running code:
+   - argument-control track: find a return target or short sequence that makes
+     the first argument point at controlled data after the final C++ stream call;
+   - pivot track: find a way to pivot to already-controlled bytes without
+     requiring a normal NUL-bearing ROP chain after the partial return address;
+   - libc/libstdc++ track: search for a gadget or call path that fits the
+     current register/stack state and C-string constraints, then validate it in
+     the IC loop.
+6. Stop the block after one falsifiable result. Record the candidate, exact
+   command, observed registers or artifact state, and whether
+   `/shared/success.txt` appeared.
+7. Only after IC-side `/shared/success.txt` appears, update completion evidence
+   and final packaging.
+
+Recommended first direction:
+
+Start with the argument-control / pivot boundary, not another full `.text`
+sweep. The latest evidence says RIP control is reachable, but the success path
+is blocked because `rdi` is stale and normal appended ROP bytes are unavailable
+after the first NUL-bearing partial return. The next useful work is therefore a
+small proof about whether the current pre-return stack/register state can be
+turned into a controlled first argument or pivot target.
