@@ -24,6 +24,7 @@ The package should include:
 The current honest submission posture is documented in:
 
 - `docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`
+- `docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md`
 - `docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md`
 - `docs/SUBMISSION_SPEC.md`
 - `docs/SUBMISSION_SDD.md`
@@ -139,6 +140,7 @@ Before asking the TA or uploading a partial package, review:
 ```text
 docs/PARTIAL_SUBMISSION_BRIEF.md
 docs/TA_CLARIFICATION_DRAFT.md
+docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md
 docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md
 docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md
 docs/SUBMISSION_SPEC.md

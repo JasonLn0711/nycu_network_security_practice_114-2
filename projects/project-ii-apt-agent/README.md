@@ -130,6 +130,7 @@ Before implementation, confirm:
 | `project2-agent-scaffold/docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md` | Bounded staging follow-up: single-target and caller-stack staging checked, no success, next route narrowed to heap/global-state feasibility |
 | `project2-agent-scaffold/docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md` | Bounded heap/global-state follow-up: forward write reaches heap-adjacent memory but crashes in `sprintf()` before a useful state change |
 | `project2-agent-scaffold/docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md` | Complete current-state analysis: done, not done, and what is required to finish |
+| `project2-agent-scaffold/docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md` | Concrete TA clarification / LMS upload action packet for the current protocol-complete partial posture |
 | `project2-agent-scaffold/docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md` | Detailed next-step runbook for TA clarification, partial upload, Docker image fallback, and bounded full-credit recovery |
 | `project2-agent-scaffold/docs/SUBMISSION_SPEC.md` | Submission-facing SPEC for protocol-complete partial versus full-credit complete states |
 | `project2-agent-scaffold/docs/SUBMISSION_SDD.md` | Submission-facing SDD for EC architecture, evidence design, and packaging |

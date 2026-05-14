@@ -23,7 +23,7 @@ package is honest and auditable.
 | Phase II Medium target: non-PIE, ASLR disabled, NX stack. | `src/phase2_payload.py` uses non-PIE partial text-address probe; Docker image enables probe mode. | Partially implemented | Control-flow probe written; IC-side `/backdoor` success not yet observed. |
 | Score depends on time to execute `/backdoor`. | `docs/COMPLETION_AUDIT.md` records that final success is not observed yet. | Remaining gap | Need official IC `/shared/success.txt` evidence. |
 | Completion evidence is reproducible. | `docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`; `docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md`; `docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md`; `docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md`; `scripts/run_phase2_one_shot_sweep.py`. | Partially implemented | Negative evidence is documented and reproducible; success evidence is still missing. |
-| Partial submission posture is explicit. | `docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`; `docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md`; `docs/SUBMISSION_SPEC.md`; `docs/SUBMISSION_SDD.md`; `docs/PARTIAL_SUBMISSION_BRIEF.md`; `docs/TA_CLARIFICATION_DRAFT.md`; `docs/SUBMISSION_GUIDE.md`. | Implemented | Package can be submitted honestly as protocol-complete partial if full success is not reached before the gate. |
+| Partial submission posture is explicit. | `docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`; `docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md`; `docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md`; `docs/SUBMISSION_SPEC.md`; `docs/SUBMISSION_SDD.md`; `docs/PARTIAL_SUBMISSION_BRIEF.md`; `docs/TA_CLARIFICATION_DRAFT.md`; `docs/SUBMISSION_GUIDE.md`. | Implemented | Package can be submitted honestly as protocol-complete partial if full success is not reached before the gate. |
 | No external network runtime dependency. | Python-only local code; no network calls. | Implemented | Readiness report scans for obvious runtime network tokens. |
 | No grader bypass / fake success. | Code does not write `/shared/success.txt`; docs forbid doing so. | Implemented | Reviewed `src/`; only IC-side `/backdoor` should create success. |
 
@@ -71,6 +71,7 @@ If full completion is not reached before the gate:
 3. Run `./scripts/build_submission_package.sh`.
 4. Review `docs/PARTIAL_SUBMISSION_BRIEF.md`.
 5. Review `docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`,
+   `docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md`,
    `docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md`,
    `docs/SUBMISSION_SPEC.md`, and `docs/SUBMISSION_SDD.md`.
 6. Send or adapt `docs/TA_CLARIFICATION_DRAFT.md` if TA clarification is needed.

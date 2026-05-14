@@ -33,6 +33,7 @@ required = {
     f'{project_name}/docs/REQUIREMENTS_TRACEABILITY.md',
     f'{project_name}/docs/SUBMISSION_GUIDE.md',
     f'{project_name}/docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md',
+    f'{project_name}/docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md',
     f'{project_name}/docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md',
     f'{project_name}/docs/SUBMISSION_SPEC.md',
     f'{project_name}/docs/SUBMISSION_SDD.md',

@@ -51,6 +51,8 @@
       unless `/shared/success.txt` has actually appeared.
 - [ ] `docs/PARTIAL_SUBMISSION_BRIEF.md` is reviewed before any partial upload.
 - [ ] `docs/TA_CLARIFICATION_DRAFT.md` is ready if TA clarification is needed.
+- [ ] `docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md` has been used
+      for the TA message or LMS upload wording.
 - [ ] `docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md` has been used to choose
       the next route.
 - [ ] Negative Phase II evidence is linked rather than hidden.

@@ -68,6 +68,7 @@ project2-agent-scaffold/
 |-- tests/
 `-- docs/
     |-- CORE_WORKFLOW.md
+    |-- PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md
     |-- PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md
     |-- PROJECT_II_ANALYSIS_REPORT_2026-05-14.md
     |-- COMPLETION_AUDIT.md
@@ -263,6 +264,9 @@ The next executable action is tracked in
 `docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md`. Use that runbook to choose
 between TA clarification, partial upload, Docker image fallback, and bounded
 full-credit recovery.
+
+The concrete upload/TA message packet is
+`docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md`.
 
 For a fuller decision-grade view, read
 `docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`,
