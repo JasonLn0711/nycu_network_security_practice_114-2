@@ -35,8 +35,16 @@ Current course-repo state:
 - machine-handoff state for continuation is compressed in
   `../../HANDOFF_PHASE2.md`; start there before any new Phase II continuation
   run so verified facts, dead ends, and theory do not get mixed;
-- the latest deep attempt is recorded in
+- the latest deep sweep/NX attempt is recorded in
   `project2-agent-scaffold/docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`;
+- the latest bounded argument-control attempt is recorded in
+  `project2-agent-scaffold/docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md`;
+- the latest staging-boundary attempt is recorded in
+  `project2-agent-scaffold/docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md`;
+- the latest heap/global-state attempt is recorded in
+  `project2-agent-scaffold/docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md`;
+- the next executable action is now defined in
+  `project2-agent-scaffold/docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md`;
 - the completion audit, success-validation log, and traceability matrix
   explicitly state that official Phase II IC-side success has **not** been
   observed yet;
@@ -118,6 +126,15 @@ Before implementation, confirm:
 | `project2-agent-scaffold/docs/COMPLETION_AUDIT.md` | Honest completion audit: implemented protocol pieces, current Phase II probe status, and remaining full-credit success evidence gap |
 | `project2-agent-scaffold/docs/PHASE2_SUCCESS_VALIDATION.md` | Latest official-IC validation log for the current Phase II candidate; records observed non-success without fabricating `/shared/success.txt` |
 | `project2-agent-scaffold/docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md` | Deep follow-up validation pass: x86_64 Colima IC setup, baseline non-success, NX shellcode check, one-shot text sweep, and current boundary |
+| `project2-agent-scaffold/docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md` | Bounded argument-control follow-up: maintenance-body entry reached, no success, saved-RBP/C-string constraint documented |
+| `project2-agent-scaffold/docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md` | Bounded staging follow-up: single-target and caller-stack staging checked, no success, next route narrowed to heap/global-state feasibility |
+| `project2-agent-scaffold/docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md` | Bounded heap/global-state follow-up: forward write reaches heap-adjacent memory but crashes in `sprintf()` before a useful state change |
+| `project2-agent-scaffold/docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md` | Complete current-state analysis: done, not done, and what is required to finish |
+| `project2-agent-scaffold/docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md` | Detailed next-step runbook for TA clarification, partial upload, Docker image fallback, and bounded full-credit recovery |
+| `project2-agent-scaffold/docs/SUBMISSION_SPEC.md` | Submission-facing SPEC for protocol-complete partial versus full-credit complete states |
+| `project2-agent-scaffold/docs/SUBMISSION_SDD.md` | Submission-facing SDD for EC architecture, evidence design, and packaging |
+| `project2-agent-scaffold/docs/PARTIAL_SUBMISSION_BRIEF.md` | Honest protocol-complete partial submission brief and final gate checklist |
+| `project2-agent-scaffold/docs/TA_CLARIFICATION_DRAFT.md` | Short TA-facing clarification draft for source/image format and partial-status handling |
 | `project2-agent-scaffold/docs/REQUIREMENTS_TRACEABILITY.md` | Requirement-by-requirement compliance matrix against the official brief and local rubric |
 | `project2-agent-scaffold/docs/SUBMISSION_GUIDE.md` | Recommended packaging, build, smoke-test, and submission workflow |
 | `project2-agent-scaffold/scripts/build_submission_package.sh` | Builds a clean zip submission package under `project2-agent-scaffold/dist/` while excluding generated runtime state |

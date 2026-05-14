@@ -22,7 +22,8 @@ package is honest and auditable.
 | `/triage` reads coredump feedback. | `src/coredump_scanner.py`, `src/coredump_analyzer.py`, `src/triage_runner.py`. | Implemented | Mock grader creates fake coredumps and state updates. |
 | Phase II Medium target: non-PIE, ASLR disabled, NX stack. | `src/phase2_payload.py` uses non-PIE partial text-address probe; Docker image enables probe mode. | Partially implemented | Control-flow probe written; IC-side `/backdoor` success not yet observed. |
 | Score depends on time to execute `/backdoor`. | `docs/COMPLETION_AUDIT.md` records that final success is not observed yet. | Remaining gap | Need official IC `/shared/success.txt` evidence. |
-| Completion evidence is reproducible. | `docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`; `scripts/run_phase2_one_shot_sweep.py`. | Partially implemented | Deep negative evidence is documented and reproducible; success evidence is still missing. |
+| Completion evidence is reproducible. | `docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`; `docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md`; `docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md`; `docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md`; `scripts/run_phase2_one_shot_sweep.py`. | Partially implemented | Negative evidence is documented and reproducible; success evidence is still missing. |
+| Partial submission posture is explicit. | `docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`; `docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md`; `docs/SUBMISSION_SPEC.md`; `docs/SUBMISSION_SDD.md`; `docs/PARTIAL_SUBMISSION_BRIEF.md`; `docs/TA_CLARIFICATION_DRAFT.md`; `docs/SUBMISSION_GUIDE.md`. | Implemented | Package can be submitted honestly as protocol-complete partial if full success is not reached before the gate. |
 | No external network runtime dependency. | Python-only local code; no network calls. | Implemented | Readiness report scans for obvious runtime network tokens. |
 | No grader bypass / fake success. | Code does not write `/shared/success.txt`; docs forbid doing so. | Implemented | Reviewed `src/`; only IC-side `/backdoor` should create success. |
 
@@ -30,10 +31,13 @@ package is honest and auditable.
 
 - Strong coverage: container interface, `/exploit` and `/triage` protocol,
   state/logging, controlled-lab path handling, buildability, documentation.
-- Main grade risk: the current Phase II probe has **not** produced IC-side
+- Main grade risk: the current Phase II work has **not** produced IC-side
   `/shared/success.txt`, so full C-section success points are not yet earned.
 - The package is therefore a high-quality partial implementation unless the
   final Phase II candidate is completed and validated before submission.
+- The latest bounded attempts narrow the simple routes: direct maintenance,
+  stack shellcode, broad text sweep, saved-RBP argument control, caller-stack
+  staging, and direct heap/global-state adjacency have not produced success.
 
 ## Commands Used For Current Verification
 
@@ -57,3 +61,18 @@ for the harness, not a replacement for the full IC validation pass.
 3. Save the grader log and `mock_shared/readiness_report.json` or equivalent
    real-run report.
 4. Re-run this traceability matrix and update the remaining gap to complete.
+
+## Required Before Honest Partial Upload
+
+If full completion is not reached before the gate:
+
+1. Run `./scripts/run_static_checks.sh`.
+2. Run `./scripts/generate_readiness_report.sh`.
+3. Run `./scripts/build_submission_package.sh`.
+4. Review `docs/PARTIAL_SUBMISSION_BRIEF.md`.
+5. Review `docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`,
+   `docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md`,
+   `docs/SUBMISSION_SPEC.md`, and `docs/SUBMISSION_SDD.md`.
+6. Send or adapt `docs/TA_CLARIFICATION_DRAFT.md` if TA clarification is needed.
+7. Confirm the zip does not contain `mock_shared/`, `dist/`, `__pycache__/`, or
+   coredumps.

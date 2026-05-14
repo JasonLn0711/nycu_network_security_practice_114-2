@@ -68,9 +68,18 @@ project2-agent-scaffold/
 |-- tests/
 `-- docs/
     |-- CORE_WORKFLOW.md
+    |-- PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md
+    |-- PROJECT_II_ANALYSIS_REPORT_2026-05-14.md
     |-- COMPLETION_AUDIT.md
     |-- PHASE2_SUCCESS_VALIDATION.md
     |-- PHASE2_COMPLETION_ATTEMPT_2026-05-14.md
+    |-- PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md
+    |-- PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md
+    |-- PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md
+    |-- PARTIAL_SUBMISSION_BRIEF.md
+    |-- TA_CLARIFICATION_DRAFT.md
+    |-- SUBMISSION_SPEC.md
+    |-- SUBMISSION_SDD.md
     |-- SPEC.md
     |-- SDD.md
     |-- STUDENT_CHECKLIST.md
@@ -239,6 +248,25 @@ python3 scripts/run_phase2_one_shot_sweep.py
 Run that sweep only inside the supplied course IC container. It does not create
 `/shared/success.txt` and does not invoke `/backdoor`; it only checks whether a
 candidate caused the official IC-side success artifact to appear.
+
+Later bounded attempts are recorded in:
+
+- `docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md`
+- `docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md`
+- `docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md`
+
+The current submission posture is summarized in
+`docs/PARTIAL_SUBMISSION_BRIEF.md`. A concise TA-facing clarification draft is
+available in `docs/TA_CLARIFICATION_DRAFT.md`.
+
+The next executable action is tracked in
+`docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md`. Use that runbook to choose
+between TA clarification, partial upload, Docker image fallback, and bounded
+full-credit recovery.
+
+For a fuller decision-grade view, read
+`docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`,
+`docs/SUBMISSION_SPEC.md`, and `docs/SUBMISSION_SDD.md`.
 
 ## What Students Must Implement
 
