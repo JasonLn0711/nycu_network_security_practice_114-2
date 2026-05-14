@@ -1,5 +1,7 @@
 # NYCU 114-2 Network Security Practices - Attack and Defense
 
+<img src="http://estruyf-github.azurewebsites.net/api/VisitorHit?user=JasonLn0711&repo=nycu_network_security_practice_114-2&countColor=%237B1E7B" alt="Visitor count"/>
+
 This repository is the course workspace for NYCU 114-2 Network Security Practices. It organizes official handouts, lecture notes, labs, homework material, and security practice resources into a clean study path.
 
 ## Course Description
