@@ -651,6 +651,10 @@ PY
   terminating the C string before saved RIP.
 - Do not assume untouched caller-stack qwords after saved RIP are controllable;
   the direct `0x4016cb` probe showed they return to the fixed main epilogue path.
+- Do not assume direct re-entry through the user-input setup point is a success
+  route; the bounded `run_server()` setup-boundary probe consumed
+  `/shared/exploit_done`, produced no coredump, and still did not create
+  `/shared/success.txt`.
 
 ## 9. Next Step For The Next Agent
 
@@ -670,7 +674,8 @@ Recommended immediate next steps:
    `docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md` and
    `docs/PHASE2_FIRST_PRINCIPLES_NEXT_GATE_2026-05-14.md` and
    `docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md` and
-   `docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md` before trying another
+   `docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md` and
+   `docs/PHASE2_BOUNDED_RECOVERY_BLOCK_2026-05-14.md` before trying another
    candidate.
 4. Focus on reliable pivot/argument-control that survives `strcpy`/`sprintf`
    NUL-byte constraints; do not repeat direct ret-to-`maintenance_task+5` as if
