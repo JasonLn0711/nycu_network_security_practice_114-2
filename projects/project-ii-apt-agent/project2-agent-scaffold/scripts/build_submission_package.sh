@@ -32,6 +32,14 @@ required = {
     f'{project_name}/src/triage_runner.py',
     f'{project_name}/docs/REQUIREMENTS_TRACEABILITY.md',
     f'{project_name}/docs/SUBMISSION_GUIDE.md',
+    f'{project_name}/docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md',
+    f'{project_name}/docs/TEACHER_REQUIREMENTS_COMPLETION_VERDICT_2026-05-14.md',
+    f'{project_name}/docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md',
+    f'{project_name}/docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md',
+    f'{project_name}/docs/SUBMISSION_SPEC.md',
+    f'{project_name}/docs/SUBMISSION_SDD.md',
+    f'{project_name}/docs/PARTIAL_SUBMISSION_BRIEF.md',
+    f'{project_name}/docs/TA_CLARIFICATION_DRAFT.md',
 }
 
 with ZipFile(out, 'w', ZIP_DEFLATED) as archive:

@@ -21,6 +21,19 @@ The package should include:
 - `docs/`
 - `README.md`
 
+The current honest submission posture is documented in:
+
+- `docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`
+- `docs/TEACHER_REQUIREMENTS_COMPLETION_VERDICT_2026-05-14.md`
+- `docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md`
+- `docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md`
+- `docs/SUBMISSION_SPEC.md`
+- `docs/SUBMISSION_SDD.md`
+- `docs/PARTIAL_SUBMISSION_BRIEF.md`
+- `docs/TA_CLARIFICATION_DRAFT.md`
+- `docs/COMPLETION_AUDIT.md`
+- `docs/PHASE2_SUCCESS_VALIDATION.md`
+
 Do **not** include generated runtime state such as:
 
 - `mock_shared/`
@@ -75,6 +88,16 @@ ls -l /path/to/lab/shared/success.txt
 Full-credit evidence requires `success.txt` to be produced by IC-side
 `/backdoor`, not by the EC.
 
+## Current Honest Status
+
+As of `2026-05-14`, the source package is a protocol-complete partial package.
+The EC loop, state/logging, readiness gate, packaging scripts, and bounded Phase
+II validation notes are present. Official IC-side `/shared/success.txt` has not
+been observed.
+
+Do not remove this limitation from the submission notes unless a new validation
+run produces `/shared/success.txt` through the official IC path.
+
 ## Packaging Command
 
 Use the helper:
@@ -109,5 +132,19 @@ If the final Phase II success condition is still not observed, do not claim full
 completion. State honestly:
 
 > The EC interface, `/exploit`/`/triage` protocol, byte-exact config writer,
-> readiness report, and Phase II control-flow probe are implemented. The
-> remaining validation item is official IC-side `/backdoor` success evidence.
+> readiness report, and bounded Phase II validation attempts are implemented.
+> The remaining validation item is official IC-side `/backdoor` success
+> evidence. The EC does not create `/shared/success.txt` directly.
+
+Before asking the TA or uploading a partial package, review:
+
+```text
+docs/PARTIAL_SUBMISSION_BRIEF.md
+docs/TA_CLARIFICATION_DRAFT.md
+docs/TEACHER_REQUIREMENTS_COMPLETION_VERDICT_2026-05-14.md
+docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md
+docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md
+docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md
+docs/SUBMISSION_SPEC.md
+docs/SUBMISSION_SDD.md
+```

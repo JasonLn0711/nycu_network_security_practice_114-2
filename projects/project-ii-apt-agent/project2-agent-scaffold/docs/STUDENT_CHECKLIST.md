@@ -13,8 +13,10 @@
 - [ ] Wrapper is executable.
 - [ ] Wrapper calls `python3 -m src.exploit_runner`.
 - [ ] It checks `config.data`.
-- [ ] It checks `blogic.copy`.
-- [ ] It writes only safe placeholder config until student logic is added.
+- [ ] It checks `blogic.copy` or supplied-lab `blogic`.
+- [ ] It writes safe placeholder config by default.
+- [ ] If Phase II probe mode is enabled, it is labeled as a lab-only candidate
+      and not a completion claim.
 - [ ] It creates `exploit_done` after config write.
 - [ ] It logs events.
 - [ ] It exits with meaningful status.
@@ -45,6 +47,17 @@
 - [ ] README explains mock grader.
 - [ ] README explains tests.
 - [ ] README explains the TODO hook.
+- [ ] `docs/COMPLETION_AUDIT.md` states that IC-side success is not observed
+      unless `/shared/success.txt` has actually appeared.
+- [ ] `docs/TEACHER_REQUIREMENTS_COMPLETION_VERDICT_2026-05-14.md` has been
+      reviewed before claiming teacher requirements are complete.
+- [ ] `docs/PARTIAL_SUBMISSION_BRIEF.md` is reviewed before any partial upload.
+- [ ] `docs/TA_CLARIFICATION_DRAFT.md` is ready if TA clarification is needed.
+- [ ] `docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md` has been used
+      for the TA message or LMS upload wording.
+- [ ] `docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md` has been used to choose
+      the next route.
+- [ ] Negative Phase II evidence is linked rather than hidden.
 
 ## Safety Readiness
 
@@ -60,3 +73,7 @@
 - [ ] `./scripts/run_static_checks.sh` passes.
 - [ ] `pytest -q` passes if pytest is installed.
 - [ ] `./scripts/run_mock_grader.sh` demonstrates the workflow.
+- [ ] `./scripts/generate_readiness_report.sh` reports
+      `ready-for-protocol-demo`.
+- [ ] `./scripts/build_submission_package.sh` creates a zip with no
+      `mock_shared/`, `dist/`, `__pycache__/`, or coredumps.

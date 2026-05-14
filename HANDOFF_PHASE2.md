@@ -8,8 +8,25 @@ Scope: state compression for the next Codex/GPT-5.5 handoff.
 Primary paired validation log:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_SUCCESS_VALIDATION.md`.
 
-Latest deep attempt:
+Latest deep sweep/NX attempt:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`.
+
+Latest bounded argument-control attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md`.
+
+Latest staging-boundary attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md`.
+
+Latest heap/global-state attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md`.
+
+Latest submission-hardening docs:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`,
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/SUBMISSION_SPEC.md`,
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/SUBMISSION_SDD.md`,
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PARTIAL_SUBMISSION_BRIEF.md`
+and
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/TA_CLARIFICATION_DRAFT.md`.
 
 ## 0. Start Here - Latest Codex Snapshot
 
@@ -102,7 +119,13 @@ Current direct status:
 Project II / Phase II is still not full-credit complete. The 2026-05-14 pass
 added a verified x86_64 Colima IC setup, reproduced the baseline non-success,
 confirmed NX blocks direct stack shellcode, and preserved the one-shot text
-sweep harness. It did not observe `/shared/success.txt`.
+sweep harness. A later 2026-05-14 bounded argument-control probe reached
+`maintenance_task+22` but stopped on the saved-RBP/C-string constraint. Neither
+that pass nor the later single-target/caller-stack staging probe observed
+`/shared/success.txt`. The later heap/global-state probe also produced no
+`/shared/success.txt`; it showed that the forward write can reach heap-adjacent
+memory, but the same long C string crashes in `sprintf()` before a useful
+control-flow state is reached.
 
 ## 2. Verified Facts
 
@@ -172,6 +195,20 @@ sprintf(local_buffer, "[LOG]: %s", user_input)
   - `rbp = 0x4242424242424242`
   - stack return chain begins with repeated `0x4242424242424242`
 - This confirms stack overflow and saved return-address overwrite are reachable.
+- A later argument-control coredump confirmed that a direct entry to
+  `maintenance_task+22` (`0x401486`) is reachable, but it stopped because saved
+  RBP contained marker bytes rather than a valid canonical stack pointer.
+- The preserved original stack slot at `log_message` frame `[rbp-0x68]` contains
+  `0x404340` (`user_input`). If original saved RBP could be preserved as
+  `0x...ec60`, then `maintenance_task+22` would read that pointer through
+  `[rbp-0x88]`. The direct path is blocked because the input must overwrite
+  bytes `89..96` before it can reach saved RIP at byte `97`.
+- A later caller-stack staging probe targeted `0x4016cb` (`pop rbp; ret`). It
+  produced no `/shared/success.txt`, no coredump, and only consumed the original
+  caller-stack qwords back toward the fixed main epilogue path.
+- A later heap/global-state probe with a long `user_input` value reached memory
+  around `0x405000`, but then crashed inside libc copy handling through
+  `sprintf()` before a useful epilogue or success path was reached.
 
 ### Current Live Shared State
 
@@ -339,6 +376,22 @@ Re-check libc base if the container is restarted.
   but the stack was non-executable.
 - Binary gadget search did not find `pop rdi; ret` in `server_2`.
 - libc has `pop rdi; ret` gadgets, but using them requires solving the C-string/NUL-byte and pivot/control constraints.
+- The direct `maintenance_task+22` argument-control probe is now tested: it
+  reached `0x401486`, did not produce `/shared/success.txt`, and failed because
+  saved RBP was non-canonical marker data.
+- Do not assume saved RBP can be kept canonical while also overwriting saved RIP
+  through the current `strcpy` / `sprintf` path. A useful stack RBP requires high
+  bytes `00 00`; embedding those NUL bytes terminates the copy before saved RIP.
+- Single-target reuse has also been narrowed: main-binary text has no useful
+  `pop rdi; ret`, no sequence was found that sets `rdi = user_input` and then
+  calls `system@plt` or `maintenance_task()`, and the clean caller-stack
+  `pop rbp; ret` probe returns through fixed original qwords rather than a
+  controllable chain.
+- The direct heap/global-state route is narrowed: forward overflow from
+  `user_input` cannot directly hit the GOT or copied iostream globals because
+  they live before `user_input`; a long enough value can reach heap-adjacent
+  memory, but the same C string then crashes in `sprintf()` before a useful
+  state change.
 
 ### REPORTED-UNVERIFIED: do not treat as verified facts without logs
 
@@ -361,6 +414,8 @@ Key constraints:
 
 - Input reaches the overflow through C-string handling: `std::getline` -> `strcpy` -> `sprintf`.
 - Embedded NUL bytes terminate the copied string, so naive full 64-bit address writes are constrained.
+- Saved RBP begins at user offset `89` and saved RIP begins at user offset `97`;
+  this means any saved RIP overwrite necessarily writes through saved RBP first.
 - NX is enabled, so direct stack shellcode is not the natural route.
 - The main binary has poor ROP gadget quality and no `pop rdi; ret`.
 - ASLR is disabled and libc base is stable inside the current container, so libc gadgets are attractive once the pivot/argument problem is solved.
@@ -369,9 +424,16 @@ Most plausible directions:
 
 1. Treat direct partial return to `maintenance_task+5` as explored and
    insufficient unless new evidence shows `rdi` control.
-2. Focus on a control-flow target or pivot that also controls the first
-   argument, not only RIP.
-3. If staying in the main binary is not enough, move to a ret2libc/libc-gadget
+2. Treat direct entry to `maintenance_task+22` as explored unless a new encoding
+   or staging idea preserves canonical saved RBP while still controlling RIP.
+3. Treat simple caller-stack staging after saved RIP as explored unless a new
+   way is found to control the untouched qwords after the partial overwrite.
+4. Focus on a route that changes global or heap state before `log_message()`
+   returns, or a genuinely new first-stage pivot that avoids saved RBP and
+   caller-stack reuse.
+5. Treat direct heap adjacency as explored unless a separate mechanism is found
+   that avoids the same long string crashing in `sprintf()`.
+6. If staying in the main binary is not enough, move to a ret2libc/libc-gadget
    route only after solving a reliable pivot or argument setup that works
    despite NUL-byte constraints.
 
@@ -553,6 +615,18 @@ PY
   after the latest smoke validation.
 - The ret-to-`maintenance_task+5` candidate did not produce official IC-side
   success in the recorded validation pass.
+- The direct `maintenance_task+22` argument-control candidate reached the target
+  instruction but did not produce official IC-side success; it stopped because
+  saved RBP was marker-controlled and non-canonical.
+- A direct path that needs preserved saved RBP is blocked by the C-string/NUL-byte
+  constraint unless a separate staging mechanism is found.
+- The caller-stack `pop rbp; ret` staging probe reached a no-success/no-coredump
+  path and only returned through fixed original call-chain qwords.
+- The main binary has no useful `pop rdi; ret` and no observed direct sequence
+  that sets `rdi = user_input` before calling `system@plt`.
+- The heap/global-state probe reached heap-adjacent bytes around `0x405000`, but
+  the process crashed in libc copy handling through `sprintf()` before a useful
+  control-flow state was reached.
 
 ### THEORY
 
@@ -561,6 +635,9 @@ PY
   gadgets after solving pivot/argument setup.
 - `maintenance_task+5 = 0x401475` is reachable by partial overwrite, but the
   recorded direct attempt did not control `rdi`; do not treat it as solved.
+- `maintenance_task+22 = 0x401486` is reachable by partial overwrite, but the
+  recorded direct attempt cannot supply a valid `rbp` under the current input
+  model; do not treat it as solved.
 - libc ROP is plausible because ASLR is off and libc gadgets exist, but naive full-address writes are constrained by NUL bytes.
 
 ### DO NOT TREAT AS FACT
@@ -569,6 +646,11 @@ PY
 - Do not assume the current Phase II probe is a valid exploit; it is explicitly marked not a success claim.
 - Do not assume ret2libc is solved merely because libc offsets are known.
 - Do not assume direct shellcode is viable; NX is enabled.
+- Do not assume a `leave; ret` or saved-RBP pivot is viable unless it first
+  proves where a canonical next stack/frame pointer can be staged without
+  terminating the C string before saved RIP.
+- Do not assume untouched caller-stack qwords after saved RIP are controllable;
+  the direct `0x4016cb` probe showed they return to the fixed main epilogue path.
 
 ## 9. Next Step For The Next Agent
 
@@ -585,16 +667,18 @@ Recommended immediate next steps:
    current `/shared/config.data`.
 2. Keep `/backdoor` untouched and never invoke it manually.
 3. Read `docs/PHASE2_SUCCESS_VALIDATION.md` and
-   `docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md` before trying another
-   candidate. Also read
-   `docs/PHASE2_FIRST_PRINCIPLES_NEXT_GATE_2026-05-14.md` for the bounded
-   next-block contract.
+   `docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md` and
+   `docs/PHASE2_FIRST_PRINCIPLES_NEXT_GATE_2026-05-14.md` and
+   `docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md` and
+   `docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md` before trying another
+   candidate.
 4. Focus on reliable pivot/argument-control that survives `strcpy`/`sprintf`
    NUL-byte constraints; do not repeat direct ret-to-`maintenance_task+5` as if
    untested.
 5. Choose **one** bounded investigation track before running code:
    - argument-control track: find a return target or short sequence that makes
-     the first argument point at controlled data after the final C++ stream call;
+     the first argument point at controlled data after the final C++ stream call,
+     without requiring a preserved saved RBP;
    - pivot track: find a way to pivot to already-controlled bytes without
      requiring a normal NUL-bearing ROP chain after the partial return address;
    - libc/libstdc++ track: search for a gadget or call path that fits the
@@ -608,9 +692,21 @@ Recommended immediate next steps:
 
 Recommended first direction:
 
-Start with the argument-control / pivot boundary, not another full `.text`
-sweep. The latest evidence says RIP control is reachable, but the success path
-is blocked because `rdi` is stale and normal appended ROP bytes are unavailable
-after the first NUL-bearing partial return. The next useful work is therefore a
-small proof about whether the current pre-return stack/register state can be
-turned into a controlled first argument or pivot target.
+Do not start another blind candidate probe. The latest evidence says the simple
+technical routes have been narrowed: `rdi` is stale, normal appended ROP bytes
+are unavailable after the first NUL-bearing partial return, saved RBP cannot be
+preserved while also overwriting saved RIP, untouched caller-stack qwords are
+fixed, and direct heap adjacency crashes in `sprintf()`. The next useful work is
+now to review and use the submission-hardening docs, then ask the TA whether the
+protocol-complete partial package is acceptable if official IC-side
+`/shared/success.txt` is not reached before the gate. Continue technical work
+only if a new mechanism is identified that avoids the shared C-string
+constraint.
+
+Concrete runbook:
+
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md`
+
+Use that runbook for the next block. It separates TA clarification, partial
+upload, Docker image fallback, and bounded full-credit recovery so the next
+agent does not mix submission work with another blind technical probe.
