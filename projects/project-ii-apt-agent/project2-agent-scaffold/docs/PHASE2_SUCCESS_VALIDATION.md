@@ -96,7 +96,7 @@ from the official IC flow. Do **not** create `/shared/success.txt` from `/exploi
 
 ## 2026-05-14 Addendum
 
-The next validation pass is recorded in
+The next deep validation pass is recorded in
 `docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`.
 
 Additional evidence from that pass:
@@ -109,3 +109,52 @@ Additional evidence from that pass:
   `0x401000..0x401a20` and found no `/shared/success.txt`.
 
 The latest status is still **not full-credit complete**.
+
+## 2026-05-14 Argument-Control Addendum
+
+The follow-up argument-control probe is recorded in
+`docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md`.
+
+Additional evidence from that pass:
+
+- a candidate reached `maintenance_task+22` (`0x401486`);
+- no `/shared/success.txt` was created;
+- the crash core showed `rbp` contained marker bytes, so the maintenance body
+  could not read a valid argument pointer from `[rbp-0x88]`;
+- the apparently useful preserved stack slot holding `0x404340` cannot be used
+  by this direct path because saved RBP and saved RIP cannot both be encoded
+  through the current C-string copy path.
+
+The latest status remains **not full-credit complete**.
+
+## 2026-05-14 Staging-Boundary Addendum
+
+The follow-up staging probe is recorded in
+`docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md`.
+
+Additional evidence from that pass:
+
+- single-target reuse in the main binary did not reveal a path that both sets
+  `rdi = user_input` and calls the success-relevant function path;
+- the caller-stack `pop rbp; ret` probe reached a no-success/no-coredump path;
+- the untouched qwords after saved RIP are fixed by the original call chain and
+  cannot act as a controlled appended chain under the current C-string
+  overwrite model.
+
+The latest status remains **not full-credit complete**.
+
+## 2026-05-14 Heap / Global-State Addendum
+
+The heap/global-state feasibility probe is recorded in
+`docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md`.
+
+Additional evidence from that pass:
+
+- a long `user_input` value reached memory around `0x405000`;
+- no `/shared/success.txt` was created;
+- the process crashed inside libc `sprintf()` / copy handling before a useful
+  control-flow epilogue was reached;
+- this makes the direct heap-adjacency route insufficient without a new staging
+  mechanism.
+
+The latest status remains **not full-credit complete**.

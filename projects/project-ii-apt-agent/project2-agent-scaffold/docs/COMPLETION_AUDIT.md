@@ -92,6 +92,71 @@ This improves the audit trail, but it does not change the completion verdict:
 Project II / Phase II remains a high-quality partial submission until the
 official IC creates `/shared/success.txt`.
 
+## 2026-05-14 Argument-Control Follow-Up
+
+A bounded follow-up tested the handoff's recommended argument-control direction.
+The result is recorded in
+`docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md`.
+
+Verified in that pass:
+
+- a maintenance-body entry candidate reached `maintenance_task+22`
+  (`0x401486`);
+- no `/shared/success.txt` appeared;
+- the IC-side `/backdoor` was not invoked manually;
+- the candidate stopped because `rbp` was marker-controlled instead of a valid
+  frame pointer;
+- the useful original frame-pointer path is blocked by the C-string/NUL-byte
+  constraint: preserving canonical saved RBP prevents continuing to overwrite
+  saved RIP, while continuing to saved RIP corrupts saved RBP.
+
+This narrows the next step: do not keep trying maintenance-body entry unless a
+new staging or encoding path can preserve a canonical frame pointer while still
+controlling the return target.
+
+## 2026-05-14 Staging-Boundary Follow-Up
+
+A second bounded follow-up tested whether simple single-target reuse or
+untouched caller-stack staging can replace the missing saved-RBP path. The
+result is recorded in
+`docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md`.
+
+Verified in that pass:
+
+- the main binary still has no useful `pop rdi; ret`;
+- no main-binary sequence was found that both sets `rdi = user_input` and calls
+  `system@plt` or `maintenance_task()`;
+- the clean caller-stack `pop rbp; ret` probe produced no success and no
+  coredump;
+- the untouched caller-stack qwords after the partial saved-RIP overwrite return
+  to the fixed main epilogue path, not to a controllable second-stage chain.
+
+This narrows the next practical direction to the remaining heap/global-state
+question around the unbounded `strcpy()` into `user_input`, or to a new staging
+idea that is not just saved-RBP or caller-stack reuse.
+
+## 2026-05-14 Heap / Global-State Follow-Up
+
+A final bounded follow-up tested whether the forward `strcpy()` overflow from
+global `user_input` can create a useful heap or global-state effect before
+`log_message()` returns. The result is recorded in
+`docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md`.
+
+Verified in that pass:
+
+- the forward write can reach memory around `0x405000`, beyond the main
+  binary's `.bss` page boundary;
+- no `/shared/success.txt` appeared;
+- the later `sprintf()` copied the same long string into the small stack buffer
+  and crashed inside libc before a useful epilogue path was reached;
+- the forward write cannot directly hit the GOT or copied iostream globals
+  because those live before `user_input`.
+
+This leaves the project in an honest high-quality partial state. The next
+practical work should be submission/report hardening and, if needed, a TA-facing
+question about whether the protocol-complete package plus negative Phase II
+evidence is acceptable before the final gate.
+
 ## Remaining Work For A Full-Credit Submission
 
 1. Finish the instructor-approved Phase II candidate-generation logic in
