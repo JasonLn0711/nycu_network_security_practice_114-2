@@ -92,6 +92,21 @@ This improves the audit trail, but it does not change the completion verdict:
 Project II / Phase II remains a high-quality partial submission until the
 official IC creates `/shared/success.txt`.
 
+## 2026-05-14 First-Principles Next Gate
+
+The next planning artifact is
+`docs/PHASE2_FIRST_PRINCIPLES_NEXT_GATE_2026-05-14.md`.
+
+It narrows the next block to one falsifiable question: whether the
+post-`log_message()` state can be turned into controlled first-argument state or
+a reliable pivot under the input path constraints. It also keeps instructor
+clarification as a valid bounded track if the intended Phase II route or binary
+assumption is different from the local reading.
+
+Do not spend the next block on another broad `.text` sweep, direct stack
+shellcode, or the same direct ret-to-maintenance attempt unless new evidence
+changes the premise.
+
 ## Remaining Work For A Full-Credit Submission
 
 1. Finish the instructor-approved Phase II candidate-generation logic in

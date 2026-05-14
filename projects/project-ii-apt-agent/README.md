@@ -118,6 +118,7 @@ Before implementation, confirm:
 | `project2-agent-scaffold/docs/COMPLETION_AUDIT.md` | Honest completion audit: implemented protocol pieces, current Phase II probe status, and remaining full-credit success evidence gap |
 | `project2-agent-scaffold/docs/PHASE2_SUCCESS_VALIDATION.md` | Latest official-IC validation log for the current Phase II candidate; records observed non-success without fabricating `/shared/success.txt` |
 | `project2-agent-scaffold/docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md` | Deep follow-up validation pass: x86_64 Colima IC setup, baseline non-success, NX shellcode check, one-shot text sweep, and current boundary |
+| `project2-agent-scaffold/docs/PHASE2_FIRST_PRINCIPLES_NEXT_GATE_2026-05-14.md` | First-principles next-gate note: choose one bounded argument-control, pivot, or instructor-clarification block before more candidate testing |
 | `project2-agent-scaffold/docs/REQUIREMENTS_TRACEABILITY.md` | Requirement-by-requirement compliance matrix against the official brief and local rubric |
 | `project2-agent-scaffold/docs/SUBMISSION_GUIDE.md` | Recommended packaging, build, smoke-test, and submission workflow |
 | `project2-agent-scaffold/scripts/build_submission_package.sh` | Builds a clean zip submission package under `project2-agent-scaffold/dist/` while excluding generated runtime state |

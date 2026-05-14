@@ -586,7 +586,9 @@ Recommended immediate next steps:
 2. Keep `/backdoor` untouched and never invoke it manually.
 3. Read `docs/PHASE2_SUCCESS_VALIDATION.md` and
    `docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md` before trying another
-   candidate.
+   candidate. Also read
+   `docs/PHASE2_FIRST_PRINCIPLES_NEXT_GATE_2026-05-14.md` for the bounded
+   next-block contract.
 4. Focus on reliable pivot/argument-control that survives `strcpy`/`sprintf`
    NUL-byte constraints; do not repeat direct ret-to-`maintenance_task+5` as if
    untested.
