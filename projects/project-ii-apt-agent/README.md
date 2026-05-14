@@ -19,7 +19,7 @@
   travel; see `../report-scheduling/2026-05-12-hsr-booking-2026-05-27.md`.
 
 
-## Latest Engineering Checkpoint - 2026-05-13
+## Latest Engineering Checkpoint - 2026-05-14
 
 FIRST PRINCIPLE status: the Project II deliverable is not a one-shot string; it
 is a closed EC/IC grading loop. The EC must expose `/exploit` and `/triage`,
@@ -35,8 +35,11 @@ Current course-repo state:
 - machine-handoff state for continuation is compressed in
   `../../HANDOFF_PHASE2.md`; start there before any new Phase II continuation
   run so verified facts, dead ends, and theory do not get mixed;
-- the completion audit and traceability matrix explicitly state that official
-  Phase II IC-side success has **not** been observed yet;
+- the latest deep attempt is recorded in
+  `project2-agent-scaffold/docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`;
+- the completion audit, success-validation log, and traceability matrix
+  explicitly state that official Phase II IC-side success has **not** been
+  observed yet;
 - the current honest submission mode is therefore a protocol-ready/partial
   package unless the final IC-side `/backdoor` success evidence is produced
   before upload;
@@ -114,9 +117,11 @@ Before implementation, confirm:
 | `project2-agent-scaffold/docs/CORE_WORKFLOW.md` | Step-by-step explanation of the safe round-based feedback loop: action, execution, evidence, triage, state update, next action |
 | `project2-agent-scaffold/docs/COMPLETION_AUDIT.md` | Honest completion audit: implemented protocol pieces, current Phase II probe status, and remaining full-credit success evidence gap |
 | `project2-agent-scaffold/docs/PHASE2_SUCCESS_VALIDATION.md` | Latest official-IC validation log for the current Phase II candidate; records observed non-success without fabricating `/shared/success.txt` |
+| `project2-agent-scaffold/docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md` | Deep follow-up validation pass: x86_64 Colima IC setup, baseline non-success, NX shellcode check, one-shot text sweep, and current boundary |
 | `project2-agent-scaffold/docs/REQUIREMENTS_TRACEABILITY.md` | Requirement-by-requirement compliance matrix against the official brief and local rubric |
 | `project2-agent-scaffold/docs/SUBMISSION_GUIDE.md` | Recommended packaging, build, smoke-test, and submission workflow |
 | `project2-agent-scaffold/scripts/build_submission_package.sh` | Builds a clean zip submission package under `project2-agent-scaffold/dist/` while excluding generated runtime state |
+| `project2-agent-scaffold/scripts/run_phase2_one_shot_sweep.py` | Lab-only reproducibility harness for the bounded one-shot partial-return sweep; does not create `/shared/success.txt` |
 | `../../HANDOFF_PHASE2.md` | Machine handoff for the next Phase II agent: objective, verified facts, important symbols, failed/explored paths, current hypothesis, exact environment, useful commands, and FACT/THEORY separation |
 | `SPEC.md` | Local audit-oriented requirements, deliverables, functional requirements, acceptance tests, and grading interface |
 | `SDD.md` | Local audit-oriented software design document for the EC workflow, state files, logging, safety guards, and grader design |

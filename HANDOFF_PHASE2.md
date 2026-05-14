@@ -1,11 +1,15 @@
 # HANDOFF_PHASE2
 
 Date: 2026-05-13
+Updated: 2026-05-14
 Repo: `/home/jnclaw/every_on_git_jnclaw/phd-life-system/nycu_network_security_practice_114-2`
 Scope: state compression for the next Codex/GPT-5.5 handoff.
 
 Primary paired validation log:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_SUCCESS_VALIDATION.md`.
+
+Latest deep attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`.
 
 Evidence standard:
 
@@ -34,6 +38,12 @@ Rules:
 
 Non-goal:
 Do not claim completion until `/shared/success.txt` is produced by IC-side `/backdoor` execution.
+
+Current direct status:
+Project II / Phase II is still not full-credit complete. The 2026-05-14 pass
+added a verified x86_64 Colima IC setup, reproduced the baseline non-success,
+confirmed NX blocks direct stack shellcode, and preserved the one-shot text
+sweep harness. It did not observe `/shared/success.txt`.
 
 ## 2. Verified Facts
 
@@ -258,6 +268,10 @@ Re-check libc base if the container is restarted.
   instruction-start addresses in `server_2`; it did not produce
   `/shared/success.txt`.
 - A later/current live `B` smash input produced a real coredump and no success.
+- The 2026-05-14 pass extended this evidence with a reusable harness at
+  `projects/project-ii-apt-agent/project2-agent-scaffold/scripts/run_phase2_one_shot_sweep.py`.
+  The full run tried `10328` one-shot candidates over `0x401000..0x401a20`
+  with four prefixes and found no `/shared/success.txt`.
 - Binary gadget search did not find `pop rdi; ret` in `server_2`.
 - libc has `pop rdi; ret` gadgets, but using them requires solving the C-string/NUL-byte and pivot/control constraints.
 

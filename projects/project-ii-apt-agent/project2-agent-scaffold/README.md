@@ -62,10 +62,15 @@ project2-agent-scaffold/
 |-- scripts/
 |   |-- run_mock_grader.sh
 |   |-- run_static_checks.sh
+|   |-- run_phase2_probe_against_shared.sh
+|   |-- run_phase2_one_shot_sweep.py
 |   `-- clean_shared.sh
 |-- tests/
 `-- docs/
     |-- CORE_WORKFLOW.md
+    |-- COMPLETION_AUDIT.md
+    |-- PHASE2_SUCCESS_VALIDATION.md
+    |-- PHASE2_COMPLETION_ATTEMPT_2026-05-14.md
     |-- SPEC.md
     |-- SDD.md
     |-- STUDENT_CHECKLIST.md
@@ -220,6 +225,20 @@ step that keeps the EC protocol honest: it writes `config.data`, signals
 `exploit_done`, and does not fabricate `/shared/success.txt`. See
 `docs/COMPLETION_AUDIT.md` and `docs/PHASE2_SUCCESS_VALIDATION.md` for the
 current missing full-credit item and the latest official-IC validation evidence.
+
+The latest deep validation pass is recorded in
+`docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`. That pass reproduced the Phase
+II IC in an x86_64 Colima Docker VM, confirmed the current ret-to-maintenance
+candidate still does not trigger IC-side `/backdoor`, confirmed stack shellcode
+is blocked by NX, and preserved the bounded one-shot text sweep as:
+
+```sh
+python3 scripts/run_phase2_one_shot_sweep.py
+```
+
+Run that sweep only inside the supplied course IC container. It does not create
+`/shared/success.txt` and does not invoke `/backdoor`; it only checks whether a
+candidate caused the official IC-side success artifact to appear.
 
 ## What Students Must Implement
 

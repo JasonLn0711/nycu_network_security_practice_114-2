@@ -1,6 +1,7 @@
 # Project II Completion Audit
 
 Date: 2026-05-13
+Updated: 2026-05-14
 Scope: Project II / Phase II Medium external-container submission under the supplied local Docker lab.
 
 ## Direct Verdict
@@ -70,6 +71,26 @@ recorded in `docs/PHASE2_SUCCESS_VALIDATION.md`.
 The submission therefore remains **not full-credit complete**. The honest final
 state is a protocol-complete scaffold plus an unsuccessful Phase II candidate; no
 EC-side fake success file was created.
+
+## 2026-05-14 Deep Completion Attempt
+
+A follow-up pass reproduced the Phase II IC inside an x86_64 Colima Docker VM
+and added stronger negative evidence. The result is recorded in
+`docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`.
+
+Verified in that pass:
+
+- the current ret-to-`maintenance_task+5` candidate still does not create
+  `/shared/success.txt`;
+- direct stack shellcode reaches the intended stack address but faults under NX;
+- a bounded one-shot partial-return sweep across `0x401000..0x401a20` with four
+  command prefixes found no target that triggered IC-side `/backdoor`;
+- the reusable lab-only sweep harness is now preserved as
+  `scripts/run_phase2_one_shot_sweep.py`.
+
+This improves the audit trail, but it does not change the completion verdict:
+Project II / Phase II remains a high-quality partial submission until the
+official IC creates `/shared/success.txt`.
 
 ## Remaining Work For A Full-Credit Submission
 

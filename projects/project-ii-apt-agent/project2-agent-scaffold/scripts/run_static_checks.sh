@@ -17,10 +17,13 @@ test -f docs/STUDENT_CHECKLIST.md
 test -f docs/SAFETY_BOUNDARY.md
 test -f docs/COMPLETION_AUDIT.md
 test -x scripts/run_phase2_probe_against_shared.sh
+test -x scripts/run_phase2_one_shot_sweep.py
 test -x scripts/build_submission_package.sh
 test -x scripts/build_submission_image.sh
 test -f docs/SUBMISSION_GUIDE.md
 test -f docs/REQUIREMENTS_TRACEABILITY.md
+test -f docs/PHASE2_SUCCESS_VALIDATION.md
+test -f docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md
 
 python3 - <<'PY'
 import importlib

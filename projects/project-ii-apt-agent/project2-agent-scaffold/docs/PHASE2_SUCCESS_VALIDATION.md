@@ -93,3 +93,19 @@ The remaining blocker is a Phase II control-flow target that both:
 
 Do **not** mark this assignment complete until `/shared/success.txt` is observed
 from the official IC flow. Do **not** create `/shared/success.txt` from `/exploit`.
+
+## 2026-05-14 Addendum
+
+The next validation pass is recorded in
+`docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`.
+
+Additional evidence from that pass:
+
+- the local IC was rebuilt and run in a verified x86_64 Colima Docker profile;
+- the current candidate again produced `success_exists=no`;
+- a direct stack-shellcode probe reached `rip = 0x7fffffffeb97` but faulted
+  under NX;
+- a text-section one-shot sweep tried `10328` candidates across
+  `0x401000..0x401a20` and found no `/shared/success.txt`.
+
+The latest status is still **not full-credit complete**.
