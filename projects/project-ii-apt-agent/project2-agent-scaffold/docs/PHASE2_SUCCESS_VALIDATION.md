@@ -158,3 +158,22 @@ Additional evidence from that pass:
   mechanism.
 
 The latest status remains **not full-credit complete**.
+
+## 2026-05-14 Bounded Recovery Block Addendum
+
+The next bounded recovery block is recorded in
+`docs/PHASE2_BOUNDED_RECOVERY_BLOCK_2026-05-14.md`.
+
+Additional evidence from that block:
+
+- a fresh Phase II IC container was started from the supplied `lab.zip`;
+- ASLR was confirmed disabled inside the container;
+- `/shared/success.txt` was absent before the candidate;
+- the IC consumed `/shared/exploit_done`;
+- no `/shared/success.txt` was created;
+- no coredump appeared for the candidate;
+- `/blogic` remained running under `/runserver.sh`;
+- the checked user-input setup boundary is therefore a stable no-success path,
+  not a full-credit route.
+
+The latest status remains **not full-credit complete**.

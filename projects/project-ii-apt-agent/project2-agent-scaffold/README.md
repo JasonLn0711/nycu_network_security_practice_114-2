@@ -78,6 +78,7 @@ project2-agent-scaffold/
     |-- PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md
     |-- PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md
     |-- PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md
+    |-- PHASE2_BOUNDED_RECOVERY_BLOCK_2026-05-14.md
     |-- PARTIAL_SUBMISSION_BRIEF.md
     |-- TA_CLARIFICATION_DRAFT.md
     |-- SUBMISSION_SPEC.md
@@ -256,6 +257,7 @@ Later bounded attempts are recorded in:
 - `docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md`
 - `docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md`
 - `docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md`
+- `docs/PHASE2_BOUNDED_RECOVERY_BLOCK_2026-05-14.md`
 
 The current submission posture is summarized in
 `docs/PARTIAL_SUBMISSION_BRIEF.md`. A concise TA-facing clarification draft is

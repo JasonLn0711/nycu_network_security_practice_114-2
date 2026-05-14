@@ -130,6 +130,7 @@ Before implementation, confirm:
 | `project2-agent-scaffold/docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md` | Bounded argument-control follow-up: maintenance-body entry reached, no success, saved-RBP/C-string constraint documented |
 | `project2-agent-scaffold/docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md` | Bounded staging follow-up: single-target and caller-stack staging checked, no success, next route narrowed to heap/global-state feasibility |
 | `project2-agent-scaffold/docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md` | Bounded heap/global-state follow-up: forward write reaches heap-adjacent memory but crashes in `sprintf()` before a useful state change |
+| `project2-agent-scaffold/docs/PHASE2_BOUNDED_RECOVERY_BLOCK_2026-05-14.md` | Bounded full-credit recovery block: fresh IC drift check plus one user-input setup-boundary candidate, no official success artifact |
 | `project2-agent-scaffold/docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md` | Complete current-state analysis: done, not done, and what is required to finish |
 | `project2-agent-scaffold/docs/TEACHER_REQUIREMENTS_COMPLETION_VERDICT_2026-05-14.md` | Direct verdict on which teacher requirements are complete and which full-credit items remain incomplete |
 | `project2-agent-scaffold/docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md` | Concrete TA clarification / LMS upload action packet for the current protocol-complete partial posture |

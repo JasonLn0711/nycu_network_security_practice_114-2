@@ -176,6 +176,26 @@ practical work should be submission/report hardening and, if needed, a TA-facing
 question about whether the protocol-complete package plus negative Phase II
 evidence is acceptable before the final gate.
 
+## 2026-05-14 Bounded Recovery Follow-Up
+
+A bounded full-credit recovery block tested one additional user-input setup
+boundary after rechecking a fresh official Phase II IC. The result is recorded
+in `docs/PHASE2_BOUNDED_RECOVERY_BLOCK_2026-05-14.md`.
+
+Verified in that pass:
+
+- the IC container was rebuilt from the supplied lab bundle;
+- ASLR was disabled;
+- `/shared/success.txt` was absent before the candidate;
+- IC consumed `/shared/exploit_done`;
+- no `/shared/success.txt` appeared;
+- no coredump appeared;
+- `/blogic` continued running under `/runserver.sh`.
+
+This closes the simple "re-enter user-input setup" boundary as a direct success
+route. The completion verdict is unchanged: protocol-complete partial, not
+full-credit complete.
+
 ## Remaining Work For A Full-Credit Submission
 
 1. Finish the instructor-approved Phase II candidate-generation logic in
