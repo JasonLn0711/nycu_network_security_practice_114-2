@@ -68,6 +68,7 @@ project2-agent-scaffold/
 |-- tests/
 `-- docs/
     |-- CORE_WORKFLOW.md
+    |-- TEACHER_REQUIREMENTS_COMPLETION_VERDICT_2026-05-14.md
     |-- PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md
     |-- PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md
     |-- PROJECT_II_ANALYSIS_REPORT_2026-05-14.md
@@ -267,6 +268,9 @@ full-credit recovery.
 
 The concrete upload/TA message packet is
 `docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md`.
+
+The direct teacher-requirements completion verdict is
+`docs/TEACHER_REQUIREMENTS_COMPLETION_VERDICT_2026-05-14.md`.
 
 For a fuller decision-grade view, read
 `docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`,

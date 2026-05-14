@@ -49,6 +49,8 @@
 - [ ] README explains the TODO hook.
 - [ ] `docs/COMPLETION_AUDIT.md` states that IC-side success is not observed
       unless `/shared/success.txt` has actually appeared.
+- [ ] `docs/TEACHER_REQUIREMENTS_COMPLETION_VERDICT_2026-05-14.md` has been
+      reviewed before claiming teacher requirements are complete.
 - [ ] `docs/PARTIAL_SUBMISSION_BRIEF.md` is reviewed before any partial upload.
 - [ ] `docs/TA_CLARIFICATION_DRAFT.md` is ready if TA clarification is needed.
 - [ ] `docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md` has been used
