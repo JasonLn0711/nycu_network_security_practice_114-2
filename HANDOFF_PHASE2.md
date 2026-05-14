@@ -18,24 +18,27 @@ Timestamp: 2026-05-14 08:20 Asia/Taipei.
 Current local repo:
 `/Users/iKev/Desktop/02_Projects_and_Code/everything_on_git/nycu_114-2_network_security_practices`
 
-Latest course-repo commit:
+Latest course-repo validation commit before this handoff-strengthening pass:
 
 ```text
 ab319c056925a4f8c946af55f8f4f53e721e4d7d
 projects: record Project II phase2 validation attempt
 ```
 
-This commit is already pushed to GitHub remote `main`.
+This validation commit is already pushed to GitHub remote `main`. The handoff
+file itself may live in a later commit; check `git log --oneline -3` before
+editing.
 
-Planning repo sync:
+Planning repo proof-gate sync before this handoff-strengthening pass:
 
 ```text
 4ca5194b501baf9dfd6d25eebba95f4a3c296eef
 planning: record Project II phase2 proof gate
 ```
 
-That commit records the planning-side status and is also pushed to remote
-`main`.
+That commit records the planning-side proof-gate status and is also pushed to
+remote `main`. The planning repo may have a later note that points back to this
+handoff update.
 
 Current local validation environment:
 
