@@ -1,6 +1,16 @@
 # NYCU 114-2 Network Security Practices - Attack and Defense
 
-<img src="http://estruyf-github.azurewebsites.net/api/VisitorHit?user=JasonLn0711&repo=nycu_network_security_practice_114-2&countColor=%237B1E7B" alt="Visitor count"/>
+<p>
+  <img src="http://estruyf-github.azurewebsites.net/api/VisitorHit?user=JasonLn0711&repo=nycu_network_security_practice_114-2&countColor=%237B1E7B" alt="Visitor count"/>
+  <img src="https://img.shields.io/badge/course-NYCU%20114--2-1f6feb?style=flat-square" alt="NYCU 114-2 course"/>
+  <img src="https://img.shields.io/badge/focus-network%20security-7B1E7B?style=flat-square&logo=hackthebox&logoColor=white" alt="Network security focus"/>
+  <img src="https://img.shields.io/badge/archive-course%20materials-455a64?style=flat-square&logo=readthedocs&logoColor=white" alt="Course material archive"/>
+  <img src="https://img.shields.io/badge/notes-Markdown-000000?style=flat-square&logo=markdown&logoColor=white" alt="Markdown notes"/>
+  <img src="https://img.shields.io/badge/helpers-Python%203-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3 helpers"/>
+  <img src="https://img.shields.io/badge/labs-Docker-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker lab workflow"/>
+  <img src="https://img.shields.io/badge/license-CC%20BY--NC%204.0-lightgrey?style=flat-square" alt="CC BY-NC 4.0 license for original notes"/>
+  <img src="https://img.shields.io/github/last-commit/JasonLn0711/nycu_network_security_practice_114-2?style=flat-square&logo=github" alt="GitHub last commit"/>
+</p>
 
 This repository is the course workspace for NYCU 114-2 Network Security Practices. It organizes official handouts, lecture notes, labs, homework material, and security practice resources into a clean study path.
 
