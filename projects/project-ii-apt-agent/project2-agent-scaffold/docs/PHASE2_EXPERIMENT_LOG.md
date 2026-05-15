@@ -69,6 +69,9 @@ Every new experiment record must include:
 | P2-EXP-012 | 2026-05-15 | Direct `rax` reuse | Returned into the `mov rdi, rax; call system` path, but no success and `system()` returned `0x7f00`. | closed | `PHASE2_REGISTER_REUSE_ATTEMPT_2026-05-15.md` |
 | P2-EXP-013 | 2026-05-15 | Backward pivot feasibility | Fresh main binary plus pinned libc had no usable simple backward `rsp` pivot in the tested family. | closed | `PHASE2_BACKWARD_PIVOT_FEASIBILITY_2026-05-15.md` |
 | P2-EXP-014 | 2026-05-15 | Current-`rdi` argument reuse | Direct `system@plt` received an empty libc lock pointer, not controlled `user_input`. | closed | `PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md` |
+| P2-EXP-015 | 2026-05-15 | Post-stream first-argument transfer | Controlled pointers survived in stack/local slots, but no single-stage `rdi` setup plus success call was found. | closed | `PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md` |
+| P2-EXP-016 | 2026-05-15 | Precise BSS staging boundary | `3264` staged bytes safely fill the data-page tail; `3300+` crosses into allocator state and crashes. | positive primitive only | `PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md` |
+| P2-EXP-017 | 2026-05-15 | BSS-indirect dispatch feasibility | Static search found no single-shot gadget that moves staged `.bss` data into first argument and reaches exec-family. | closed | `PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md` |
 
 ## Detailed Records
 
@@ -312,9 +315,57 @@ Every new experiment record must include:
 | Next action | Do not reuse current `rdi` directly; find a different non-stack staging or first-argument setup mechanism. |
 | Evidence files | `PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md`; preserved local coredump path `/tmp/project2_phase2_next/lab/shared/coredump/blogic-74.core` if not cleaned. |
 
+### P2-EXP-015 - Post-Stream First-Argument Transfer Check
+
+| Field | Record |
+| --- | --- |
+| Date | 2026-05-15 |
+| Hypothesis | After the final C++ stream call in `log_message()`, a controlled pointer may still survive in a fixed stack/local slot or original caller-stack qword, and a single reachable sequence may move that pointer into the first argument and call `system()` or `execve()` without appended ROP. |
+| Prior blocker avoided | Avoids appended ROP, preserved saved RBP, direct `rax` reuse, and direct current-`rdi` reuse. |
+| Environment | Disposable IC `IC_PHASE2_P15`, `server_2` SHA-256 `155fee01eb0e2a88e9f19738b7bd92bd25306a387247047ca525a2ff7cf8304c`, libc SHA-256 `d8db8739a1633c972cec6a4fe0566bdcec6fd088f98723492ab0361f66238f75`, ASLR disabled, evidence dir `/tmp/project2_phase2_p15/`. |
+| Procedure | Write a marker `user_input=` line that reaches `log_message()` return; trigger the IC loop; capture `blogic-30.core` at the `ret` boundary; byte-scan the pinned libc and main binary for first-stage `rdi`-setup-to-`system`/`execve` sequences. |
+| Expected observation | A reachable single-stage gadget that loads a controlled pointer into `rdi` and immediately calls `system()` or `execve()` without appended ROP. |
+| Observed result | Core showed `rip = 0x40146f`, `rax = 0x404100`, `rdi = 0x7ffff7d00710`; controlled data preserved at `[$rsp-0x70] = 0x404340` and `[$rsp+0x08] = 0x00007fffffffec00`; static scan found 10 direct `system`/`execve` call sites in libc but `rdi_setup_to_system_or_execve_gadgets = 0`; the only `pop rdi; call rax` sequence at libc offset `0x129a61` is unusable because post-stream `rax = 0x404100` is the writable `cout` object, not an executable success path. |
+| Success artifact | No `/shared/success.txt`. |
+| Verdict | closed for the tested single-stage first-argument family. |
+| Next action | Do not re-run a single-stage post-stream `rdi`-setup probe; the next block must use a different mechanism. |
+| Evidence files | `PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md`. |
+
+### P2-EXP-016 - Precise BSS Non-Stack Staging Boundary
+
+| Field | Record |
+| --- | --- |
+| Date | 2026-05-15 |
+| Hypothesis | Multi-line `user_input=` staging can safely fill the `.bss`/data-page tail up to the allocator boundary, but crossing into heap/tcache state is not stable unless a precise allocator plan exists. |
+| Prior blocker avoided | Avoids the broad heap-overwrite assumption from `P2-EXP-009`. |
+| Environment | Same disposable IC as `P2-EXP-015`. |
+| Procedure | For a sweep of first-line lengths `L` in `{2048, 3000, 3200, 3264, 3300, 3400, 3500, 3600, 3700, 3800, 4000}`, write `user_input=STAGELEN<L>;...` followed by a short `user_input=P15-FINAL;...` line; trigger the IC; record where the IC reaches `log_message()` return cleanly versus where it crashes in libc allocator paths. |
+| Expected observation | A precise length boundary separating safe `.bss`/data-page staging from allocator-state corruption. |
+| Observed result | `L=3200` and `L=3264` reached `log_message()` ret cleanly with staged 'S' bytes still present at `0x404ff0` and allocator state intact at `0x405000`; `L=3300` and `L=3400` crashed in `tcache_get_n` before the final `log_message()` ret; `L>=3500` reproduced `SIGABRT` in the allocator path. |
+| Success artifact | No `/shared/success.txt`. |
+| Verdict | positive primitive only (safe non-stack staging window bounded at `L=3264`). |
+| Next action | Treat `0x404340..0x404FFF` as the safe multi-line staging address range; do not rely on `L>=3300` heap overwrites unless a separate precise allocator plan is written first. |
+| Evidence files | `PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md`. |
+
+### P2-EXP-017 - BSS-Indirect Dispatch Feasibility (deeper static slice)
+
+| Field | Record |
+| --- | --- |
+| Date | 2026-05-15 |
+| Hypothesis | A single-shot binary or libc gadget exists that sets `rdi` from `rax + small disp` (or another callee-preserved register) into the multi-line `.bss` staging range and transfers control to `system`/`execve`-family in one shot. |
+| Prior blocker avoided | Avoids appended ROP after saved RIP, preserved saved RBP, direct `rax` reuse, direct current-`rdi` reuse, and the simple backward stack-pivot family. |
+| Environment | Local in-tree extraction `/tmp/p2_explore/lab`, `server_2` SHA-256 `155fee01eb0e2a88e9f19738b7bd92bd25306a387247047ca525a2ff7cf8304c`, pinned libc `/tmp/project2_pivot_static/libc.so.6` SHA-256 `d8db8739a1633c972cec6a4fe0566bdcec6fd088f98723492ab0361f66238f75`, libc executable file range `0x28000..0x1afd39`. No live IC was started. |
+| Procedure | Static byte-scan over `server_2` text and the pinned libc executable segment for the candidate single-shot families (`lea rdi, [rax+disp]; (jmp|call) <exec-family>`, `mov rdi, [rax+disp]; (jmp|call) <exec-family>`, `mov rdi, r{bx,8,12,13,14,15}; (jmp|call) <exec-family>`); decode each candidate's call/jmp target and verify it resolves to `system`/`execve`/`execvp`/`execvpe`/`posix_spawn`. |
+| Expected observation | At least one matching gadget with a decoded target inside the exec-family symbols and a `disp` that lands `rax + disp` inside `0x404340..0x404FFF`. |
+| Observed result | Six libc `lea rdi, [rax+disp32]; call rel32` matches all resolve to `__pthread_mutex_unlock` or internal assert helpers; 23 `lea rdi, [rax+disp8]; call rel32` matches use `disp` of `0x1` or `0x3` and target the `cout` object, not the staging range; `server_2` text has zero `lea rdi, [rip+disp]`, `mov rdi, [rax]`, `mov rdi, [rax+disp]`, `mov rdi, [rsp+disp]`, or `pop rdi; ret` matches; the only binary `mov edi, imm; jmp rax` gadgets at `0x401387` and `0x4013c9` hardcode `rdi = 0x4040d8` (in `.data`, before `user_input`, unreachable through forward `strcpy`). The exec-family direct-call sites in libc are preceded by `mov rdi, rbx` / `mov rdi, r8` / `mov rdi, r15`, none of which is pinned to a value inside the staging range at `log_message` return time. |
+| Success artifact | No `/shared/success.txt`; no live IC run was performed. |
+| Verdict | closed. |
+| Next action | Do not run a live EC candidate for this hypothesis class; pivot to submission-track follow-through (`docs/TA_CLARIFICATION_DRAFT.md`, `docs/PARTIAL_SUBMISSION_BRIEF.md`) or open a new bounded block with a fundamentally different writable primitive (heap-allocator state, shared-volume file, or kernel-level escalation). |
+| Evidence files | `PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md`. |
+
 ## Future Entry Template
 
-Use this template for `P2-EXP-015` and later:
+Use this template for `P2-EXP-018` and later:
 
 ```markdown
 ### P2-EXP-XXX - Short Title
