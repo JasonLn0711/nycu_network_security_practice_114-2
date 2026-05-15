@@ -74,6 +74,7 @@ Every new experiment record must include:
 | P2-EXP-017 | 2026-05-15 | BSS-indirect dispatch feasibility | Static search found no single-shot gadget that moves staged `.bss` data into first argument and reaches exec-family. | closed | `PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md` |
 | P2-EXP-018 | 2026-05-15 | Stack-local first-argument setup | Static search found no viable stack-relative `rdi` setup that consumes preserved stack/local pointers and reaches a success call. | closed | `PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md` |
 | P2-EXP-019 | 2026-05-15 | Tcache count-gate staging | `L=3292` uses the `strcpy()` terminator to keep tcache `count[6]` zero and reaches final `log_message`; `L>=3293` crashes in `tcache_get_n`. | positive primitive only | `PHASE2_TCACHE_COUNT_GATE_STAGING_2026-05-15.md` |
+| P2-EXP-020 | 2026-05-15 | Safe-linked entries[6] feasibility | Partial `entries[6]=0x41b1a0` made malloc use the staged pointer, but C++ string destruction aborted on an invalid chunk header. | closed | `PHASE2_SAFE_LINKED_ENTRY_FEASIBILITY_2026-05-15.md` |
 
 ## Detailed Records
 
@@ -397,9 +398,25 @@ Every new experiment record must include:
 | Next action | Treat `L=3292` as the allocator-tolerated staging ceiling and `L>=3293` as closed unless a future plan can keep `count[6]` zero or provide a valid safe-linked `entries[6]` pointer before `malloc(106)`. |
 | Evidence files | `PHASE2_TCACHE_COUNT_GATE_STAGING_2026-05-15.md`; volatile cores under `/tmp/project2_phase2_p19/P19-L*.core`. |
 
+### P2-EXP-020 - Safe-Linked Entries[6] Feasibility
+
+| Field | Record |
+| --- | --- |
+| Date | 2026-05-15 |
+| Hypothesis | The forward `strcpy()` staging primitive can write a plausible tcache `entries[6]` pointer so the following `malloc(106)` crosses the `L>=3293` count gate and reaches final `log_message()`. |
+| Prior blocker avoided | Avoids current-`rdi`, direct `rax`, appended ROP, preserved saved RBP, stack-local gadget reuse, and broad heap-overwrite assumptions. |
+| Environment | Disposable IC `IC_PHASE2_P20`, mount `/tmp/project2_phase2_p20/lab/shared`, ASLR disabled, `server_2` SHA-256 `155fee01eb0e2a88e9f19738b7bd92bd25306a387247047ca525a2ff7cf8304c`. |
+| Procedure | Re-check `baseline-3292`, then run a single `safe-entry6-41b1a0` candidate that writes non-zero `count[6]` bytes and partially writes `entries[6] = 0x41b1a0` by placing bytes `a0 b1 41` at offset `0x4050c0-0x404340` and using the `strcpy()` terminator as byte 3. |
+| Expected observation | If `0x41b1a0` is a reusable valid tcache entry at the post-stage allocation point, IC should pass the next `malloc(106)` and reach the final overflow marker. |
+| Observed result | Baseline `L=3292` reproduced final `log_message` ret. The `safe-entry6-41b1a0` candidate aborted before final logging with `double free or corruption (out)` in `_int_free_merge_chunk`; the abort core showed `0x41b1a0` was used as the next C++ string buffer, but its preceding header at `0x41b190` contained staged/corrupted bytes (`0x0153535353535353`, `0x5353535353535301`), so freeing it was invalid. |
+| Success artifact | No `/shared/success.txt`. |
+| Verdict | closed for the naive safe-linked-entry candidate. |
+| Next action | Do not reuse final-core `entries[6] = 0x41b1a0` as if it were valid at the earlier allocation point; any future heap plan must identify a real free chunk pointer available before `malloc(106)` with a header that the long `strcpy()` line does not corrupt. |
+| Evidence files | `PHASE2_SAFE_LINKED_ENTRY_FEASIBILITY_2026-05-15.md`; volatile cores under `/tmp/project2_phase2_p20/P20-*.core`. |
+
 ## Future Entry Template
 
-Use this template for `P2-EXP-020` and later:
+Use this template for `P2-EXP-021` and later:
 
 ```markdown
 ### P2-EXP-XXX - Short Title
