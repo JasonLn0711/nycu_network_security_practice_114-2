@@ -329,6 +329,28 @@ Verified in that pass:
 This closes the tested BSS-indirect dispatch route. The completion verdict is
 unchanged: protocol-complete partial, not full-credit complete.
 
+## 2026-05-15 Stack-Local First-Argument Feasibility Follow-Up
+
+A final same-day static slice tested whether the preserved stack-local pointer
+from the live post-stream core can be used directly by a stack-relative
+first-argument setup gadget. The result is recorded in
+`docs/PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md`.
+
+Verified in that pass:
+
+- no live IC candidate was run because no concrete first-stage address survived
+  static/manual review;
+- `server_2` has zero stack-relative `mov/lea rdi, [rsp+disp]` setup patterns
+  in its executable text;
+- the apparent libc exec-family hits are not valid success candidates: two
+  require `rbp`-relative state, and one `posix_spawn` path uses `rdi` as
+  `pid_t *` while its executable path is fixed to `/bin/sh`;
+- the preserved `[rsp-0x70] = 0x404340` pointer therefore does not provide a
+  usable one-stage first-argument setup in this artifact set.
+
+This closes the tested stack-local first-argument route. The completion verdict
+is unchanged: protocol-complete partial, not full-credit complete.
+
 ## Remaining Work For A Full-Credit Submission
 
 1. Finish the instructor-approved Phase II candidate-generation logic in

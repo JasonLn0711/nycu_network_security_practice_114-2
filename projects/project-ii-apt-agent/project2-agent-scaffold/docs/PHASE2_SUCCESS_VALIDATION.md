@@ -265,3 +265,24 @@ Additional evidence from that block:
 
 The BSS-indirect dispatch route is closed in the tested artifact set. The
 latest status remains **not full-credit complete**.
+
+## 2026-05-15 Stack-Local First-Argument Feasibility Addendum
+
+The follow-up stack-local first-argument check is recorded in
+`docs/PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md`.
+
+Additional evidence from that block:
+
+- no live IC candidate was run because the static/manual review produced no
+  concrete first-stage address;
+- `server_2` contains no stack-relative `mov/lea rdi, [rsp+disp]` setup pattern
+  in its executable text;
+- the only apparent libc exec-family hits are invalid for this problem: two
+  `rbp`-relative `execve` paths require the saved-RBP route that is already
+  closed, and one `posix_spawn` path puts the stack address in `rdi` as
+  `pid_t *` while the executable path is fixed in `rsi` to `/bin/sh`;
+- no tested stack-local path consumes `[rsp-0x70] = 0x404340` or controlled
+  caller-stack bytes into a success-relevant first argument.
+
+The stack-local first-argument setup route is closed in the tested artifact set.
+The latest status remains **not full-credit complete**.

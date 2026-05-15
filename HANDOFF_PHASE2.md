@@ -38,6 +38,9 @@ Latest BSS-indirect dispatch feasibility attempt:
 Latest post-stream first-argument and `.bss` staging-boundary attempt:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md`.
 
+Latest stack-local first-argument feasibility attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md`.
+
 Latest current-`rdi` argument attempt:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md`.
 
@@ -170,6 +173,11 @@ return point. A later BSS-indirect dispatch feasibility block searched
 `rax + disp` or another callee-preserved register into that staged `.bss` range
 and transfers control to `system`/`execve`-family in one shot; no qualifying
 gadget exists in the tested family, so this route is also closed.
+A stack-local first-argument feasibility block then checked whether the
+preserved `[rsp-0x70] = 0x404340` pointer could be consumed through
+`mov/lea rdi, [rsp+disp]` into a success call; `server_2` has no such pattern,
+and the pinned libc hits either require invalid `rbp` state or call
+`posix_spawn()` with the controlled stack address in the wrong argument.
 
 ## 2. Verified Facts
 
@@ -712,6 +720,11 @@ PY
   pointing into the controlled stack buffer, but no fresh-binary or
   pinned-libc single-stage sequence consumes either of those into a
   controlled `rdi` plus immediate `system`/`execve` call.
+- The stack-local first-argument feasibility check found no viable
+  `mov/lea rdi, [rsp+disp]` path into a success call: `server_2` has zero such
+  setup patterns; libc's apparent hits are two invalid `rbp`-relative `execve`
+  paths and one `posix_spawn` path where `rdi` is `pid_t *` while the executable
+  path is fixed in `rsi` to `/bin/sh`, not controlled `/backdoor`.
 - The current-`rdi` first-argument probe reached libc `do_system()`, but no
   `/shared/success.txt` appeared and the command pointer was the empty
   `_IO_stdfile_1_lock` buffer; direct current-`rdi` reuse is not a full-credit
@@ -754,6 +767,10 @@ PY
   `mov rdi, r*; transfer-to-system` gadget exists that lands the first argument
   inside the multi-line `.bss` staging range; the 2026-05-15 BSS-indirect
   dispatch feasibility block found none in the tested family.
+- Do not assume the preserved stack-local pointer at `[rsp-0x70] = 0x404340`
+  can be consumed by a simple `mov/lea rdi, [rsp+disp]` gadget into
+  `system`/`execve`; the 2026-05-15 stack-local feasibility block found no
+  viable candidate in `server_2` or the pinned libc.
 - Do not assume the preserved post-stream stack/local pointer is enough by
   itself; the 2026-05-15 post-stream transfer block found the pointer but no
   single-stage sequence that moves it into `rdi` and immediately reaches
@@ -788,7 +805,8 @@ Recommended immediate next steps:
    candidate. Also read `docs/PHASE2_REGISTER_REUSE_ATTEMPT_2026-05-15.md`,
    `docs/PHASE2_BACKWARD_PIVOT_FEASIBILITY_2026-05-15.md`,
    `docs/PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md`,
-   `docs/PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md`, and
+   `docs/PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md`,
+   `docs/PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md`, and
    `docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md` because direct
    `rax` reuse, the simple backward-pivot family, preserved post-stream pointer
    consumption, BSS-indirect dispatch, and direct current-`rdi` reuse are now
@@ -800,7 +818,7 @@ Recommended immediate next steps:
    - argument-control track: find a return target or short sequence that makes
      the first argument point at controlled data after the final C++ stream call,
      without requiring a preserved saved RBP or a single-stage family already
-     closed in `P2-EXP-015` / `P2-EXP-017`;
+     closed in `P2-EXP-015` / `P2-EXP-017` / `P2-EXP-018`;
    - pivot track: find a way to pivot to already-controlled bytes without
      requiring a normal NUL-bearing ROP chain after the partial return address;
    - libc/libstdc++ track: search for a gadget or call path that fits the

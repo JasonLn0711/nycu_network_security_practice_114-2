@@ -72,6 +72,7 @@ Every new experiment record must include:
 | P2-EXP-015 | 2026-05-15 | Post-stream first-argument transfer | Controlled pointers survived in stack/local slots, but no single-stage `rdi` setup plus success call was found. | closed | `PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md` |
 | P2-EXP-016 | 2026-05-15 | Precise BSS staging boundary | `3264` staged bytes safely fill the data-page tail; `3300+` crosses into allocator state and crashes. | positive primitive only | `PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md` |
 | P2-EXP-017 | 2026-05-15 | BSS-indirect dispatch feasibility | Static search found no single-shot gadget that moves staged `.bss` data into first argument and reaches exec-family. | closed | `PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md` |
+| P2-EXP-018 | 2026-05-15 | Stack-local first-argument setup | Static search found no viable stack-relative `rdi` setup that consumes preserved stack/local pointers and reaches a success call. | closed | `PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md` |
 
 ## Detailed Records
 
@@ -363,9 +364,25 @@ Every new experiment record must include:
 | Next action | Do not run a live EC candidate for this hypothesis class; pivot to submission-track follow-through (`docs/TA_CLARIFICATION_DRAFT.md`, `docs/PARTIAL_SUBMISSION_BRIEF.md`) or open a new bounded block with a fundamentally different writable primitive (heap-allocator state, shared-volume file, or kernel-level escalation). |
 | Evidence files | `PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md`. |
 
+### P2-EXP-018 - Stack-Local First-Argument Feasibility
+
+| Field | Record |
+| --- | --- |
+| Date | 2026-05-15 |
+| Hypothesis | A reachable main-binary or libc sequence can consume the preserved post-stream stack/local pointer (`[rsp-0x70] = 0x404340`) or controlled caller-stack bytes into `rdi` and immediately call `system`/`execve`-family without appended ROP, preserved saved RBP, direct `rax` reuse, or heap overwrite. |
+| Prior blocker avoided | Avoids appended ROP after saved RIP, preserved saved RBP, direct `rax` reuse, direct current-`rdi` reuse, and the `.bss` dispatch route closed in `P2-EXP-017`. |
+| Environment | Fresh extraction `/tmp/p2_exp018/lab`, `server_2` SHA-256 `155fee01eb0e2a88e9f19738b7bd92bd25306a387247047ca525a2ff7cf8304c`, pinned libc `/tmp/project2_pivot_static/libc.so.6` SHA-256 `d8db8739a1633c972cec6a4fe0566bdcec6fd088f98723492ab0361f66238f75`. No live IC run. |
+| Procedure | Static byte-scan executable PT_LOAD ranges for `mov/lea rdi, [rsp+disp8/disp32]` patterns followed by direct `call/jmp` tails to `system`, `execv`, `execve`, `execvp`, `execvpe`, `posix_spawn`, or `posix_spawnp`; record `rbp` analogues only as non-viable sanity checks; manually disassemble apparent hits. |
+| Expected observation | At least one candidate that loads `rdi` from a stack-local controlled pointer or controlled stack bytes and reaches a success-relevant call in one stage. |
+| Observed result | `server_2` has zero stack-relative `rdi` setup patterns; libc has stack-relative setup instructions but no viable success tail. The only apparent exec-family hits are two `rbp`-relative `execve` paths (invalid because they require preserved saved RBP) and one `lea rdi, [rsp+0x64]; call posix_spawn` path where `rdi` is `pid_t *` and the path is fixed in `rsi` to `/bin/sh`, not controlled `/backdoor`. |
+| Success artifact | No `/shared/success.txt`; no live candidate was run. |
+| Verdict | closed. |
+| Next action | Do not repeat stack-local first-argument gadget search unless binary/libc changes; either write a precise heap-allocator-state hypothesis for the `L>=3300` boundary or switch to submission-track TA clarification. |
+| Evidence files | `PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md`. |
+
 ## Future Entry Template
 
-Use this template for `P2-EXP-018` and later:
+Use this template for `P2-EXP-019` and later:
 
 ```markdown
 ### P2-EXP-XXX - Short Title
