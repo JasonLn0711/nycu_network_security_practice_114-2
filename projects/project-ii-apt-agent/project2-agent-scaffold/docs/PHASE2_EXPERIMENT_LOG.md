@@ -73,6 +73,7 @@ Every new experiment record must include:
 | P2-EXP-016 | 2026-05-15 | Precise BSS staging boundary | `3264` staged bytes safely fill the data-page tail; `3300+` crosses into allocator state and crashes. | positive primitive only | `PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md` |
 | P2-EXP-017 | 2026-05-15 | BSS-indirect dispatch feasibility | Static search found no single-shot gadget that moves staged `.bss` data into first argument and reaches exec-family. | closed | `PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md` |
 | P2-EXP-018 | 2026-05-15 | Stack-local first-argument setup | Static search found no viable stack-relative `rdi` setup that consumes preserved stack/local pointers and reaches a success call. | closed | `PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md` |
+| P2-EXP-019 | 2026-05-15 | Tcache count-gate staging | `L=3292` uses the `strcpy()` terminator to keep tcache `count[6]` zero and reaches final `log_message`; `L>=3293` crashes in `tcache_get_n`. | positive primitive only | `PHASE2_TCACHE_COUNT_GATE_STAGING_2026-05-15.md` |
 
 ## Detailed Records
 
@@ -380,9 +381,25 @@ Every new experiment record must include:
 | Next action | Do not repeat stack-local first-argument gadget search unless binary/libc changes; either write a precise heap-allocator-state hypothesis for the `L>=3300` boundary or switch to submission-track TA clarification. |
 | Evidence files | `PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md`. |
 
+### P2-EXP-019 - Tcache Count-Gate Staging
+
+| Field | Record |
+| --- | --- |
+| Date | 2026-05-15 |
+| Hypothesis | The earlier `L>=3300` allocator crashes correspond to a specific tcache count field; if the first long `user_input=` line's terminating NUL lands on that field, IC can continue past the allocator call and reach final `log_message()` even after writing beyond `0x405000`. |
+| Prior blocker avoided | Avoids current-`rdi`, direct `rax`, appended ROP, preserved saved RBP, stack-local gadget reuse, and broad heap-overwrite assumptions; focuses on precise non-stack staging. |
+| Environment | Disposable IC `IC_PHASE2_P19`, mount `/tmp/project2_phase2_p19/lab/shared`, ASLR disabled, `server_2` SHA-256 `155fee01eb0e2a88e9f19738b7bd92bd25306a387247047ca525a2ff7cf8304c`. |
+| Procedure | For stage lengths `3278, 3280, 3288, 3290, 3291, 3292, 3293, 3294, 3300`, write two-line configs (`user_input=<stage length L>`, then a short final overflow marker), trigger `/shared/exploit_done`, and inspect whether IC reaches `log_message()` ret or crashes earlier in allocator code. |
+| Expected observation | A precise boundary where the staged line's NUL terminator keeps the needed tcache count zero; longer lines should corrupt that count and crash before final logging. |
+| Observed result | `L=3278..3292` all reached the final `log_message` ret marker; `L=3293`, `L=3294`, and `L=3300` crashed in `tcache_get_n` during `malloc(106)` from `std::string::substr()`. `L=3292` places the `strcpy()` terminator at `0x40501c`, the `count[6]` halfword used by `malloc(106)`, keeping the tcache fast path from consuming a NULL/invalid entry. `L=3293` makes `count[6] = 0x0053` with `entries[6] = NULL`, causing the crash. |
+| Success artifact | No `/shared/success.txt`. |
+| Verdict | positive primitive only. |
+| Next action | Treat `L=3292` as the allocator-tolerated staging ceiling and `L>=3293` as closed unless a future plan can keep `count[6]` zero or provide a valid safe-linked `entries[6]` pointer before `malloc(106)`. |
+| Evidence files | `PHASE2_TCACHE_COUNT_GATE_STAGING_2026-05-15.md`; volatile cores under `/tmp/project2_phase2_p19/P19-L*.core`. |
+
 ## Future Entry Template
 
-Use this template for `P2-EXP-019` and later:
+Use this template for `P2-EXP-020` and later:
 
 ```markdown
 ### P2-EXP-XXX - Short Title

@@ -41,6 +41,9 @@ Latest post-stream first-argument and `.bss` staging-boundary attempt:
 Latest stack-local first-argument feasibility attempt:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md`.
 
+Latest tcache count-gate non-stack staging attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_TCACHE_COUNT_GATE_STAGING_2026-05-15.md`.
+
 Latest current-`rdi` argument attempt:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md`.
 
@@ -177,7 +180,7 @@ A stack-local first-argument feasibility block then checked whether the
 preserved `[rsp-0x70] = 0x404340` pointer could be consumed through
 `mov/lea rdi, [rsp+disp]` into a success call; `server_2` has no such pattern,
 and the pinned libc hits either require invalid `rbp` state or call
-`posix_spawn()` with the controlled stack address in the wrong argument.
+`posix_spawn()` with the controlled stack address in the wrong argument. A subsequent tcache count-gate staging block switched to precise non-stack staging: it showed `L=3292` survives because the `strcpy()` terminator lands on tcache `count[6]` at `0x40501c`, while `L>=3293` makes `count[6]` non-zero with a NULL/invalid entry and crashes in `tcache_get_n()` before final logging. This is a positive primitive only; no `/shared/success.txt` appeared.
 
 ## 2. Verified Facts
 
@@ -725,6 +728,7 @@ PY
   setup patterns; libc's apparent hits are two invalid `rbp`-relative `execve`
   paths and one `posix_spawn` path where `rdi` is `pid_t *` while the executable
   path is fixed in `rsi` to `/bin/sh`, not controlled `/backdoor`.
+- The precise tcache count-gate staging check found `L=3292` is allocator-tolerated because the `strcpy()` terminator lands at `0x40501c`, the `count[6]` halfword used by the following `malloc(106)` from `std::string::substr()`. Stage lengths `L>=3293` make `count[6]` non-zero while `entries[6]` is NULL/invalid, causing `tcache_get_n()` to crash before final `log_message()`.
 - The current-`rdi` first-argument probe reached libc `do_system()`, but no
   `/shared/success.txt` appeared and the command pointer was the empty
   `_IO_stdfile_1_lock` buffer; direct current-`rdi` reuse is not a full-credit
@@ -778,6 +782,7 @@ PY
 - Do not assume multi-line staging beyond `L=3264` is safe; `L>=3300`
   reproducibly crosses into allocator/tcache state and crashes before a useful
   return point.
+- Refined boundary: do not assume heap/tcache staging beyond `L=3292` is usable. `L=3292` is only a count-gated positive primitive, and `L>=3293` crashes at `malloc(106)` unless a future plan keeps `count[6]` zero or supplies a valid safe-linked `entries[6]` pointer before the allocator call.
 - Do not assume current `rdi` can be passed directly to `system()` as a command
   pointer; the 2026-05-15 current-`rdi` probe showed it is an empty libc lock
   buffer at the relevant return point.
@@ -806,7 +811,8 @@ Recommended immediate next steps:
    `docs/PHASE2_BACKWARD_PIVOT_FEASIBILITY_2026-05-15.md`,
    `docs/PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md`,
    `docs/PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md`,
-   `docs/PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md`, and
+   `docs/PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md`,
+   `docs/PHASE2_TCACHE_COUNT_GATE_STAGING_2026-05-15.md`, and
    `docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md` because direct
    `rax` reuse, the simple backward-pivot family, preserved post-stream pointer
    consumption, BSS-indirect dispatch, and direct current-`rdi` reuse are now
@@ -839,8 +845,8 @@ Do not start another blind candidate probe. The latest evidence says the simple
 technical routes have been narrowed: `rdi` is stale, normal appended ROP bytes
 are unavailable after the first NUL-bearing partial return, saved RBP cannot be
 preserved while also overwriting saved RIP, untouched caller-stack qwords are
-fixed, direct heap adjacency crashes in `sprintf()`, and direct current-`rdi`
-reuse passes an empty libc lock buffer to `system()`. The next useful work is now
+fixed, direct heap adjacency crashes in `sprintf()`, direct current-`rdi`
+reuse passes an empty libc lock buffer to `system()`, and refined tcache staging is capped at `L=3292` unless a plan can keep `count[6]` zero or provide a valid safe-linked `entries[6]`. The next useful work is now
 to review and use the submission-hardening docs, then ask the TA whether the
 protocol-complete partial package is acceptable if official IC-side
 `/shared/success.txt` is not reached before the gate. Continue technical work
