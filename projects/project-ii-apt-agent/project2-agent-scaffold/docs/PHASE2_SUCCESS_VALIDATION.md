@@ -218,3 +218,50 @@ Additional evidence from that pass:
 
 The direct current-`rdi` route is therefore closed as a full-credit mechanism.
 The latest status remains **not full-credit complete**.
+
+## 2026-05-15 Post-Stream Argument / BSS Boundary Addendum
+
+The next bounded recovery block is recorded in
+`docs/PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md`.
+
+Additional evidence from that block:
+
+- the probe did not reuse direct current-`rdi`, direct `rax`, preserved saved
+  RBP, or appended ROP;
+- a marker crash at `log_message()` return showed controlled data still
+  survived at `0x404340`, with a preserved local slot
+  `[rsp-0x70] = 0x404340` and a caller qword `[rsp+0x08]` pointing into the
+  controlled stack buffer;
+- the same crash showed `rax = 0x404100` and
+  `rdi = 0x7ffff7d00710`, so neither register was already the needed first
+  argument;
+- a fresh main-binary plus pinned-libc scan found no single-stage sequence that
+  moves those preserved pointers into `rdi` and immediately calls
+  `system()`/`execve()`;
+- multi-line staging is safe through the data-page tail at first-line length
+  `L=3264`, but `L>=3300` crosses into allocator/tcache state and crashes
+  before a useful final return point.
+
+The post-stream pointer-transfer route is closed in the tested single-stage
+family. The `.bss` staging boundary is a positive primitive only, not a
+full-credit mechanism.
+
+## 2026-05-15 BSS-Indirect Dispatch Feasibility Addendum
+
+The follow-up static dispatch check is recorded in
+`docs/PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md`.
+
+Additional evidence from that block:
+
+- no live IC candidate was run because the static search produced no concrete
+  first-stage address;
+- `server_2` and the pinned libc were searched for single-shot
+  `lea/mov rdi, [rax+disp]; (jmp|call) exec-family` and
+  `mov rdi, r*; (jmp|call) exec-family` families;
+- no candidate both landed in the staged `.bss` range and transferred to
+  `system`/`execve`-family;
+- the binary's hardcoded `mov edi, 0x4040d8; jmp rax` gadgets point before
+  `user_input`, outside the forward `strcpy()` staging surface.
+
+The BSS-indirect dispatch route is closed in the tested artifact set. The
+latest status remains **not full-credit complete**.

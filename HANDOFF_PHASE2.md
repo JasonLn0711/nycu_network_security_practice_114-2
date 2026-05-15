@@ -32,6 +32,12 @@ Latest register-reuse attempt:
 Latest backward-pivot feasibility attempt:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_BACKWARD_PIVOT_FEASIBILITY_2026-05-15.md`.
 
+Latest BSS-indirect dispatch feasibility attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md`.
+
+Latest post-stream first-argument and `.bss` staging-boundary attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md`.
+
 Latest current-`rdi` argument attempt:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md`.
 
@@ -153,7 +159,17 @@ tested family, so no live EC candidate exists for that hypothesis. A later
 current-`rdi` first-argument probe returned directly to `system@plt` without
 appended ROP, saved RBP, or direct `rax` reuse; it produced no
 `/shared/success.txt`, and the coredump showed `system()` received the empty
-`_IO_stdfile_1_lock` buffer rather than controlled `user_input`.
+`_IO_stdfile_1_lock` buffer rather than controlled `user_input`. The next
+post-stream first-argument block confirmed controlled pointers still survive in
+stack/local state, including `[rsp-0x70] = 0x404340`, but found no single-stage
+sequence that consumes them into `rdi` and reaches `system`/`execve`. The same
+block bounded the safe non-stack `.bss` staging window at first-line length
+`L=3264`; `L>=3300` crosses into allocator state and crashes before a usable
+return point. A later BSS-indirect dispatch feasibility block searched
+`server_2` and the pinned libc for any single-shot gadget that sets `rdi` from
+`rax + disp` or another callee-preserved register into that staged `.bss` range
+and transfers control to `system`/`execve`-family in one shot; no qualifying
+gadget exists in the tested family, so this route is also closed.
 
 ## 2. Verified Facts
 
@@ -680,6 +696,22 @@ PY
 - The simple backward-stack-pivot family is not available in the fresh Phase II
   main binary plus pinned libc, so pre-RIP controlled stack bytes cannot yet be
   promoted into a normal appended ROP surface by that route.
+- A static `lea/mov rdi, [rax+disp]; (jmp|call) exec-family` and
+  `mov rdi, r{bx,8,12,13,14,15}; (jmp|call) exec-family` search across
+  `server_2` and the pinned libc found no single-shot gadget reaching
+  `system`/`execve`-family with `rdi` derived inside the multi-line `.bss`
+  staging range, so register-derived first-argument setup into the staging
+  area is closed in this artifact set.
+- The safe multi-line `.bss` non-stack staging window is bounded at
+  first-line length `L=3264`; first-line lengths `L>=3300` reproducibly
+  crash in libc allocator paths (`tcache_get_n` / `SIGABRT` in allocator)
+  before `log_message()` returns, so heap-state corruption from this
+  primitive is not a stable full-credit route.
+- The post-stream stack/local state still preserves a slot at
+  `[rsp-0x70]` containing `0x404340` and a caller qword at `[rsp+0x08]`
+  pointing into the controlled stack buffer, but no fresh-binary or
+  pinned-libc single-stage sequence consumes either of those into a
+  controlled `rdi` plus immediate `system`/`execve` call.
 - The current-`rdi` first-argument probe reached libc `do_system()`, but no
   `/shared/success.txt` appeared and the command pointer was the empty
   `_IO_stdfile_1_lock` buffer; direct current-`rdi` reuse is not a full-credit
@@ -718,6 +750,17 @@ PY
 - Do not assume a simple backward `rsp` pivot exists in the pinned libc or main
   binary; the 2026-05-15 feasibility block found no candidate in the tested
   family.
+- Do not assume a single-shot `lea/mov rdi, [rax+disp]; transfer-to-system` or
+  `mov rdi, r*; transfer-to-system` gadget exists that lands the first argument
+  inside the multi-line `.bss` staging range; the 2026-05-15 BSS-indirect
+  dispatch feasibility block found none in the tested family.
+- Do not assume the preserved post-stream stack/local pointer is enough by
+  itself; the 2026-05-15 post-stream transfer block found the pointer but no
+  single-stage sequence that moves it into `rdi` and immediately reaches
+  `system`/`execve`.
+- Do not assume multi-line staging beyond `L=3264` is safe; `L>=3300`
+  reproducibly crosses into allocator/tcache state and crashes before a useful
+  return point.
 - Do not assume current `rdi` can be passed directly to `system()` as a command
   pointer; the 2026-05-15 current-`rdi` probe showed it is an empty libc lock
   buffer at the relevant return point.
@@ -743,17 +786,21 @@ Recommended immediate next steps:
    `docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md` and
    `docs/PHASE2_BOUNDED_RECOVERY_BLOCK_2026-05-14.md` before trying another
    candidate. Also read `docs/PHASE2_REGISTER_REUSE_ATTEMPT_2026-05-15.md`,
-   `docs/PHASE2_BACKWARD_PIVOT_FEASIBILITY_2026-05-15.md`, and
+   `docs/PHASE2_BACKWARD_PIVOT_FEASIBILITY_2026-05-15.md`,
+   `docs/PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md`,
+   `docs/PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md`, and
    `docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md` because direct
-   `rax` reuse, the simple backward-pivot family, and direct current-`rdi`
-   reuse are now closed.
+   `rax` reuse, the simple backward-pivot family, preserved post-stream pointer
+   consumption, BSS-indirect dispatch, and direct current-`rdi` reuse are now
+   closed in the tested families.
 4. Focus on reliable pivot/argument-control that survives `strcpy`/`sprintf`
    NUL-byte constraints; do not repeat direct ret-to-`maintenance_task+5` as if
    untested.
 5. Choose **one** bounded investigation track before running code:
    - argument-control track: find a return target or short sequence that makes
      the first argument point at controlled data after the final C++ stream call,
-     without requiring a preserved saved RBP;
+     without requiring a preserved saved RBP or a single-stage family already
+     closed in `P2-EXP-015` / `P2-EXP-017`;
    - pivot track: find a way to pivot to already-controlled bytes without
      requiring a normal NUL-bearing ROP chain after the partial return address;
    - libc/libstdc++ track: search for a gadget or call path that fits the

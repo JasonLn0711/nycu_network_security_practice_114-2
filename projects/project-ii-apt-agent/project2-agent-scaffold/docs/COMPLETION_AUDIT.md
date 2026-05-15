@@ -283,6 +283,52 @@ Verified in that pass:
 This closes the direct current-`rdi` first-argument route. The completion
 verdict is unchanged: protocol-complete partial, not full-credit complete.
 
+## 2026-05-15 Post-Stream Argument / BSS Boundary Follow-Up
+
+A bounded follow-up tested the next stricter route: not current-`rdi`, not
+direct `rax`, not preserved saved RBP, and not appended ROP. The result is
+recorded in
+`docs/PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md`.
+
+Verified in that pass:
+
+- a marker crash at `log_message()` return preserved controlled data in
+  `user_input` at `0x404340`;
+- a stack/local slot at `[rsp-0x70]` still held `0x404340`, and a caller qword
+  at `[rsp+0x08]` pointed into the controlled stack buffer;
+- no fresh-binary or pinned-libc single-stage sequence was found that consumes
+  either pointer into `rdi` and immediately calls `system()`/`execve()`;
+- multi-line staging safely fills the data-page tail through first-line length
+  `L=3264`;
+- first-line lengths `L>=3300` cross into allocator/tcache state and crash
+  before a useful final return point.
+
+This closes the tested post-stream first-argument transfer family and preserves
+only a bounded non-stack staging primitive. The completion verdict is unchanged:
+protocol-complete partial, not full-credit complete.
+
+## 2026-05-15 BSS-Indirect Dispatch Feasibility Follow-Up
+
+A deeper static slice tested whether the bounded `.bss` staging range can be
+used through a one-shot register-derived dispatch gadget. The result is
+recorded in
+`docs/PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md`.
+
+Verified in that pass:
+
+- no live IC candidate was run because no concrete first-stage address was
+  found;
+- `server_2` and the pinned libc were searched for single-shot
+  `lea/mov rdi, [rax+disp]; (jmp|call) exec-family` and
+  `mov rdi, r*; (jmp|call) exec-family` families;
+- no candidate moved the first argument into the staged `.bss` range and then
+  reached `system`/`execve`-family;
+- hardcoded binary gadgets that set `rdi = 0x4040d8` target `.data` before
+  `user_input`, which the forward `strcpy()` primitive cannot reach.
+
+This closes the tested BSS-indirect dispatch route. The completion verdict is
+unchanged: protocol-complete partial, not full-credit complete.
+
 ## Remaining Work For A Full-Credit Submission
 
 1. Finish the instructor-approved Phase II candidate-generation logic in
