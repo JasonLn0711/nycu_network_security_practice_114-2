@@ -4,6 +4,9 @@ Date: 2026-05-13
 Scope: supplied Project II Phase II IC (`server_2`) running from the official
 local Docker lab bundle.
 
+Experiment ledger IDs: `P2-EXP-000`, `P2-EXP-001` in
+`docs/PHASE2_EXPERIMENT_LOG.md`.
+
 ## Direct Result
 
 **Not full-credit complete yet.** The latest EC candidate still does **not** make
@@ -12,6 +15,10 @@ the official IC create `/shared/success.txt`.
 This file is intentionally explicit so a reader who did not see the live debug
 session can tell what was tried, what was observed, and why the submission must
 not claim Phase II success yet.
+
+The canonical index of all Phase II experiments is
+`docs/PHASE2_EXPERIMENT_LOG.md`. Each success, failure, static infeasibility
+check, and positive primitive should have a row there.
 
 ## Candidate Under Test
 
@@ -125,8 +132,6 @@ Additional evidence from that pass:
   by this direct path because saved RBP and saved RIP cannot both be encoded
   through the current C-string copy path.
 
-The latest status remains **not full-credit complete**.
-
 ## 2026-05-14 Staging-Boundary Addendum
 
 The follow-up staging probe is recorded in
@@ -141,8 +146,6 @@ Additional evidence from that pass:
   cannot act as a controlled appended chain under the current C-string
   overwrite model.
 
-The latest status remains **not full-credit complete**.
-
 ## 2026-05-14 Heap / Global-State Addendum
 
 The heap/global-state feasibility probe is recorded in
@@ -156,8 +159,6 @@ Additional evidence from that pass:
   control-flow epilogue was reached;
 - this makes the direct heap-adjacency route insufficient without a new staging
   mechanism.
-
-The latest status remains **not full-credit complete**.
 
 ## 2026-05-14 Bounded Recovery Block Addendum
 
@@ -176,4 +177,44 @@ Additional evidence from that block:
 - the checked user-input setup boundary is therefore a stable no-success path,
   not a full-credit route.
 
+The latest status remains **not full-credit complete**.
+
+## 2026-05-15 Register-Reuse Addendum
+
+The bounded register-reuse probe is recorded in
+`docs/PHASE2_REGISTER_REUSE_ATTEMPT_2026-05-15.md`.
+
+Additional evidence from that pass:
+
+- a fresh Phase II IC container was started from the supplied `lab.zip`;
+- ASLR was confirmed disabled inside the container;
+- the EC candidate used
+  `PROJECT2_PHASE2_STRATEGY=register-reuse-system-rax`;
+- IC consumed `/shared/exploit_done`;
+- no `/shared/success.txt` was created;
+- a coredump appeared at `maintenance_task+74` after the selected `system()`
+  tail path returned;
+- `system()` returned `0x7f00`, so direct `rax` reuse is not a full-credit
+  route.
+
+The latest status remains **not full-credit complete**.
+
+## 2026-05-15 Current-RDI Argument Addendum
+
+The bounded current-`rdi` first-argument probe is recorded in
+`docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md`.
+
+Additional evidence from that pass:
+
+- a fresh local Phase II IC container was started from the supplied `lab.zip`;
+- a marker crash confirmed `rdi = 0x7ffff7d00710`, the empty
+  `_IO_stdfile_1_lock` buffer, at `log_message()` return time;
+- the EC candidate used `PROJECT2_PHASE2_STRATEGY=current-rdi-system`;
+- IC consumed `/shared/exploit_done`;
+- no `/shared/success.txt` was created;
+- the coredump stopped inside libc `do_system()` with
+  `line = 0x7ffff7d00710 ""`, while controlled `/backdoor` text remained in
+  `user_input`.
+
+The direct current-`rdi` route is therefore closed as a full-credit mechanism.
 The latest status remains **not full-credit complete**.

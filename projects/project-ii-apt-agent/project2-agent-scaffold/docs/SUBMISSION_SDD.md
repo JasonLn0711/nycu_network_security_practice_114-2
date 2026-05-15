@@ -64,7 +64,7 @@ sequenceDiagram
 
     G->>X: run one round
     X->>SG: validate lab boundary
-    X->>EC: check config/blogic/shared paths
+    X->>EC: check shared/blogic paths
     X->>SM: load and increment state
     X->>CP: build candidate config
     X->>FS: atomic write config.data
@@ -134,7 +134,7 @@ The submission package includes docs in three layers:
 | --- | --- |
 | Interface docs | `SPEC.md`, `SDD.md`, `CORE_WORKFLOW.md` |
 | Current status docs | `PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`, `PARTIAL_SUBMISSION_BRIEF.md`, `REQUIREMENTS_TRACEABILITY.md` |
-| Validation/audit docs | `COMPLETION_AUDIT.md`, `PHASE2_SUCCESS_VALIDATION.md`, `PHASE2_*_ATTEMPT_2026-05-14.md` |
+| Validation/audit docs | `COMPLETION_AUDIT.md`, `PHASE2_SUCCESS_VALIDATION.md`, `PHASE2_EXPERIMENT_LOG.md`, `PHASE2_*_ATTEMPT_2026-05-14.md`, `PHASE2_*_ATTEMPT_2026-05-15.md` |
 
 This design lets a reviewer distinguish:
 

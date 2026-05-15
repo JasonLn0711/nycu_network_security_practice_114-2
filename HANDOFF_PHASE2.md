@@ -1,12 +1,15 @@
 # HANDOFF_PHASE2
 
 Date: 2026-05-13
-Updated: 2026-05-14
+Updated: 2026-05-15
 Repo: `/home/jnclaw/every_on_git_jnclaw/phd-life-system/nycu_network_security_practice_114-2`
 Scope: state compression for the next Codex/GPT-5.5 handoff.
 
 Primary paired validation log:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_SUCCESS_VALIDATION.md`.
+
+Canonical experiment ledger:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_EXPERIMENT_LOG.md`.
 
 Latest deep sweep/NX attempt:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md`.
@@ -19,6 +22,18 @@ Latest staging-boundary attempt:
 
 Latest heap/global-state attempt:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md`.
+
+Latest multiline staging attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_MULTILINE_STAGING_ATTEMPT_2026-05-15.md`.
+
+Latest register-reuse attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_REGISTER_REUSE_ATTEMPT_2026-05-15.md`.
+
+Latest backward-pivot feasibility attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_BACKWARD_PIVOT_FEASIBILITY_2026-05-15.md`.
+
+Latest current-`rdi` argument attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md`.
 
 Latest submission-hardening docs:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`,
@@ -125,7 +140,20 @@ that pass nor the later single-target/caller-stack staging probe observed
 `/shared/success.txt`. The later heap/global-state probe also produced no
 `/shared/success.txt`; it showed that the forward write can reach heap-adjacent
 memory, but the same long C string crashes in `sprintf()` before a useful
-control-flow state is reached.
+control-flow state is reached. The 2026-05-15 multi-line staging pass confirmed
+that earlier `user_input=` lines can leave staged bytes beyond the final line's
+terminating NUL, but no validated first-stage pivot or first-argument setup has
+turned that primitive into IC-side `/backdoor` execution. A later 2026-05-15
+register-reuse probe reached the selected `system()` tail path and still
+produced no `/shared/success.txt`; this closes direct `rax` reuse as a
+full-credit route. A later backward-pivot feasibility block checked the fresh
+Phase II main binary plus pinned libc for a simple first-stage gadget that could
+move `rsp` back into controlled pre-RIP stack bytes; none was found in the
+tested family, so no live EC candidate exists for that hypothesis. A later
+current-`rdi` first-argument probe returned directly to `system@plt` without
+appended ROP, saved RBP, or direct `rax` reuse; it produced no
+`/shared/success.txt`, and the coredump showed `system()` received the empty
+`_IO_stdfile_1_lock` buffer rather than controlled `user_input`.
 
 ## 2. Verified Facts
 
@@ -209,34 +237,47 @@ sprintf(local_buffer, "[LOG]: %s", user_input)
 - A later heap/global-state probe with a long `user_input` value reached memory
   around `0x405000`, but then crashed inside libc copy handling through
   `sprintf()` before a useful epilogue or success path was reached.
+- A later register-reuse probe targeted `0x4014b1`
+  (`mov rdi, rax; call system@plt`). It reached the selected path, returned from
+  `system()` with status `0x7f00`, produced no `/shared/success.txt`, and then
+  crashed at the corrupted-frame epilogue (`maintenance_task+74`).
+- A later backward-pivot feasibility block checked both `server_2` and the
+  pinned Ubuntu 24.04 libc for `sub rsp, imm; ret`, negative
+  `add rsp, imm; ret`, `lea rsp, [rsp-negative-imm]; ret`,
+  `xchg rsp, reg; ret`, and `mov rsp, reg; ret` style first-stage pivots. No
+  usable gadget in that family was found.
+- A later current-`rdi` first-argument probe targeted `system@plt` (`0x401250`)
+  directly. It reached libc `do_system()`, but the `line` argument was
+  `0x7ffff7d00710` (`_IO_stdfile_1_lock`) with empty bytes, not the staged
+  `/backdoor` text in `user_input`.
 
-### Current Live Shared State
+### Latest Local Shared State
 
-- Treat `/Users/iKev/.cache/codex-phase2-complete/lab/shared` as volatile
-  runtime state. Re-check before acting; do not assume it still represents the
-  latest official validation attempt.
-- Current live shared directory:
-  `/Users/iKev/.cache/codex-phase2-complete/lab/shared`
-- Current coredump directory is empty after the latest smoke validation.
-- Current `/shared/success.txt` does not exist.
-- Current live `config.data` is `112` bytes, SHA-256:
+- Treat all shared directories as volatile runtime state. Re-check before
+  acting; do not assume any previous container still represents the latest
+  official validation attempt.
+- Latest local disposable shared directory from the current-`rdi` pass:
+  `/tmp/project2_phase2_next/lab/shared`
+- Latest local disposable container used for validation: `IC_PHASE2_NEXT`
+  (removed after evidence capture).
+- Latest `/shared/success.txt` did not exist after the current-`rdi` probe.
+- Latest `config.data` is `112` bytes, SHA-256:
 
 ```text
-1e970e62906ba73deddfef62121ea341cb5bf84d0d85623b561f6a7a6e2d6cd2
+800062950e8fb89ba71d69b4d5b23feb87a77841bf4658454cb315e1fc83406c
 ```
 
-- Current live `config.data` begins with:
+- Latest `config.data` begins with:
 
 ```text
-user_input=/backdoor #AAAA...
+user_input=/backdoor #DDDD...
 ```
 
-- `triage_state.json` does not necessarily match that live `config.data`; it
-  records an earlier `phase2-medium-control-flow-probe` candidate. Do not trust
-  `triage_state.json` alone as the latest input source.
-- The paired validation log records a later explicit ret-to-maintenance
-  validation pass where IC consumed `/shared/exploit_done`, no
-  `/shared/success.txt` appeared, and no EC-side fake success file was created.
+- Latest coredump from the scaffold-run current-`rdi` validation:
+  `/tmp/project2_phase2_next/lab/shared/coredump/blogic-74.core`.
+- `triage_state.json` is useful only as runner state. Re-read `config.data`,
+  `/shared/success.txt`, and coredumps directly before making any completion
+  claim.
 
 ### libc Facts
 
@@ -392,6 +433,10 @@ Re-check libc base if the container is restarted.
   they live before `user_input`; a long enough value can reach heap-adjacent
   memory, but the same C string then crashes in `sprintf()` before a useful
   state change.
+- The direct current-`rdi` first-argument route is narrowed: a fresh probe
+  returned to `system@plt` without appended ROP, saved RBP, or `rax` reuse, but
+  libc `do_system()` received the empty `_IO_stdfile_1_lock` pointer rather than
+  controlled `user_input`.
 
 ### REPORTED-UNVERIFIED: do not treat as verified facts without logs
 
@@ -433,7 +478,9 @@ Most plausible directions:
    caller-stack reuse.
 5. Treat direct heap adjacency as explored unless a separate mechanism is found
    that avoids the same long string crashing in `sprintf()`.
-6. If staying in the main binary is not enough, move to a ret2libc/libc-gadget
+6. Treat direct current-`rdi` reuse as explored; the observed first argument is
+   an empty libc lock buffer, not `user_input`.
+7. If staying in the main binary is not enough, move to a ret2libc/libc-gadget
    route only after solving a reliable pivot or argument setup that works
    despite NUL-byte constraints.
 
@@ -611,8 +658,8 @@ PY
 - libc `system` offset is `0x58750`.
 - libc `"/bin/sh"` offset is `0x1cb42f`.
 - Main binary has no byte-scan `pop rdi; ret`.
-- Current live shared state has no success; the coredump directory is empty
-  after the latest smoke validation.
+- Latest local shared state has no success; the current-`rdi` validation left a
+  coredump at `/tmp/project2_phase2_next/lab/shared/coredump/blogic-74.core`.
 - The ret-to-`maintenance_task+5` candidate did not produce official IC-side
   success in the recorded validation pass.
 - The direct `maintenance_task+22` argument-control candidate reached the target
@@ -627,6 +674,16 @@ PY
 - The heap/global-state probe reached heap-adjacent bytes around `0x405000`, but
   the process crashed in libc copy handling through `sprintf()` before a useful
   control-flow state was reached.
+- The direct `rax` register-reuse probe reached the selected
+  `maintenance_task()` tail path, but no `/shared/success.txt` appeared and
+  `system()` returned `0x7f00`; direct `rax` reuse is not a full-credit route.
+- The simple backward-stack-pivot family is not available in the fresh Phase II
+  main binary plus pinned libc, so pre-RIP controlled stack bytes cannot yet be
+  promoted into a normal appended ROP surface by that route.
+- The current-`rdi` first-argument probe reached libc `do_system()`, but no
+  `/shared/success.txt` appeared and the command pointer was the empty
+  `_IO_stdfile_1_lock` buffer; direct current-`rdi` reuse is not a full-credit
+  route.
 
 ### THEORY
 
@@ -655,6 +712,15 @@ PY
   route; the bounded `run_server()` setup-boundary probe consumed
   `/shared/exploit_done`, produced no coredump, and still did not create
   `/shared/success.txt`.
+- Do not assume `rax` after the final `log_message()` stream call can be reused
+  directly as a controlled command pointer; the `0x4014b1` probe falsified that
+  route.
+- Do not assume a simple backward `rsp` pivot exists in the pinned libc or main
+  binary; the 2026-05-15 feasibility block found no candidate in the tested
+  family.
+- Do not assume current `rdi` can be passed directly to `system()` as a command
+  pointer; the 2026-05-15 current-`rdi` probe showed it is an empty libc lock
+  buffer at the relevant return point.
 
 ## 9. Next Step For The Next Agent
 
@@ -676,7 +742,11 @@ Recommended immediate next steps:
    `docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md` and
    `docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md` and
    `docs/PHASE2_BOUNDED_RECOVERY_BLOCK_2026-05-14.md` before trying another
-   candidate.
+   candidate. Also read `docs/PHASE2_REGISTER_REUSE_ATTEMPT_2026-05-15.md`,
+   `docs/PHASE2_BACKWARD_PIVOT_FEASIBILITY_2026-05-15.md`, and
+   `docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md` because direct
+   `rax` reuse, the simple backward-pivot family, and direct current-`rdi`
+   reuse are now closed.
 4. Focus on reliable pivot/argument-control that survives `strcpy`/`sprintf`
    NUL-byte constraints; do not repeat direct ret-to-`maintenance_task+5` as if
    untested.
@@ -692,7 +762,10 @@ Recommended immediate next steps:
 6. Stop the block after one falsifiable result. Record the candidate, exact
    command, observed registers or artifact state, and whether
    `/shared/success.txt` appeared.
-7. Only after IC-side `/shared/success.txt` appears, update completion evidence
+7. Update `docs/PHASE2_EXPERIMENT_LOG.md` for every experiment, whether the
+   result is success, failure, static infeasibility, or positive primitive only.
+   If the evidence is non-trivial, also add a dated attempt note.
+8. Only after IC-side `/shared/success.txt` appears, update completion evidence
    and final packaging.
 
 Recommended first direction:
@@ -701,8 +774,9 @@ Do not start another blind candidate probe. The latest evidence says the simple
 technical routes have been narrowed: `rdi` is stale, normal appended ROP bytes
 are unavailable after the first NUL-bearing partial return, saved RBP cannot be
 preserved while also overwriting saved RIP, untouched caller-stack qwords are
-fixed, and direct heap adjacency crashes in `sprintf()`. The next useful work is
-now to review and use the submission-hardening docs, then ask the TA whether the
+fixed, direct heap adjacency crashes in `sprintf()`, and direct current-`rdi`
+reuse passes an empty libc lock buffer to `system()`. The next useful work is now
+to review and use the submission-hardening docs, then ask the TA whether the
 protocol-complete partial package is acceptable if official IC-side
 `/shared/success.txt` is not reached before the gate. Continue technical work
 only if a new mechanism is identified that avoids the shared C-string

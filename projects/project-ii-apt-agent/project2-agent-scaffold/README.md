@@ -100,7 +100,7 @@ It:
 
 1. logs start;
 2. runs safety checks;
-3. checks `/shared`, existing `config.data`, and the observable `blogic` artifact
+3. checks `/shared` and the observable `blogic` artifact
    (`blogic.copy` from the brief or `blogic` from the supplied lab script);
 4. loads `/shared/triage_state.json` if present;
 5. increments the round;
@@ -254,10 +254,48 @@ candidate caused the official IC-side success artifact to appear.
 
 Later bounded attempts are recorded in:
 
+- `docs/PHASE2_EXPERIMENT_LOG.md`
 - `docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md`
 - `docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md`
 - `docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md`
 - `docs/PHASE2_BOUNDED_RECOVERY_BLOCK_2026-05-14.md`
+- `docs/PHASE2_MULTILINE_STAGING_ATTEMPT_2026-05-15.md`
+- `docs/PHASE2_REGISTER_REUSE_ATTEMPT_2026-05-15.md`
+- `docs/PHASE2_BACKWARD_PIVOT_FEASIBILITY_2026-05-15.md`
+- `docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md`
+
+`docs/PHASE2_EXPERIMENT_LOG.md` is now the canonical ledger. Every new
+full-credit recovery experiment, successful or failed, must add a stable
+experiment ID, hypothesis, environment, procedure, observation, verdict, and
+evidence link there before the next experiment starts.
+
+The 2026-05-15 pass adds a selectable multi-line staging probe:
+
+```sh
+PROJECT2_SHARED_DIR=/path/to/lab/shared \
+  PROJECT2_ENABLE_PHASE2_PROBE=1 \
+  PROJECT2_PHASE2_STRATEGY=multiline-staging \
+  ./scripts/run_phase2_probe_against_shared.sh
+```
+
+This confirms a useful parser primitive but remains a bounded recovery probe,
+not a completion claim.
+
+The later 2026-05-15 register-reuse block tested
+`PROJECT2_PHASE2_STRATEGY=register-reuse-system-rax`. It reached the selected
+`system()` tail path, produced no `/shared/success.txt`, and is now closed as a
+direct full-credit route.
+
+The next 2026-05-15 backward-pivot feasibility block checked the fresh Phase II
+main binary plus pinned libc for a narrow first-stage pivot family that could
+move `rsp` back into controlled pre-RIP stack bytes. No usable gadget in that
+family was found, so no live EC candidate exists for that hypothesis.
+
+The later 2026-05-15 current-`rdi` argument block tested
+`PROJECT2_PHASE2_STRATEGY=current-rdi-system`. It returned directly to
+`system@plt` without appended ROP, saved RBP, or direct `rax` reuse. The IC
+produced no `/shared/success.txt`; the core showed `system()` received an empty
+libc lock pointer, not controlled `user_input`.
 
 The current submission posture is summarized in
 `docs/PARTIAL_SUBMISSION_BRIEF.md`. A concise TA-facing clarification draft is

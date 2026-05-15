@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 from typing import Any
 
-from .phase2_payload import build_control_flow_probe
+from .phase2_payload import build_phase2_candidate
 
 
 MAX_PLACEHOLDER_FIELD_LENGTH = 256
@@ -23,7 +23,8 @@ def plan_candidate_config(state: dict[str, Any]) -> dict[str, Any]:
     """
 
     if os.environ.get("PROJECT2_ENABLE_PHASE2_PROBE") == "1":
-        candidate = build_control_flow_probe()
+        strategy = os.environ.get("PROJECT2_PHASE2_STRATEGY", "control-flow")
+        candidate = build_phase2_candidate(strategy)
         return {
             "strategy_id": candidate.strategy_id,
             "content_bytes": candidate.content,

@@ -125,12 +125,17 @@ Before implementation, confirm:
 | `project2-agent-scaffold/docs/CORE_WORKFLOW.md` | Step-by-step explanation of the safe round-based feedback loop: action, execution, evidence, triage, state update, next action |
 | `project2-agent-scaffold/docs/COMPLETION_AUDIT.md` | Honest completion audit: implemented protocol pieces, current Phase II probe status, and remaining full-credit success evidence gap |
 | `project2-agent-scaffold/docs/PHASE2_SUCCESS_VALIDATION.md` | Latest official-IC validation log for the current Phase II candidate; records observed non-success without fabricating `/shared/success.txt` |
+| `project2-agent-scaffold/docs/PHASE2_EXPERIMENT_LOG.md` | Canonical Phase II experiment ledger: every success, failure, and positive primitive must be indexed here |
 | `project2-agent-scaffold/docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md` | Deep follow-up validation pass: x86_64 Colima IC setup, baseline non-success, NX shellcode check, one-shot text sweep, and current boundary |
 | `project2-agent-scaffold/docs/PHASE2_FIRST_PRINCIPLES_NEXT_GATE_2026-05-14.md` | First-principles next-gate note: choose one bounded argument-control, pivot, or instructor-clarification block before more candidate testing |
 | `project2-agent-scaffold/docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md` | Bounded argument-control follow-up: maintenance-body entry reached, no success, saved-RBP/C-string constraint documented |
 | `project2-agent-scaffold/docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md` | Bounded staging follow-up: single-target and caller-stack staging checked, no success, next route narrowed to heap/global-state feasibility |
 | `project2-agent-scaffold/docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md` | Bounded heap/global-state follow-up: forward write reaches heap-adjacent memory but crashes in `sprintf()` before a useful state change |
 | `project2-agent-scaffold/docs/PHASE2_BOUNDED_RECOVERY_BLOCK_2026-05-14.md` | Bounded full-credit recovery block: fresh IC drift check plus one user-input setup-boundary candidate, no official success artifact |
+| `project2-agent-scaffold/docs/PHASE2_MULTILINE_STAGING_ATTEMPT_2026-05-15.md` | Bounded multiline staging follow-up: parser leaves staged bytes beyond the final `user_input` NUL, but no pivot or first-argument setup yet |
+| `project2-agent-scaffold/docs/PHASE2_REGISTER_REUSE_ATTEMPT_2026-05-15.md` | Bounded register-reuse follow-up: direct post-logging `rax` reuse reaches `system()` but does not create `/shared/success.txt` |
+| `project2-agent-scaffold/docs/PHASE2_BACKWARD_PIVOT_FEASIBILITY_2026-05-15.md` | Bounded backward-pivot feasibility check: no usable simple first-stage pivot found in the fresh binary set |
+| `project2-agent-scaffold/docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md` | Bounded current-`rdi` argument follow-up: direct `system@plt` receives an empty libc lock pointer, not controlled `user_input` |
 | `project2-agent-scaffold/docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md` | Complete current-state analysis: done, not done, and what is required to finish |
 | `project2-agent-scaffold/docs/TEACHER_REQUIREMENTS_COMPLETION_VERDICT_2026-05-14.md` | Direct verdict on which teacher requirements are complete and which full-credit items remain incomplete |
 | `project2-agent-scaffold/docs/PROJECT_II_SUBMISSION_ACTION_PACKET_2026-05-14.md` | Concrete TA clarification / LMS upload action packet for the current protocol-complete partial posture |

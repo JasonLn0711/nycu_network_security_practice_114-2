@@ -3,6 +3,9 @@
 Scope: supplied Project II Phase II IC (`server_2`) in an x86_64 Colima Docker
 VM, using the official `/blogic` and `/backdoor` files from `lab.zip`.
 
+Experiment ledger IDs: `P2-EXP-002`, `P2-EXP-003` in
+`docs/PHASE2_EXPERIMENT_LOG.md`.
+
 ## Direct Result
 
 Project II is still **not full-credit complete**.
