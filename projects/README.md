@@ -13,16 +13,19 @@ Use this folder for project briefs, provided lab bundles, implementation notes, 
 - Travel logistics: paid HSR student tickets are booked for Taipei `09:11` ->
   Hsinchu `09:45`, return Hsinchu `14:08` -> Taipei `14:39`.
 - Presentation format: in-class presentation, `10` minutes; Project I / II are separate reports.
-- Presenter split currently recorded:
-  - Project I - Virus Scanner: 陳靖中 presents the already-built Sentinel package.
-  - Project II / other project item: Jason presents, unless the instructor's final registration flow changes the split.
+- Ownership split currently recorded:
+  - Project I - Virus Scanner: built/completed by Jason for the two-person group.
+  - Project II - Autonomous APT Agent: Jason's local scaffold/recovery attempt
+    did not meet the success gate; Chen Jingzhong's package under
+    `project-ii-apt-agent/submissions/jingzhong-success/` is the successful
+    Project II result.
 
 ## Current Project Briefs
 
 | Project | Due | Canonical folder | Current objective | Status |
 | --- | --- | --- | --- | --- |
-| Project I - Virus Scanner | `2026-06-07 23:59` | `project-i-virus-scanner/` | Build a functional signature-based virus scanner with source code, report, and demo. | LMS PDF submitted for grading on `2026-04-22 17:30`; Rust `v0.4.0` package/report/demo evidence preserved; 陳靖中 should present Project I; product continuation split to `../../sentinel-virus-scanner/` |
-| Project II - Autonomous APT Agent | `2026-06-07 23:59` | `project-ii-apt-agent/` | Prepare an external-container grading artifact with runnable `/exploit` and `/triage` paths. | Active; student-facing docs live in `project-ii-apt-agent/docs/`, local SPEC/SDD/rubric are drafted, and a classroom-safe runnable scaffold lives in `project-ii-apt-agent/project2-agent-scaffold/`; Jason should present the other project item; Doodle booked for `2026-05-27 10:50` |
+| Project I - Virus Scanner | `2026-06-07 23:59` | `project-i-virus-scanner/` | Build a functional signature-based virus scanner with source code, report, and demo. | LMS PDF submitted for grading on `2026-04-22 17:30`; Rust `v0.4.0` package/report/demo evidence preserved; Project I was completed by Jason for the two-person group; product continuation split to `../../sentinel-virus-scanner/` |
+| Project II - Autonomous APT Agent | `2026-06-07 23:59` | `project-ii-apt-agent/` | Preserve the successful external-container package and keep Jason's unsuccessful recovery attempt separate. | Ownership-separated archive: Jason's `project2-agent-scaffold/` is a protocol-complete partial without success; Chen Jingzhong's `project-ii-apt-agent/submissions/jingzhong-success/` package is the successful Project II result; Doodle booked for `2026-05-27 10:50` |
 
 ## Routing Rule
 

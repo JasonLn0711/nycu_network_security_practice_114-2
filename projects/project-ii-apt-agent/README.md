@@ -7,19 +7,47 @@
 - PDF title metadata: `Project - Automous APT Agent`
 - Opened: `2026-04-13 00:00`
 - Due: `2026-06-07 23:59`
-- Status: active, relationship to Project I not yet clarified
+- Status: ownership-separated archive; Jason's local Project II attempt did
+  not meet the success gate, while Chen Jingzhong's package under
+  `submissions/jingzhong-success/` is the successful Project II result
 - Planning locator: `../../../planning-everything-track/data/projects/2026-06-network-security-project-ii-apt-agent.md`
 - Official brief: `project-brief.pdf`
 - Provided lab bundle: `lab.zip`
 - Lab manifest: `lab-manifest.md`
 - Presentation scheduling evidence: `../report-scheduling/`
-- Presentation intent: Jason presents this or the other non-Project-I item while 陳靖中 presents Project I.
+- Presentation / attribution intent: Project I was completed by Jason; Project
+  II's successful package was completed by 陳靖中. Use
+  `OWNERSHIP_AND_OUTCOME.md` when explaining the split.
 - Booked presentation slot: `2026-05-27 10:50`
 - Travel logistics: paid HSR tickets are booked for same-day Taipei <-> Hsinchu
   travel; see `../report-scheduling/2026-05-12-hsr-booking-2026-05-27.md`.
 
 
-## Latest Engineering Checkpoint - 2026-05-14
+## Current Ownership And Submission Checkpoint - 2026-05-23
+
+FIRST PRINCIPLE: the scarce resource is not more exploit polish; it is
+trustable attribution and reproducible evidence. Keep the failed local recovery
+line, the successful external package, and the classroom report packet separate
+so the course archive remains honest and useful.
+
+Project II now has two separated work lines:
+
+| Work line | Owner | Location | Result |
+| --- | --- | --- | --- |
+| Local scaffold / recovery attempt | Jason | `project2-agent-scaffold/`, `../../HANDOFF_PHASE2.md` | Protocol-complete partial; no official local IC `/shared/success.txt` was observed. |
+| Successful package | 陳靖中 | `submissions/jingzhong-success/` | Successful package with EC agent, report, saved target analysis, payload evidence, and `success.txt`. |
+
+Do not merge these two stories. Jason's Project II work is the unsuccessful
+attempt and audit trail. Jingzhong's package is the successful result. The full
+analysis and evidence boundary live in `OWNERSHIP_AND_OUTCOME.md`.
+
+Important verification caveat: Jingzhong's extracted package includes IC
+`server_1`, `server_2`, and `shared/blogic` binaries whose checksums differ from
+the earlier preserved `lab.zip` snapshot. Keep both archives. Treat the success
+claim as belonging to `submissions/jingzhong-success/` unless a future rerun
+validates the exact earlier `lab.zip` environment.
+
+## Latest Jason Engineering Checkpoint - 2026-05-14
 
 FIRST PRINCIPLE status: the Project II deliverable is not a one-shot string; it
 is a closed EC/IC grading loop. The EC must expose `/exploit` and `/triage`,
@@ -151,6 +179,17 @@ Before implementation, confirm:
 | `project2-agent-scaffold/docs/SUBMISSION_GUIDE.md` | Recommended packaging, build, smoke-test, and submission workflow |
 | `project2-agent-scaffold/scripts/build_submission_package.sh` | Builds a clean zip submission package under `project2-agent-scaffold/dist/` while excluding generated runtime state |
 | `project2-agent-scaffold/scripts/run_phase2_one_shot_sweep.py` | Lab-only reproducibility harness for the bounded one-shot partial-return sweep; does not create `/shared/success.txt` |
+| `OWNERSHIP_AND_OUTCOME.md` | Canonical ownership and result split: Jason's unsuccessful Project II line versus Jingzhong's successful package |
+| `PROJECT_II_COMPARATIVE_ANALYSIS.md` | Detailed analysis of why Jason's route failed, why Jingzhong's package succeeded, and what lessons should be preserved |
+| `report/` | Classroom report packet for the `10` minute Project II presentation and optional short demo |
+| `report/10-minute-presentation-plan.md` | Minute-by-minute presentation plan for the recommended slide deck plus optional demo format |
+| `report/slide-deck-outline.md` | `8-9` slide outline with visual suggestions, slide content, and talk track |
+| `report/speaker-script.md` | Full Traditional Chinese speaker script for a `10` minute in-class report |
+| `report/optional-demo-runbook.md` | Evidence-first demo plan, terminal walkthrough commands, live-demo fallback, and risk controls |
+| `report/presentation-checklist.md` | Before-class, during-class, and after-class checklist for the Project II report |
+| `submissions/README.md` | Submission-folder routing rules |
+| `submissions/jingzhong-success/` | Jingzhong's successful Project II package, moved from Downloads and extracted for review |
+| `submissions/jingzhong-success/artifact-manifest.md` | Checksums, file inventory, evidence notes, and archive-time static check |
 | `../../HANDOFF_PHASE2.md` | Machine handoff for the next Phase II agent: objective, verified facts, important symbols, failed/explored paths, current hypothesis, exact environment, useful commands, and FACT/THEORY separation |
 | `SPEC.md` | Local audit-oriented requirements, deliverables, functional requirements, acceptance tests, and grading interface |
 | `SDD.md` | Local audit-oriented software design document for the EC workflow, state files, logging, safety guards, and grader design |
