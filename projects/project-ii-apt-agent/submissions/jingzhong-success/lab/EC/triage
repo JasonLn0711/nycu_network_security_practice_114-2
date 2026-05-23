@@ -1,0 +1,252 @@
+#!/usr/bin/env python3
+from pathlib import Path
+import json
+import time
+
+
+SHARED = Path("/shared")
+
+STATE_PATH = SHARED / "state.json"
+TRIAGE_LOG_PATH = SHARED / "triage.log"
+SUCCESS_PATH = SHARED / "success.txt"
+COREDUMP_DIR = SHARED / "coredump"
+
+
+def now() -> str:
+    return time.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def log(message: str) -> None:
+    with TRIAGE_LOG_PATH.open("a", encoding="utf-8") as f:
+        f.write(f"[{now()}] {message}\n")
+
+
+def load_state() -> dict:
+    if not STATE_PATH.exists():
+        return {
+            "round": 1,
+            "strategy": "unknown",
+            "triage_initialized": True,
+        }
+
+    try:
+        with STATE_PATH.open("r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        return {
+            "round": 1,
+            "strategy": "unknown",
+            "state_load_error": str(e),
+        }
+
+
+def save_state(state: dict) -> None:
+    with STATE_PATH.open("w", encoding="utf-8") as f:
+        json.dump(state, f, indent=2)
+
+
+def list_coredumps() -> list[dict]:
+    if not COREDUMP_DIR.exists():
+        return []
+
+    cores = []
+
+    for path in sorted(COREDUMP_DIR.glob("*")):
+        if not path.is_file():
+            continue
+
+        try:
+            stat = path.stat()
+            cores.append({
+                "path": str(path),
+                "name": path.name,
+                "size": stat.st_size,
+                "mtime": int(stat.st_mtime),
+            })
+        except OSError:
+            continue
+
+    return cores
+
+
+def infer_last_result(success_exists: bool, cores: list[dict]) -> str:
+    if success_exists:
+        return "success"
+
+    if cores:
+        return "crash"
+
+    return "no_success_no_coredump"
+
+
+def advance_adaptive_offset_probe(state: dict, last_result: str) -> dict:
+    """
+    Adaptive offset probing:
+
+    If offset_status == adaptive_probe:
+      - success  -> mark offset as known
+      - failure  -> advance offset_candidate_index
+    """
+
+    if state.get("offset_status") != "adaptive_probe":
+        return state
+
+    candidates = state.get("offset_candidates", [])
+    index = int(state.get("offset_candidate_index", 0))
+
+    tried_offset = None
+    if isinstance(candidates, list) and 0 <= index < len(candidates):
+        tried_offset = int(candidates[index])
+
+    state["last_tried_offset"] = tried_offset
+
+    if last_result == "success":
+        state["offset_status"] = "known"
+        state["offset_source"] = "adaptive_probe_success"
+        state["offset_reason"] = f"candidate offset {tried_offset} succeeded"
+        state["offset_to_ret"] = tried_offset
+        state["next_action"] = "stop"
+        state["status"] = "completed"
+        return state
+
+    next_index = index + 1
+    state["offset_candidate_index"] = next_index
+
+    if isinstance(candidates, list) and next_index < len(candidates):
+        next_offset = int(candidates[next_index])
+        state["offset_to_ret"] = next_offset
+        state["next_action"] = "try_next_offset_candidate"
+        state["offset_reason"] = (
+            f"previous candidate offset {tried_offset} failed; "
+            f"advance to candidate index {next_index}, offset {next_offset}"
+        )
+        log(
+            f"[*] Adaptive offset probe advanced: "
+            f"{tried_offset} -> {next_offset}"
+        )
+    else:
+        state["next_action"] = "offset_candidates_exhausted"
+        state["offset_reason"] = "all adaptive offset candidates were exhausted"
+        state["status"] = "needs_manual_review"
+        log("[!] Adaptive offset probe exhausted all candidates")
+
+    return state
+
+
+def choose_next_action(state: dict, last_result: str, cores: list[dict]) -> str:
+    if last_result == "success":
+        return "stop"
+
+    if state.get("offset_status") == "adaptive_probe":
+        return state.get("next_action", "try_next_offset_candidate")
+
+    if last_result == "crash":
+        return "analyze_coredump_then_adjust_payload"
+
+    return "increase_observability_or_probe_input_length"
+
+
+def update_state_after_triage(state: dict, success_exists: bool, cores: list[dict]) -> dict:
+    previous_round = int(state.get("round", 1))
+    last_result = infer_last_result(success_exists, cores)
+
+    state = advance_adaptive_offset_probe(
+        state=state,
+        last_result=last_result,
+    )
+
+    next_action = state.get("next_action") or choose_next_action(
+        state,
+        last_result,
+        cores,
+    )
+
+    history = state.get("history", [])
+    if not isinstance(history, list):
+        history = []
+
+    history.append({
+        "round": previous_round,
+        "timestamp": int(time.time()),
+        "result": last_result,
+        "success_txt_exists": success_exists,
+        "coredump_count": len(cores),
+        "coredumps": cores,
+        "strategy": state.get("strategy", "unknown"),
+        "mode": state.get("mode"),
+        "offset_status": state.get("offset_status"),
+        "offset_candidate_index": state.get("offset_candidate_index"),
+        "last_tried_offset": state.get("last_tried_offset"),
+        "offset_to_ret": state.get("offset_to_ret"),
+        "offset_source": state.get("offset_source"),
+        "ret_gadget": state.get("ret_gadget"),
+        "execute_task": state.get("execute_task"),
+        "next_action": next_action,
+    })
+
+    state["last_triage_time"] = int(time.time())
+    state["last_result"] = last_result
+    state["last_success_txt_exists"] = success_exists
+    state["last_coredump_count"] = len(cores)
+    state["last_coredumps"] = cores
+    state["next_action"] = next_action
+    state["history"] = history[-20:]
+
+    if last_result == "success":
+        state["status"] = "completed"
+    else:
+        if state.get("status") != "needs_manual_review":
+            state["status"] = "needs_next_attempt"
+        state["round"] = previous_round + 1
+
+    return state
+
+
+def main() -> None:
+    # Keep only latest triage log for readability.
+    TRIAGE_LOG_PATH.write_text("", encoding="utf-8")
+
+    log("[*] Adaptive triage feedback module started")
+
+    state = load_state()
+    log(f"[*] Loaded state round={state.get('round')} strategy={state.get('strategy')}")
+    log(f"[*] offset_status={state.get('offset_status')}")
+    log(f"[*] offset_candidate_index={state.get('offset_candidate_index')}")
+    log(f"[*] offset_to_ret={state.get('offset_to_ret')}")
+
+    success_exists = SUCCESS_PATH.exists()
+    cores = list_coredumps()
+
+    log(f"[*] success.txt exists: {success_exists}")
+    log(f"[*] coredump count: {len(cores)}")
+
+    for core in cores:
+        log(
+            f"[*] coredump: name={core['name']} "
+            f"size={core['size']} path={core['path']}"
+        )
+
+    updated_state = update_state_after_triage(
+        state=state,
+        success_exists=success_exists,
+        cores=cores,
+    )
+
+    save_state(updated_state)
+
+    log(f"[+] last_result={updated_state.get('last_result')}")
+    log(f"[+] next_action={updated_state.get('next_action')}")
+    log(f"[+] status={updated_state.get('status')}")
+    log(f"[+] offset_status={updated_state.get('offset_status')}")
+    log(f"[+] offset_candidate_index={updated_state.get('offset_candidate_index')}")
+    log(f"[+] offset_to_ret={updated_state.get('offset_to_ret')}")
+    log(f"[+] state updated at {STATE_PATH}")
+
+    print("[*] triage complete")
+    print(f"[*] result: {updated_state.get('last_result')}")
+    print(f"[*] next_action: {updated_state.get('next_action')}")
+    print(f"[*] offset_to_ret: {updated_state.get('offset_to_ret')}")
+
+
+if __name__ == "__main__":
+    main()

