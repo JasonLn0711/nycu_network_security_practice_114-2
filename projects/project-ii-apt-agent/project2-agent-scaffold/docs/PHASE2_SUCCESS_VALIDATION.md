@@ -159,6 +159,22 @@ Additional evidence from that pass:
 
 The latest status remains **not full-credit complete**.
 
+## 2026-05-15 Multi-Line Non-Stack Staging Addendum
+
+The multi-line non-stack staging probe is recorded in
+`docs/PHASE2_MULTI_LINE_NON_STACK_STAGING_ATTEMPT_2026-05-15.md`.
+
+Additional evidence from that pass:
+
+- repeated `user_input=` keys can stage marker bytes around `0x405000`;
+- a later short `user_input=` line resets the final global string before
+  `log_message()` copies it;
+- direct 6-byte ret-to-libc `system()` reached `__libc_system`, but `rdi` was
+  not controlled command text;
+- no official IC-side `/shared/success.txt` was produced.
+
+The latest status remains **not full-credit complete**.
+
 ## 2026-05-14 Bounded Recovery Block Addendum
 
 The next bounded recovery block is recorded in

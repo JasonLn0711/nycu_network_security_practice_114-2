@@ -133,3 +133,9 @@ Stop after one of these outcomes:
   validation plan;
 - the heap/global-state route is ruled out for this binary and runtime;
 - `/shared/success.txt` appears through the official IC path.
+
+2026-05-15 follow-up: the direct single-line heap/global-state route was not a
+shortcut, but the route is not fully ruled out. The later multi-line probe in
+`docs/PHASE2_MULTI_LINE_NON_STACK_STAGING_ATTEMPT_2026-05-15.md` proved that
+repeated `user_input=` keys can stage bytes around `0x405000` and then reset the
+final logging string. That primitive still lacks first-argument control.

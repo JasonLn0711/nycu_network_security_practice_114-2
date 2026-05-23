@@ -1,7 +1,7 @@
 # HANDOFF_PHASE2
 
 Date: 2026-05-13
-Updated: 2026-05-14
+Updated: 2026-05-15
 Repo: `/home/jnclaw/every_on_git_jnclaw/phd-life-system/nycu_network_security_practice_114-2`
 Scope: state compression for the next Codex/GPT-5.5 handoff.
 
@@ -19,6 +19,9 @@ Latest staging-boundary attempt:
 
 Latest heap/global-state attempt:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md`.
+
+Latest multi-line non-stack staging attempt:
+`projects/project-ii-apt-agent/project2-agent-scaffold/docs/PHASE2_MULTI_LINE_NON_STACK_STAGING_ATTEMPT_2026-05-15.md`.
 
 Latest submission-hardening docs:
 `projects/project-ii-apt-agent/project2-agent-scaffold/docs/PROJECT_II_ANALYSIS_REPORT_2026-05-14.md`,
@@ -122,10 +125,14 @@ confirmed NX blocks direct stack shellcode, and preserved the one-shot text
 sweep harness. A later 2026-05-14 bounded argument-control probe reached
 `maintenance_task+22` but stopped on the saved-RBP/C-string constraint. Neither
 that pass nor the later single-target/caller-stack staging probe observed
-`/shared/success.txt`. The later heap/global-state probe also produced no
+`/shared/success.txt`. The single-line heap/global-state probe also produced no
 `/shared/success.txt`; it showed that the forward write can reach heap-adjacent
 memory, but the same long C string crashes in `sprintf()` before a useful
-control-flow state is reached.
+control-flow state is reached. A 2026-05-15 multi-line recovery pass changed
+that boundary: repeated `user_input=` keys can stage bytes around `0x405000`
+and then reset the final `user_input` before `log_message()`, so non-stack
+staging exists. It is still not a full-credit route because no verified
+first-argument setup or pivot points at the staged bytes.
 
 ## 2. Verified Facts
 
@@ -627,6 +634,14 @@ PY
 - The heap/global-state probe reached heap-adjacent bytes around `0x405000`, but
   the process crashed in libc copy handling through `sprintf()` before a useful
   control-flow state was reached.
+- A later multi-line probe showed the single-line heap conclusion was too broad:
+  a first long `user_input=` line can stage marker bytes around `0x405000`, and
+  a second short `user_input=` line can reset the final global `user_input` so
+  `log_message()` exits normally.
+- Direct 6-byte ret-to-libc `system()` was checked under `gdb`; it reached
+  `__libc_system`, but `rdi` pointed at `0x7ffff7d01710
+  <_IO_stdfile_1_lock> ""`, not controlled command text, and no
+  `/shared/success.txt` appeared.
 
 ### THEORY
 
@@ -639,6 +654,10 @@ PY
   recorded direct attempt cannot supply a valid `rbp` under the current input
   model; do not treat it as solved.
 - libc ROP is plausible because ASLR is off and libc gadgets exist, but naive full-address writes are constrained by NUL bytes.
+- The multi-line non-stack staging primitive is useful only if a later live
+  object, pointer, or call path can read from the staged `0x405000` region, or
+  if a single-hop target can make the first argument point there without a
+  normal appended chain.
 
 ### DO NOT TREAT AS FACT
 
@@ -655,6 +674,9 @@ PY
   route; the bounded `run_server()` setup-boundary probe consumed
   `/shared/exploit_done`, produced no coredump, and still did not create
   `/shared/success.txt`.
+- Do not assume the new multi-line staging primitive is a full exploit. It only
+  proves that non-stack bytes can be staged while the final logging string stays
+  short.
 
 ## 9. Next Step For The Next Agent
 
@@ -675,8 +697,9 @@ Recommended immediate next steps:
    `docs/PHASE2_FIRST_PRINCIPLES_NEXT_GATE_2026-05-14.md` and
    `docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md` and
    `docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md` and
-   `docs/PHASE2_BOUNDED_RECOVERY_BLOCK_2026-05-14.md` before trying another
-   candidate.
+   `docs/PHASE2_BOUNDED_RECOVERY_BLOCK_2026-05-14.md` and
+   `docs/PHASE2_MULTI_LINE_NON_STACK_STAGING_ATTEMPT_2026-05-15.md` before
+   trying another candidate.
 4. Focus on reliable pivot/argument-control that survives `strcpy`/`sprintf`
    NUL-byte constraints; do not repeat direct ret-to-`maintenance_task+5` as if
    untested.
@@ -688,7 +711,11 @@ Recommended immediate next steps:
      requiring a normal NUL-bearing ROP chain after the partial return address;
    - libc/libstdc++ track: search for a gadget or call path that fits the
      current register/stack state and C-string constraints, then validate it in
-     the IC loop.
+     the IC loop;
+   - non-stack staging track: use the multi-line `user_input=` primitive to
+     stage bytes around `0x405000`, then identify a live reader or single-hop
+     first-argument setup that reaches those bytes without a normal appended
+     chain.
 6. Stop the block after one falsifiable result. Record the candidate, exact
    command, observed registers or artifact state, and whether
    `/shared/success.txt` appeared.
@@ -700,11 +727,14 @@ Recommended first direction:
 Do not start another blind candidate probe. The latest evidence says the simple
 technical routes have been narrowed: `rdi` is stale, normal appended ROP bytes
 are unavailable after the first NUL-bearing partial return, saved RBP cannot be
-preserved while also overwriting saved RIP, untouched caller-stack qwords are
-fixed, and direct heap adjacency crashes in `sprintf()`. The next useful work is
-now to review and use the submission-hardening docs, then ask the TA whether the
-protocol-complete partial package is acceptable if official IC-side
-`/shared/success.txt` is not reached before the gate. Continue technical work
+preserved while also overwriting saved RIP, and untouched caller-stack qwords
+are fixed. The updated technical opening is the multi-line non-stack staging
+primitive: it avoids the earlier single-line heap crash by staging into the
+`0x405000` region, then resetting the final logging string. The next useful
+technical work is to find a live reader/path from that staged region or to
+prove none exists in one bounded check. Continue submission-hardening work in
+parallel and keep the claim as protocol-complete partial until IC-side
+`/shared/success.txt` appears.
 only if a new mechanism is identified that avoids the shared C-string
 constraint.
 

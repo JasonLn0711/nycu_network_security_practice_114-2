@@ -140,3 +140,16 @@ decision point:
 3. If continuing technical work, only pursue a new route after identifying a
    concrete mechanism that avoids the shared C-string constraint. Do not repeat
    the already-closed direct paths.
+
+## 2026-05-15 Follow-Up Boundary
+
+A later bounded pass found one such separate mechanism:
+`docs/PHASE2_MULTI_LINE_NON_STACK_STAGING_ATTEMPT_2026-05-15.md`.
+
+The updated boundary is:
+
+- the single-line long heap-adjacency route still crashes through `sprintf()`;
+- repeated `user_input=` keys can stage bytes around `0x405000` first, then
+  reset the final `user_input` to a short string before `log_message()`;
+- this proves a non-stack staging primitive exists, but it still does not prove
+  first-argument control, a pivot, or official IC-side success.
