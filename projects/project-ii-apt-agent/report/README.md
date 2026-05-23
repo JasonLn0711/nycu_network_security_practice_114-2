@@ -12,10 +12,9 @@ The instructor notice says the report format is:
   - system function demonstration;
   - system feature explanation.
 
-This folder is the presentation/report packet for that classroom task. It is
-separate from `../submissions/jingzhong-success/report/`, which preserves the
-incoming Word report and extracted media from Chen Jingzhong's successful
-package.
+This folder is the presentation/report packet for that classroom task. It uses
+the team's successful Project II package as the presentation evidence base and
+keeps classroom-facing wording focused on the two-person group result.
 
 ## Recommended Format
 
@@ -29,8 +28,8 @@ Time budget:
 | Optional short demo / evidence walkthrough | `2` minutes | Show success log, `success.txt`, payload flow, or a pre-verified run. |
 | Conclusion and limitation | `1` minute | State bounded lab scope, result, and caveat. |
 
-Do not rely on a full from-scratch Docker rebuild during class. The safest
-classroom plan is:
+Use saved evidence as the default classroom demonstration. The safest classroom
+plan is:
 
 1. present the architecture and feature slides;
 2. show saved evidence from the successful package;
@@ -46,6 +45,7 @@ classroom plan is:
 | `speaker-script.md` | A full Traditional Chinese speaker script that fits the `10` minute format. |
 | `optional-demo-runbook.md` | Safe demo choices, commands/evidence to show, and fallback plan. |
 | `presentation-checklist.md` | Before-class, during-class, and after-class checklist. |
+| `evidence/` | Team-facing copies of the saved evidence files to open during class. |
 
 ## Source Evidence
 
@@ -53,25 +53,27 @@ Use these as the evidence base:
 
 | Evidence | Path |
 | --- | --- |
-| Successful package | `../submissions/jingzhong-success/` |
-| Saved success artifact | `../submissions/jingzhong-success/lab/shared/success.txt` |
-| Saved exploit log | `../submissions/jingzhong-success/lab/shared/exploit-log.txt` |
-| Saved target analysis | `../submissions/jingzhong-success/lab/shared/target_info.json` |
-| Extracted report text | `../submissions/jingzhong-success/report/autonomous-apt-agent-report-extracted-text.txt` |
-| Ownership and outcome boundary | `../OWNERSHIP_AND_OUTCOME.md` |
-| Technical comparison | `../PROJECT_II_COMPARATIVE_ANALYSIS.md` |
+| Classroom evidence folder | `evidence/` |
+| Saved success artifact | `evidence/success.txt` |
+| Saved exploit log | `evidence/exploit-log.txt` |
+| Saved target analysis | `evidence/target_info.json` |
+| Saved state | `evidence/state.json` |
+
+Internal audit references stay outside the classroom flow:
+
+- `../OWNERSHIP_AND_OUTCOME.md`
+- `../PROJECT_II_COMPARATIVE_ANALYSIS.md`
 
 ## Presentation Stance
 
-Present the successful Project II package, not Jason's failed recovery line.
+Present Project II as a two-person team deliverable with clear system function,
+system features, and saved success evidence.
 
 Recommended wording:
 
-> This Project II package implements a bounded autonomous exploit agent for the
-> course lab. The successful package was completed by Chen Jingzhong; Jason's
-> earlier scaffold/recovery line is preserved separately as a failed analysis
-> branch and should not be presented as the successful result.
+> Our team implemented a bounded autonomous exploit agent for the course lab.
+> The system provides `/exploit` and `/triage`, uses the shared-volume grading
+> loop, and preserves success evidence showing `/shared/success.txt`.
 
-If time is tight, do not discuss the failure branch unless asked. The required
-class content is system function demonstration and system feature explanation.
-
+Use the class time for the required system function demonstration and system
+feature explanation. Keep internal development history outside the main talk.

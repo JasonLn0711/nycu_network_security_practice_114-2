@@ -2,8 +2,8 @@
 
 Language: Taiwan Traditional Chinese.
 
-Use this as speaker notes, not as slide text. Keep the spoken version direct and
-technical.
+Use this as speaker notes. Keep slide text shorter than the spoken version, and
+keep the spoken delivery direct and technical.
 
 ## 0:00-0:30 - Slide 1
 
@@ -12,9 +12,8 @@ technical.
 External Container 端的 agent，讓它可以透過 `/shared` 跟 Internal
 Container 互動，最後觸發 IC 裡的 `/backdoor`。
 
-這份成功 package 主要由靖中完成；我這邊有把 package、證據、以及先前
-沒有成功的分析線分開保存。今天報告會聚焦在成功 package 的系統功能與
-特色。
+我們是兩人分組分工完成這個 Project II package。今天報告會聚焦在我們這組
+最後 package 的系統功能、系統特色，以及保存下來的成功證據。
 
 ## 0:30-1:20 - Slide 2
 
@@ -150,4 +149,3 @@ return 時的 first-argument setup。
 應該綁定在這份 package 的 binary context 裡。
 
 以上是我們 Project II 的系統功能展示與特色說明。
-

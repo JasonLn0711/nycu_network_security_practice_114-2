@@ -1,7 +1,7 @@
 # Optional Demo Runbook
 
-Purpose: support the required "system function demonstration" without risking a
-failed live Docker session during a `10` minute report.
+Purpose: support the required "system function demonstration" with a reliable
+evidence-first path during a `10` minute report.
 
 ## Recommendation
 
@@ -21,14 +21,15 @@ Risk: low.
 
 Time: `90-120` seconds.
 
-Use this unless the instructor explicitly asks for a live run.
+Use this as the default path. Switch to a live run when the instructor asks for
+one and the environment is already warm.
 
 ### Step A1 - Show success artifact
 
 File:
 
 ```text
-../submissions/jingzhong-success/lab/shared/success.txt
+evidence/success.txt
 ```
 
 Expected content:
@@ -48,7 +49,7 @@ Talking point:
 File:
 
 ```text
-../submissions/jingzhong-success/lab/shared/exploit-log.txt
+evidence/exploit-log.txt
 ```
 
 Lines to point out:
@@ -70,7 +71,7 @@ Talking point:
 File:
 
 ```text
-../submissions/jingzhong-success/lab/shared/target_info.json
+evidence/target_info.json
 ```
 
 Fields to show:
@@ -83,8 +84,8 @@ Fields to show:
 
 Talking point:
 
-> The agent is not only emitting a hard-coded command. It records target facts
-> and uses the discovered helper path.
+> The agent records target facts and uses the discovered helper path, so the
+> payload generation is tied to analyzer output.
 
 ### Step A4 - Show payload flow diagram
 
@@ -112,19 +113,19 @@ Time: `60-90` seconds.
 Run from:
 
 ```sh
-cd /Users/iKev/Desktop/02_Projects_and_Code/everything_on_git/nycu_114-2_network_security_practices/projects/project-ii-apt-agent
+cd /Users/iKev/Desktop/02_Projects_and_Code/everything_on_git/nycu_114-2_network_security_practices/projects/project-ii-apt-agent/report
 ```
 
 Commands:
 
 ```sh
-sed -n '1,5p' submissions/jingzhong-success/lab/shared/success.txt
-sed -n '1,25p' submissions/jingzhong-success/lab/shared/exploit-log.txt
+sed -n '1,5p' evidence/success.txt
+sed -n '1,25p' evidence/exploit-log.txt
 python3 - <<'PY'
 import json
 from pathlib import Path
 
-data = json.loads(Path("submissions/jingzhong-success/lab/shared/target_info.json").read_text())
+data = json.loads(Path("evidence/target_info.json").read_text())
 targets = data["discovered_targets"]
 gadgets = data["discovered_gadgets"]
 
@@ -151,33 +152,32 @@ Rationale:
 
 - Full Docker startup can exceed the report time.
 - Container state, image cache, volume cleanup, and architecture flags can
-  produce non-content failures.
+  consume presentation time.
 - The instructor's requirement is system function demonstration and feature
-  explanation, not necessarily a fresh rebuild.
+  explanation, so saved evidence and a short warm demo satisfy the report goal.
 
 Suggested live-demo stance:
 
-> I have a pre-verified package and saved success evidence. I can run it live if
-> time allows, but I will first show the deterministic evidence so the report is
-> not dependent on Docker startup time.
+> We have a pre-verified package and saved success evidence. I can run it live
+> if time allows, and I will first show the deterministic evidence so the report
+> stays on the system function.
 
 If doing live demo:
 
 1. Pre-build images before class.
 2. Keep terminal in the package folder.
 3. Keep one cleanup command ready.
-4. Stop after one failed/slow command and switch to evidence.
+4. Use one short command sequence; switch to saved evidence when startup is slow.
 
-Do not troubleshoot Docker during the `10` minute presentation.
+Keep Docker troubleshooting outside the `10` minute presentation.
 
-## What Not To Demo
+## Demo Scope
 
-- Do not build images from scratch during the presentation.
-- Do not run unrelated scans or external network commands.
-- Do not show personal files outside the project folder.
-- Do not present Jason's failed scaffold as the successful package.
-- Do not claim success against the earlier `lab.zip` snapshot unless you have a
-  separate rerun transcript for that exact binary.
+- Use prebuilt or saved evidence instead of building images from scratch during the presentation.
+- Keep commands inside the project folder and course lab artifacts.
+- Keep external networks, personal files, and unrelated systems outside the demo.
+- Present the two-person team package as the classroom result.
+- Tie success evidence to this package's binary context; use a separate rerun transcript for any other binary.
 
 ## Final Demo Choice
 

@@ -2,15 +2,15 @@
 
 Audience: instructor / classmates in Network Security Practice.
 
-Goal: explain the successful Project II package clearly, show the system
-function and system features, and leave evidence that `/backdoor` was triggered
-inside the bounded lab.
+Goal: explain our team's Project II package clearly, show the system function
+and system features, and leave evidence that `/backdoor` was triggered inside
+the bounded lab.
 
 ## Timing Overview
 
 | Time | Slide / segment | Main point |
 | ---: | --- | --- |
-| `0:00-0:30` | 1. Title and result | This is an Autonomous APT Agent for the course lab; final package succeeds. |
+| `0:00-0:30` | 1. Title and result | Our team built an Autonomous APT Agent for the course lab; final package succeeds. |
 | `0:30-1:20` | 2. Assignment interface | EC must provide `/exploit` and `/triage`, modify `/shared/config.data`, and signal `/shared/exploit_done`. |
 | `1:20-2:20` | 3. System architecture | EC, IC, and `/shared` form a closed grading loop. |
 | `2:20-3:25` | 4. Analyzer function | Agent reads `blogic`, extracts ELF metadata, symbols, gadgets, and risk clues. |
@@ -66,13 +66,13 @@ Use `8-9` slides. This keeps the pace under control:
 If the instructor is strict about `10` minutes, skip a detailed live run and use
 Slide 8 as an evidence walkthrough.
 
-## What To Avoid
+## Scope Choices
 
-- Do not start from a clean Docker build during the report.
-- Do not spend time explaining Jason's failed branch unless asked.
-- Do not overclaim that this proves the earlier `lab.zip` binary also succeeds.
-- Do not present the package as a general offensive tool.
-- Do not show external targets, network scans, or non-course systems.
+- Use saved success evidence and a pre-tested short demo path instead of a clean Docker build during the report.
+- Keep the talk centered on the team package, system function, and system features.
+- Tie the success claim to this package's binary context.
+- Present the package as a bounded course-lab system.
+- Keep all demonstrations inside the project folder and course lab artifacts.
 
 ## One-Sentence Thesis
 
@@ -80,4 +80,3 @@ Slide 8 as an evidence walkthrough.
 > analyzes the provided target, generates a shared-volume payload, uses triage
 > state for feedback, and in the successful package triggers `/backdoor` through
 > the discovered `execute_task()` path.
-

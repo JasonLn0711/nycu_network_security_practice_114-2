@@ -1,0 +1,1768 @@
+{
+  "timestamp": 1779468615,
+  "stage": "level_5c_corrected_static_offset_inference",
+  "target_path": "/shared/blogic",
+  "target_exists": true,
+  "file_info": {
+    "bits": 64,
+    "architecture": "x86_64",
+    "endianness": "little",
+    "stripped": false,
+    "raw": "/shared/blogic: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=3632699c5be8507cfb94499f443ee9c5e8fd4a9e, for GNU/Linux 3.2.0, not stripped"
+  },
+  "pie_info": {
+    "elf_type": "EXEC",
+    "pie": false,
+    "explanation": "ELF type is EXEC, so this is usually a non-PIE executable with fixed code addresses."
+  },
+  "nx_info": {
+    "nx_enabled": false,
+    "gnu_stack": "GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RWE 0x10",
+    "explanation": "GNU_STACK contains E permission, so stack appears executable."
+  },
+  "parsed_symbol_count": 108,
+  "interesting_symbols": [
+    "12: 0x0 0 FUNC GLOBAL DEFAULT UND memcpy@GLIBC_2.14 (7)",
+    "29: 0x404340 512 OBJECT GLOBAL DEFAULT 27 user_input",
+    "33: 0x4016c7 280 FUNC GLOBAL DEFAULT 15 main",
+    "45: 0x0 0 FUNC GLOBAL DEFAULT UND memcpy@GLIBC_2.14",
+    "47: 0x0 0 FUNC GLOBAL DEFAULT UND system@GLIBC_2.2.5",
+    "48: 0x404540 8 OBJECT GLOBAL DEFAULT 27 user_input_len",
+    "62: 0x401415 33 FUNC GLOBAL DEFAULT 15 _Z12execute_taskv",
+    "67: 0x4013f6 31 FUNC GLOBAL DEFAULT 15 _Z16maintenance_[...]",
+    "73: 0x401464 492 FUNC GLOBAL DEFAULT 15 _Z12parse_configv"
+  ],
+  "interesting_strings": [
+    "/lib64/ld-linux-x86-64.so.2",
+    "system",
+    "/shared/config.data",
+    "user_input",
+    "/shared/exploit_done",
+    "[+] Detected exploit_done, reading config...",
+    "[+] exploit_done removed, ready for next round",
+    "[-] Failed to remove exploit_done",
+    "user_input",
+    "system@GLIBC_2.2.5",
+    "user_input_len",
+    "_Z12execute_taskv",
+    "_Z16maintenance_taskPKc",
+    "_Z12parse_configv",
+    ".data"
+  ],
+  "imported_risky_functions": [
+    "12: 0x0 0 FUNC GLOBAL DEFAULT UND memcpy@GLIBC_2.14 (7)",
+    "45: 0x0 0 FUNC GLOBAL DEFAULT UND memcpy@GLIBC_2.14",
+    "47: 0x0 0 FUNC GLOBAL DEFAULT UND system@GLIBC_2.2.5"
+  ],
+  "discovered_targets": {
+    "user_input": {
+      "address": "0x404340",
+      "address_int": 4211520,
+      "symbol": "user_input",
+      "type": "OBJECT",
+      "size": 512,
+      "reason": "global object named user_input"
+    },
+    "main": {
+      "address": "0x4016c7",
+      "address_int": 4200135,
+      "symbol": "main",
+      "type": "FUNC",
+      "size": 280,
+      "reason": "program entry logic symbol"
+    },
+    "user_input_len": {
+      "address": "0x404540",
+      "address_int": 4212032,
+      "symbol": "user_input_len",
+      "type": "OBJECT",
+      "size": 8,
+      "reason": "global object named user_input_len"
+    },
+    "execute_task": {
+      "address": "0x401415",
+      "address_int": 4199445,
+      "symbol": "_Z12execute_taskv",
+      "type": "FUNC",
+      "size": 33,
+      "reason": "symbol name contains execute_task"
+    },
+    "maintenance_task": {
+      "address": "0x4013f6",
+      "address_int": 4199414,
+      "symbol": "_Z16maintenance_[...]",
+      "type": "FUNC",
+      "size": 31,
+      "reason": "symbol name contains maintenance"
+    },
+    "parse_config": {
+      "address": "0x401464",
+      "address_int": 4199524,
+      "symbol": "_Z12parse_configv",
+      "type": "FUNC",
+      "size": 492,
+      "reason": "symbol name contains parse_config"
+    }
+  },
+  "discovered_gadgets": {
+    "ret_gadgets_count": 20,
+    "preferred_ret": {
+      "address": "0x401414",
+      "address_int": 4199444,
+      "instruction": "401414:\tc3                   \tret",
+      "type": "ret"
+    },
+    "ret_gadgets_sample": [
+      {
+        "address": "0x40101a",
+        "address_int": 4198426,
+        "instruction": "40101a:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x401344",
+        "address_int": 4199236,
+        "instruction": "401344:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x401370",
+        "address_int": 4199280,
+        "instruction": "401370:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x4013b0",
+        "address_int": 4199344,
+        "instruction": "4013b0:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x4013de",
+        "address_int": 4199390,
+        "instruction": "4013de:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x4013e0",
+        "address_int": 4199392,
+        "instruction": "4013e0:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x401414",
+        "address_int": 4199444,
+        "instruction": "401414:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x401463",
+        "address_int": 4199523,
+        "instruction": "401463:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x40164f",
+        "address_int": 4200015,
+        "instruction": "40164f:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x40169e",
+        "address_int": 4200094,
+        "instruction": "40169e:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x4016c6",
+        "address_int": 4200134,
+        "instruction": "4016c6:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x4017de",
+        "address_int": 4200414,
+        "instruction": "4017de:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x4017ed",
+        "address_int": 4200429,
+        "instruction": "4017ed:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x401814",
+        "address_int": 4200468,
+        "instruction": "401814:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x4018d8",
+        "address_int": 4200664,
+        "instruction": "4018d8:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x40190e",
+        "address_int": 4200718,
+        "instruction": "40190e:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x401959",
+        "address_int": 4200793,
+        "instruction": "401959:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x4019d4",
+        "address_int": 4200916,
+        "instruction": "4019d4:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x4019f9",
+        "address_int": 4200953,
+        "instruction": "4019f9:\tc3                   \tret",
+        "type": "ret"
+      },
+      {
+        "address": "0x401a08",
+        "address_int": 4200968,
+        "instruction": "401a08:\tc3                   \tret",
+        "type": "ret"
+      }
+    ]
+  },
+  "offset_inference": {
+    "ok": false,
+    "offset_to_ret": null,
+    "source": "static_disassembly_inference",
+    "confidence": "none",
+    "reason": "could not identify memcpy destination buffer in maintenance_task; refusing to infer offset from parse_config largest stack object",
+    "attempts": [
+      {
+        "function": "maintenance_task",
+        "symbol": "_Z16maintenance_[...]",
+        "address": "0x4013f6",
+        "size": 31,
+        "contains_memcpy": false,
+        "memcpy_destination_candidate": null,
+        "rbp_candidates_sample": [
+          {
+            "address": "0x401402",
+            "line": "401402:\t48 89 7d f8          \tmov    %rdi,-0x8(%rbp)",
+            "displacement": 8,
+            "displacement_hex": "0x8"
+          },
+          {
+            "address": "0x401406",
+            "line": "401406:\t48 8b 45 f8          \tmov    -0x8(%rbp),%rax",
+            "displacement": 8,
+            "displacement_hex": "0x8"
+          }
+        ],
+        "function_disassembly_sample": [
+          "4013f6:\tf3 0f 1e fa          \tendbr64",
+          "4013fa:\t55                   \tpush   %rbp",
+          "4013fb:\t48 89 e5             \tmov    %rsp,%rbp",
+          "4013fe:\t48 83 ec 10          \tsub    $0x10,%rsp",
+          "401402:\t48 89 7d f8          \tmov    %rdi,-0x8(%rbp)",
+          "401406:\t48 8b 45 f8          \tmov    -0x8(%rbp),%rax",
+          "40140a:\t48 89 c7             \tmov    %rax,%rdi",
+          "40140d:\te8 2e fe ff ff       \tcall   401240 <system@plt>",
+          "401412:\t90                   \tnop",
+          "401413:\tc9                   \tleave",
+          "401414:\tc3                   \tret"
+        ]
+      },
+      {
+        "function": "parse_config",
+        "symbol": "_Z12parse_configv",
+        "address": "0x401464",
+        "size": 492,
+        "contains_memcpy": true,
+        "memcpy_destination_candidate": {
+          "address": "0x401532",
+          "line": "401532:\t48 8d 85 a0 fd ff ff \tlea    -0x260(%rbp),%rax",
+          "displacement": 608,
+          "displacement_hex": "0x260",
+          "register": "%rax",
+          "reason": "rbp-relative address moved into rdi before memcpy",
+          "memcpy_call": "40156e:\te8 bd fc ff ff       \tcall   401230 <memcpy@plt>",
+          "rdi_assignment": "401539:\t48 89 c7             \tmov    %rax,%rdi"
+        },
+        "rbp_candidates_sample": [
+          {
+            "address": "0x401474",
+            "line": "401474:\t48 8d 85 e0 fd ff ff \tlea    -0x220(%rbp),%rax",
+            "displacement": 544,
+            "displacement_hex": "0x220"
+          },
+          {
+            "address": "0x401492",
+            "line": "401492:\t48 8d 85 c0 fd ff ff \tlea    -0x240(%rbp),%rax",
+            "displacement": 576,
+            "displacement_hex": "0x240"
+          },
+          {
+            "address": "0x4014a6",
+            "line": "4014a6:\t48 8d 85 c0 fd ff ff \tlea    -0x240(%rbp),%rax",
+            "displacement": 576,
+            "displacement_hex": "0x240"
+          },
+          {
+            "address": "0x4014bf",
+            "line": "4014bf:\t48 89 45 e8          \tmov    %rax,-0x18(%rbp)",
+            "displacement": 24,
+            "displacement_hex": "0x18"
+          },
+          {
+            "address": "0x4014c3",
+            "line": "4014c3:\t48 83 7d e8 ff       \tcmpq   $0xffffffffffffffff,-0x18(%rbp)",
+            "displacement": 24,
+            "displacement_hex": "0x18"
+          },
+          {
+            "address": "0x4014ce",
+            "line": "4014ce:\t48 8d 85 80 fd ff ff \tlea    -0x280(%rbp),%rax",
+            "displacement": 640,
+            "displacement_hex": "0x280"
+          },
+          {
+            "address": "0x4014d5",
+            "line": "4014d5:\t48 8b 55 e8          \tmov    -0x18(%rbp),%rdx",
+            "displacement": 24,
+            "displacement_hex": "0x18"
+          },
+          {
+            "address": "0x4014d9",
+            "line": "4014d9:\t48 8d b5 c0 fd ff ff \tlea    -0x240(%rbp),%rsi",
+            "displacement": 576,
+            "displacement_hex": "0x240"
+          },
+          {
+            "address": "0x4014f0",
+            "line": "4014f0:\t48 8b 45 e8          \tmov    -0x18(%rbp),%rax",
+            "displacement": 24,
+            "displacement_hex": "0x18"
+          },
+          {
+            "address": "0x4014f8",
+            "line": "4014f8:\t48 8d 85 a0 fd ff ff \tlea    -0x260(%rbp),%rax",
+            "displacement": 608,
+            "displacement_hex": "0x260"
+          },
+          {
+            "address": "0x4014ff",
+            "line": "4014ff:\t48 8d b5 c0 fd ff ff \tlea    -0x240(%rbp),%rsi",
+            "displacement": 576,
+            "displacement_hex": "0x240"
+          },
+          {
+            "address": "0x401515",
+            "line": "401515:\t48 8d 85 80 fd ff ff \tlea    -0x280(%rbp),%rax",
+            "displacement": 640,
+            "displacement_hex": "0x280"
+          },
+          {
+            "address": "0x401532",
+            "line": "401532:\t48 8d 85 a0 fd ff ff \tlea    -0x260(%rbp),%rax",
+            "displacement": 608,
+            "displacement_hex": "0x260"
+          },
+          {
+            "address": "0x40154f",
+            "line": "40154f:\t48 8d 85 a0 fd ff ff \tlea    -0x260(%rbp),%rax",
+            "displacement": 608,
+            "displacement_hex": "0x260"
+          },
+          {
+            "address": "0x401573",
+            "line": "401573:\t48 8d 85 a0 fd ff ff \tlea    -0x260(%rbp),%rax",
+            "displacement": 608,
+            "displacement_hex": "0x260"
+          },
+          {
+            "address": "0x401582",
+            "line": "401582:\t48 8d 85 80 fd ff ff \tlea    -0x280(%rbp),%rax",
+            "displacement": 640,
+            "displacement_hex": "0x280"
+          },
+          {
+            "address": "0x401594",
+            "line": "401594:\t48 8d 95 c0 fd ff ff \tlea    -0x240(%rbp),%rdx",
+            "displacement": 576,
+            "displacement_hex": "0x240"
+          },
+          {
+            "address": "0x40159b",
+            "line": "40159b:\t48 8d 85 e0 fd ff ff \tlea    -0x220(%rbp),%rax",
+            "displacement": 544,
+            "displacement_hex": "0x220"
+          },
+          {
+            "address": "0x4015ca",
+            "line": "4015ca:\t48 8d 85 c0 fd ff ff \tlea    -0x240(%rbp),%rax",
+            "displacement": 576,
+            "displacement_hex": "0x240"
+          },
+          {
+            "address": "0x4015d9",
+            "line": "4015d9:\t48 8d 85 e0 fd ff ff \tlea    -0x220(%rbp),%rax",
+            "displacement": 544,
+            "displacement_hex": "0x220"
+          },
+          {
+            "address": "0x4015f1",
+            "line": "4015f1:\t48 8d 85 a0 fd ff ff \tlea    -0x260(%rbp),%rax",
+            "displacement": 608,
+            "displacement_hex": "0x260"
+          },
+          {
+            "address": "0x401609",
+            "line": "401609:\t48 8d 85 80 fd ff ff \tlea    -0x280(%rbp),%rax",
+            "displacement": 640,
+            "displacement_hex": "0x280"
+          },
+          {
+            "address": "0x401621",
+            "line": "401621:\t48 8d 85 c0 fd ff ff \tlea    -0x240(%rbp),%rax",
+            "displacement": 576,
+            "displacement_hex": "0x240"
+          },
+          {
+            "address": "0x401630",
+            "line": "401630:\t48 8d 85 e0 fd ff ff \tlea    -0x220(%rbp),%rax",
+            "displacement": 544,
+            "displacement_hex": "0x220"
+          },
+          {
+            "address": "0x40164a",
+            "line": "40164a:\t48 8b 5d f8          \tmov    -0x8(%rbp),%rbx",
+            "displacement": 8,
+            "displacement_hex": "0x8"
+          }
+        ],
+        "function_disassembly_sample": [
+          "401464:\tf3 0f 1e fa          \tendbr64",
+          "401468:\t55                   \tpush   %rbp",
+          "401469:\t48 89 e5             \tmov    %rsp,%rbp",
+          "40146c:\t53                   \tpush   %rbx",
+          "40146d:\t48 81 ec 78 02 00 00 \tsub    $0x278,%rsp",
+          "401474:\t48 8d 85 e0 fd ff ff \tlea    -0x220(%rbp),%rax",
+          "40147b:\tba 04 00 00 00       \tmov    $0x4,%edx",
+          "401480:\t48 8d 0d 81 0b 00 00 \tlea    0xb81(%rip),%rcx        # 402008 <_IO_stdin_used+0x8>",
+          "401487:\t48 89 ce             \tmov    %rcx,%rsi",
+          "40148a:\t48 89 c7             \tmov    %rax,%rdi",
+          "40148d:\te8 6e fe ff ff       \tcall   401300 <_ZNSt14basic_ifstreamIcSt11char_traitsIcEEC1EPKcSt13_Ios_Openmode@plt>",
+          "401492:\t48 8d 85 c0 fd ff ff \tlea    -0x240(%rbp),%rax",
+          "401499:\t48 89 c7             \tmov    %rax,%rdi",
+          "40149c:\te8 1f fe ff ff       \tcall   4012c0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC1Ev@plt>",
+          "4014a1:\te9 ee 00 00 00       \tjmp    401594 <_Z12parse_configv+0x130>",
+          "4014a6:\t48 8d 85 c0 fd ff ff \tlea    -0x240(%rbp),%rax",
+          "4014ad:\tba 00 00 00 00       \tmov    $0x0,%edx",
+          "4014b2:\tbe 3d 00 00 00       \tmov    $0x3d,%esi",
+          "4014b7:\t48 89 c7             \tmov    %rax,%rdi",
+          "4014ba:\te8 f1 fd ff ff       \tcall   4012b0 <_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE4findEcm@plt>",
+          "4014bf:\t48 89 45 e8          \tmov    %rax,-0x18(%rbp)",
+          "4014c3:\t48 83 7d e8 ff       \tcmpq   $0xffffffffffffffff,-0x18(%rbp)",
+          "4014c8:\t0f 84 c5 00 00 00    \tje     401593 <_Z12parse_configv+0x12f>",
+          "4014ce:\t48 8d 85 80 fd ff ff \tlea    -0x280(%rbp),%rax",
+          "4014d5:\t48 8b 55 e8          \tmov    -0x18(%rbp),%rdx",
+          "4014d9:\t48 8d b5 c0 fd ff ff \tlea    -0x240(%rbp),%rsi",
+          "4014e0:\t48 89 d1             \tmov    %rdx,%rcx",
+          "4014e3:\tba 00 00 00 00       \tmov    $0x0,%edx",
+          "4014e8:\t48 89 c7             \tmov    %rax,%rdi",
+          "4014eb:\te8 70 fd ff ff       \tcall   401260 <_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6substrEmm@plt>",
+          "4014f0:\t48 8b 45 e8          \tmov    -0x18(%rbp),%rax",
+          "4014f4:\t48 8d 50 01          \tlea    0x1(%rax),%rdx",
+          "4014f8:\t48 8d 85 a0 fd ff ff \tlea    -0x260(%rbp),%rax",
+          "4014ff:\t48 8d b5 c0 fd ff ff \tlea    -0x240(%rbp),%rsi",
+          "401506:\t48 c7 c1 ff ff ff ff \tmov    $0xffffffffffffffff,%rcx",
+          "40150d:\t48 89 c7             \tmov    %rax,%rdi",
+          "401510:\te8 4b fd ff ff       \tcall   401260 <_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6substrEmm@plt>",
+          "401515:\t48 8d 85 80 fd ff ff \tlea    -0x280(%rbp),%rax",
+          "40151c:\t48 8d 15 f9 0a 00 00 \tlea    0xaf9(%rip),%rdx        # 40201c <_IO_stdin_used+0x1c>",
+          "401523:\t48 89 d6             \tmov    %rdx,%rsi",
+          "401526:\t48 89 c7             \tmov    %rax,%rdi",
+          "401529:\te8 2c 04 00 00       \tcall   40195a <_ZSteqIcSt11char_traitsIcESaIcEEbRKNSt7__cxx1112basic_stringIT_T0_T1_EEPKS5_>",
+          "40152e:\t84 c0                \ttest   %al,%al",
+          "401530:\t74 41                \tje     401573 <_Z12parse_configv+0x10f>",
+          "401532:\t48 8d 85 a0 fd ff ff \tlea    -0x260(%rbp),%rax",
+          "401539:\t48 89 c7             \tmov    %rax,%rdi",
+          "40153c:\te8 df fc ff ff       \tcall   401220 <_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE4sizeEv@plt>",
+          "401541:\t48 89 05 f8 2f 00 00 \tmov    %rax,0x2ff8(%rip)        # 404540 <user_input_len>",
+          "401548:\t48 8b 1d f1 2f 00 00 \tmov    0x2ff1(%rip),%rbx        # 404540 <user_input_len>",
+          "40154f:\t48 8d 85 a0 fd ff ff \tlea    -0x260(%rbp),%rax",
+          "401556:\t48 89 c7             \tmov    %rax,%rdi",
+          "401559:\te8 a2 fc ff ff       \tcall   401200 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE4dataEv@plt>",
+          "40155e:\t48 89 da             \tmov    %rbx,%rdx",
+          "401561:\t48 89 c6             \tmov    %rax,%rsi",
+          "401564:\t48 8d 05 d5 2d 00 00 \tlea    0x2dd5(%rip),%rax        # 404340 <user_input>",
+          "40156b:\t48 89 c7             \tmov    %rax,%rdi",
+          "40156e:\te8 bd fc ff ff       \tcall   401230 <memcpy@plt>",
+          "401573:\t48 8d 85 a0 fd ff ff \tlea    -0x260(%rbp),%rax",
+          "40157a:\t48 89 c7             \tmov    %rax,%rdi",
+          "40157d:\te8 8e fc ff ff       \tcall   401210 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev@plt>",
+          "401582:\t48 8d 85 80 fd ff ff \tlea    -0x280(%rbp),%rax",
+          "401589:\t48 89 c7             \tmov    %rax,%rdi",
+          "40158c:\te8 7f fc ff ff       \tcall   401210 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev@plt>",
+          "401591:\teb 01                \tjmp    401594 <_Z12parse_configv+0x130>",
+          "401593:\t90                   \tnop",
+          "401594:\t48 8d 95 c0 fd ff ff \tlea    -0x240(%rbp),%rdx",
+          "40159b:\t48 8d 85 e0 fd ff ff \tlea    -0x220(%rbp),%rax",
+          "4015a2:\t48 89 d6             \tmov    %rdx,%rsi",
+          "4015a5:\t48 89 c7             \tmov    %rax,%rdi",
+          "4015a8:\te8 f3 fb ff ff       \tcall   4011a0 <_ZSt7getlineIcSt11char_traitsIcESaIcEERSt13basic_istreamIT_T0_ES7_RNSt7__cxx1112basic_stringIS4_S5_T1_EE@plt>",
+          "4015ad:\t48 8b 10             \tmov    (%rax),%rdx",
+          "4015b0:\t48 83 ea 18          \tsub    $0x18,%rdx",
+          "4015b4:\t48 8b 12             \tmov    (%rdx),%rdx",
+          "4015b7:\t48 01 d0             \tadd    %rdx,%rax",
+          "4015ba:\t48 89 c7             \tmov    %rax,%rdi",
+          "4015bd:\te8 ce fc ff ff       \tcall   401290 <_ZNKSt9basic_iosIcSt11char_traitsIcEEcvbEv@plt>",
+          "4015c2:\t84 c0                \ttest   %al,%al",
+          "4015c4:\t0f 85 dc fe ff ff    \tjne    4014a6 <_Z12parse_configv+0x42>",
+          "4015ca:\t48 8d 85 c0 fd ff ff \tlea    -0x240(%rbp),%rax",
+          "4015d1:\t48 89 c7             \tmov    %rax,%rdi",
+          "4015d4:\te8 37 fc ff ff       \tcall   401210 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev@plt>",
+          "4015d9:\t48 8d 85 e0 fd ff ff \tlea    -0x220(%rbp),%rax",
+          "4015e0:\t48 89 c7             \tmov    %rax,%rdi",
+          "4015e3:\te8 c8 fb ff ff       \tcall   4011b0 <_ZNSt14basic_ifstreamIcSt11char_traitsIcEED1Ev@plt>",
+          "4015e8:\teb 60                \tjmp    40164a <_Z12parse_configv+0x1e6>",
+          "4015ea:\tf3 0f 1e fa          \tendbr64",
+          "4015ee:\t48 89 c3             \tmov    %rax,%rbx",
+          "4015f1:\t48 8d 85 a0 fd ff ff \tlea    -0x260(%rbp),%rax",
+          "4015f8:\t48 89 c7             \tmov    %rax,%rdi",
+          "4015fb:\te8 10 fc ff ff       \tcall   401210 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev@plt>",
+          "401600:\teb 07                \tjmp    401609 <_Z12parse_configv+0x1a5>",
+          "401602:\tf3 0f 1e fa          \tendbr64",
+          "401606:\t48 89 c3             \tmov    %rax,%rbx",
+          "401609:\t48 8d 85 80 fd ff ff \tlea    -0x280(%rbp),%rax",
+          "401610:\t48 89 c7             \tmov    %rax,%rdi",
+          "401613:\te8 f8 fb ff ff       \tcall   401210 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev@plt>",
+          "401618:\teb 07                \tjmp    401621 <_Z12parse_configv+0x1bd>",
+          "40161a:\tf3 0f 1e fa          \tendbr64",
+          "40161e:\t48 89 c3             \tmov    %rax,%rbx",
+          "401621:\t48 8d 85 c0 fd ff ff \tlea    -0x240(%rbp),%rax",
+          "401628:\t48 89 c7             \tmov    %rax,%rdi",
+          "40162b:\te8 e0 fb ff ff       \tcall   401210 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev@plt>",
+          "401630:\t48 8d 85 e0 fd ff ff \tlea    -0x220(%rbp),%rax",
+          "401637:\t48 89 c7             \tmov    %rax,%rdi",
+          "40163a:\te8 71 fb ff ff       \tcall   4011b0 <_ZNSt14basic_ifstreamIcSt11char_traitsIcEED1Ev@plt>",
+          "40163f:\t48 89 d8             \tmov    %rbx,%rax",
+          "401642:\t48 89 c7             \tmov    %rax,%rdi",
+          "401645:\te8 a6 fc ff ff       \tcall   4012f0 <_Unwind_Resume@plt>",
+          "40164a:\t48 8b 5d f8          \tmov    -0x8(%rbp),%rbx",
+          "40164e:\tc9                   \tleave",
+          "40164f:\tc3                   \tret"
+        ]
+      }
+    ]
+  },
+  "risk_assessment": {
+    "score": 10,
+    "reasons": [
+      "non-PIE executable: code addresses are likely fixed",
+      "executable stack: stack-based code execution may be easier",
+      "binary contains user_input string",
+      "binary contains config-related string",
+      "binary contains task/execute-related symbol",
+      "binary imports potentially risky library functions",
+      "agent discovered a candidate task execution function",
+      "agent discovered a candidate vulnerable maintenance function",
+      "agent discovered a usable ret gadget"
+    ]
+  },
+  "all_parsed_symbols_sample": [
+    {
+      "index": "1",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4.21 (2)"
+    },
+    {
+      "index": "2",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4 (3)"
+    },
+    {
+      "index": "3",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBC_2.2.5 (4)"
+    },
+    {
+      "index": "4",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBC_2.2.5 (4)"
+    },
+    {
+      "index": "5",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBC_2.2.5 (4)"
+    },
+    {
+      "index": "6",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4 (3)"
+    },
+    {
+      "index": "7",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBC_2.2.5 (4)"
+    },
+    {
+      "index": "8",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4.26 (5)"
+    },
+    {
+      "index": "9",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4.21 (2)"
+    },
+    {
+      "index": "10",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4.21 (2)"
+    },
+    {
+      "index": "11",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_[...]@GLIBC_2.34 (6)"
+    },
+    {
+      "index": "12",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "memcpy@GLIBC_2.14 (7)"
+    },
+    {
+      "index": "13",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBC_2.2.5 (4)"
+    },
+    {
+      "index": "14",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4 (3)"
+    },
+    {
+      "index": "15",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4.21 (2)"
+    },
+    {
+      "index": "16",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4 (3)"
+    },
+    {
+      "index": "17",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "exit@GLIBC_2.2.5 (4)"
+    },
+    {
+      "index": "18",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4.21 (2)"
+    },
+    {
+      "index": "19",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4.21 (2)"
+    },
+    {
+      "index": "20",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4.21 (2)"
+    },
+    {
+      "index": "21",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4.21 (2)"
+    },
+    {
+      "index": "22",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBC_2.2.5 (4)"
+    },
+    {
+      "index": "23",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4.32 (8)"
+    },
+    {
+      "index": "24",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_[...]@CXXABI_1.3 (9)"
+    },
+    {
+      "index": "25",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBC_2.2.5 (4)"
+    },
+    {
+      "index": "26",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_Un[...]@GCC_3.0 (10)"
+    },
+    {
+      "index": "27",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "[...]@GLIBCXX_3.4 (3)"
+    },
+    {
+      "index": "28",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "NOTYPE",
+      "bind": "WEAK",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "__gmon_start__"
+    },
+    {
+      "index": "29",
+      "address": 4210944,
+      "address_hex": "0x404100",
+      "size": 272,
+      "type": "OBJECT",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "27",
+      "name": "[...]@GLIBCXX_3.4 (3)"
+    },
+    {
+      "index": "30",
+      "address": 4211232,
+      "address_hex": "0x404220",
+      "size": 272,
+      "type": "OBJECT",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "27",
+      "name": "[...]@GLIBCXX_3.4 (3)"
+    },
+    {
+      "index": "1",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FILE",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "ABS",
+      "name": "crt1.o"
+    },
+    {
+      "index": "2",
+      "address": 4195212,
+      "address_hex": "0x40038c",
+      "size": 32,
+      "type": "OBJECT",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "4",
+      "name": "__abi_tag"
+    },
+    {
+      "index": "3",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FILE",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "ABS",
+      "name": "crtstuff.c"
+    },
+    {
+      "index": "4",
+      "address": 4199248,
+      "address_hex": "0x401350",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "deregister_tm_clones"
+    },
+    {
+      "index": "5",
+      "address": 4199296,
+      "address_hex": "0x401380",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "register_tm_clones"
+    },
+    {
+      "index": "6",
+      "address": 4199360,
+      "address_hex": "0x4013c0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "__do_global_dtors_aux"
+    },
+    {
+      "index": "7",
+      "address": 4211504,
+      "address_hex": "0x404330",
+      "size": 1,
+      "type": "OBJECT",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "27",
+      "name": "completed.0"
+    },
+    {
+      "index": "8",
+      "address": 4210136,
+      "address_hex": "0x403dd8",
+      "size": 0,
+      "type": "OBJECT",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "22",
+      "name": "__do_global_dtor[...]"
+    },
+    {
+      "index": "9",
+      "address": 4199408,
+      "address_hex": "0x4013f0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "frame_dummy"
+    },
+    {
+      "index": "10",
+      "address": 4210128,
+      "address_hex": "0x403dd0",
+      "size": 0,
+      "type": "OBJECT",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "21",
+      "name": "__frame_dummy_in[...]"
+    },
+    {
+      "index": "11",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FILE",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "ABS",
+      "name": "server.cpp"
+    },
+    {
+      "index": "12",
+      "address": 4202714,
+      "address_hex": "0x4020da",
+      "size": 1,
+      "type": "OBJECT",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "17",
+      "name": "_ZNSt8__detail30[...]"
+    },
+    {
+      "index": "13",
+      "address": 4202715,
+      "address_hex": "0x4020db",
+      "size": 1,
+      "type": "OBJECT",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "17",
+      "name": "_ZNSt8__detail30[...]"
+    },
+    {
+      "index": "14",
+      "address": 4202716,
+      "address_hex": "0x4020dc",
+      "size": 1,
+      "type": "OBJECT",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "17",
+      "name": "_ZNSt8__detail30[...]"
+    },
+    {
+      "index": "15",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FILE",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "ABS",
+      "name": "crtstuff.c"
+    },
+    {
+      "index": "16",
+      "address": 4203496,
+      "address_hex": "0x4023e8",
+      "size": 0,
+      "type": "OBJECT",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "19",
+      "name": "__FRAME_END__"
+    },
+    {
+      "index": "18",
+      "address": 4202720,
+      "address_hex": "0x4020e0",
+      "size": 0,
+      "type": "NOTYPE",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "18",
+      "name": "__GNU_EH_FRAME_HDR"
+    },
+    {
+      "index": "19",
+      "address": 4210144,
+      "address_hex": "0x403de0",
+      "size": 0,
+      "type": "OBJECT",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "23",
+      "name": "_DYNAMIC"
+    },
+    {
+      "index": "20",
+      "address": 4210664,
+      "address_hex": "0x403fe8",
+      "size": 0,
+      "type": "OBJECT",
+      "bind": "LOCAL",
+      "visibility": "DEFAULT",
+      "ndx": "25",
+      "name": "_GLOBAL_OFFSET_TABLE_"
+    },
+    {
+      "index": "21",
+      "address": 4200430,
+      "address_hex": "0x4017ee",
+      "size": 39,
+      "type": "FUNC",
+      "bind": "WEAK",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_ZNSt11char_trai[...]"
+    },
+    {
+      "index": "22",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZSt7getlineIcSt[...]"
+    },
+    {
+      "index": "23",
+      "address": 4210896,
+      "address_hex": "0x4040d0",
+      "size": 0,
+      "type": "NOTYPE",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "26",
+      "name": "_edata"
+    },
+    {
+      "index": "24",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZNSt14basic_ifs[...]"
+    },
+    {
+      "index": "25",
+      "address": 4199478,
+      "address_hex": "0x401436",
+      "size": 46,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_Z11log_messagePKcm"
+    },
+    {
+      "index": "26",
+      "address": 4210872,
+      "address_hex": "0x4040b8",
+      "size": 0,
+      "type": "NOTYPE",
+      "bind": "WEAK",
+      "visibility": "DEFAULT",
+      "ndx": "26",
+      "name": "data_start"
+    },
+    {
+      "index": "27",
+      "address": 4202496,
+      "address_hex": "0x402000",
+      "size": 4,
+      "type": "OBJECT",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "17",
+      "name": "_IO_stdin_used"
+    },
+    {
+      "index": "28",
+      "address": 4200016,
+      "address_hex": "0x401650",
+      "size": 79,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_Z10run_serverv"
+    },
+    {
+      "index": "29",
+      "address": 4211520,
+      "address_hex": "0x404340",
+      "size": 512,
+      "type": "OBJECT",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "27",
+      "name": "user_input"
+    },
+    {
+      "index": "30",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "strlen@GLIBC_2.2.5"
+    },
+    {
+      "index": "31",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "memcmp@GLIBC_2.2.5"
+    },
+    {
+      "index": "32",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "unlink@GLIBC_2.2.5"
+    },
+    {
+      "index": "33",
+      "address": 4200135,
+      "address_hex": "0x4016c7",
+      "size": 280,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "main"
+    },
+    {
+      "index": "34",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZSt4endlIcSt11c[...]"
+    },
+    {
+      "index": "35",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "memset@GLIBC_2.2.5"
+    },
+    {
+      "index": "36",
+      "address": 4210880,
+      "address_hex": "0x4040c0",
+      "size": 0,
+      "type": "OBJECT",
+      "bind": "GLOBAL",
+      "visibility": "HIDDEN",
+      "ndx": "26",
+      "name": "__dso_handle"
+    },
+    {
+      "index": "37",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZNSt7__cxx1112b[...]"
+    },
+    {
+      "index": "38",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZNSt7__cxx1112b[...]"
+    },
+    {
+      "index": "39",
+      "address": 4210888,
+      "address_hex": "0x4040c8",
+      "size": 8,
+      "type": "OBJECT",
+      "bind": "WEAK",
+      "visibility": "HIDDEN",
+      "ndx": "26",
+      "name": "DW.ref.__gxx_per[...]"
+    },
+    {
+      "index": "40",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZNKSt7__cxx1112[...]"
+    },
+    {
+      "index": "41",
+      "address": 4200956,
+      "address_hex": "0x4019fc",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "HIDDEN",
+      "ndx": "16",
+      "name": "_fini"
+    },
+    {
+      "index": "42",
+      "address": 4200917,
+      "address_hex": "0x4019d5",
+      "size": 37,
+      "type": "FUNC",
+      "bind": "WEAK",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_ZN9__gnu_cxx11c[...]"
+    },
+    {
+      "index": "43",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "__libc_start_mai[...]"
+    },
+    {
+      "index": "44",
+      "address": 4199232,
+      "address_hex": "0x401340",
+      "size": 5,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "HIDDEN",
+      "ndx": "15",
+      "name": "_dl_relocate_sta[...]"
+    },
+    {
+      "index": "45",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "memcpy@GLIBC_2.14"
+    },
+    {
+      "index": "46",
+      "address": 4200415,
+      "address_hex": "0x4017df",
+      "size": 15,
+      "type": "FUNC",
+      "bind": "WEAK",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_ZSt23__is_const[...]"
+    },
+    {
+      "index": "47",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "system@GLIBC_2.2.5"
+    },
+    {
+      "index": "48",
+      "address": 4212032,
+      "address_hex": "0x404540",
+      "size": 8,
+      "type": "OBJECT",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "27",
+      "name": "user_input_len"
+    },
+    {
+      "index": "49",
+      "address": 4199184,
+      "address_hex": "0x401310",
+      "size": 38,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_start"
+    },
+    {
+      "index": "50",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZStlsISt11char_[...]"
+    },
+    {
+      "index": "51",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZNKSt7__cxx1112[...]"
+    },
+    {
+      "index": "52",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZNSolsEPFRSoS_E[...]"
+    },
+    {
+      "index": "53",
+      "address": 4200720,
+      "address_hex": "0x401910",
+      "size": 74,
+      "type": "FUNC",
+      "bind": "WEAK",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_ZN9__gnu_cxx11c[...]"
+    },
+    {
+      "index": "54",
+      "address": 4198400,
+      "address_hex": "0x401000",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "HIDDEN",
+      "ndx": "12",
+      "name": "_init"
+    },
+    {
+      "index": "55",
+      "address": 4210896,
+      "address_hex": "0x4040d0",
+      "size": 0,
+      "type": "OBJECT",
+      "bind": "GLOBAL",
+      "visibility": "HIDDEN",
+      "ndx": "26",
+      "name": "__TMC_END__"
+    },
+    {
+      "index": "56",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "exit@GLIBC_2.2.5"
+    },
+    {
+      "index": "57",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZNKSt9basic_ios[...]"
+    },
+    {
+      "index": "58",
+      "address": 4210944,
+      "address_hex": "0x404100",
+      "size": 272,
+      "type": "OBJECT",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "27",
+      "name": "_ZSt4cout@GLIBCXX_3.4"
+    },
+    {
+      "index": "59",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZNKSt7__cxx1112[...]"
+    },
+    {
+      "index": "60",
+      "address": 4200095,
+      "address_hex": "0x40169f",
+      "size": 40,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_Z11file_existsPKc"
+    },
+    {
+      "index": "61",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZNKSt7__cxx1112[...]"
+    },
+    {
+      "index": "62",
+      "address": 4199445,
+      "address_hex": "0x401415",
+      "size": 33,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_Z12execute_taskv"
+    },
+    {
+      "index": "63",
+      "address": 4210872,
+      "address_hex": "0x4040b8",
+      "size": 0,
+      "type": "NOTYPE",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "26",
+      "name": "__data_start"
+    },
+    {
+      "index": "64",
+      "address": 4212040,
+      "address_hex": "0x404548",
+      "size": 0,
+      "type": "NOTYPE",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "27",
+      "name": "_end"
+    },
+    {
+      "index": "65",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZNSt7__cxx1112b[...]"
+    },
+    {
+      "index": "66",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "usleep@GLIBC_2.2.5"
+    },
+    {
+      "index": "67",
+      "address": 4199414,
+      "address_hex": "0x4013f6",
+      "size": 31,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_Z16maintenance_[...]"
+    },
+    {
+      "index": "68",
+      "address": 4200469,
+      "address_hex": "0x401815",
+      "size": 196,
+      "type": "FUNC",
+      "bind": "WEAK",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_ZNSt11char_trai[...]"
+    },
+    {
+      "index": "69",
+      "address": 4210944,
+      "address_hex": "0x404100",
+      "size": 0,
+      "type": "NOTYPE",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "27",
+      "name": "__bss_start"
+    },
+    {
+      "index": "70",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZSt21ios_base_l[...]"
+    },
+    {
+      "index": "71",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "__gxx_personalit[...]"
+    },
+    {
+      "index": "72",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "access@GLIBC_2.2.5"
+    },
+    {
+      "index": "73",
+      "address": 4199524,
+      "address_hex": "0x401464",
+      "size": 492,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_Z12parse_configv"
+    },
+    {
+      "index": "74",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_Unwind_Resume@G[...]"
+    },
+    {
+      "index": "75",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "FUNC",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "_ZNSt14basic_ifs[...]"
+    },
+    {
+      "index": "76",
+      "address": 4200665,
+      "address_hex": "0x4018d9",
+      "size": 54,
+      "type": "FUNC",
+      "bind": "WEAK",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_ZNSt11char_trai[...]"
+    },
+    {
+      "index": "77",
+      "address": 0,
+      "address_hex": "0x0",
+      "size": 0,
+      "type": "NOTYPE",
+      "bind": "WEAK",
+      "visibility": "DEFAULT",
+      "ndx": "UND",
+      "name": "__gmon_start__"
+    },
+    {
+      "index": "78",
+      "address": 4211232,
+      "address_hex": "0x404220",
+      "size": 272,
+      "type": "OBJECT",
+      "bind": "GLOBAL",
+      "visibility": "DEFAULT",
+      "ndx": "27",
+      "name": "_ZSt4cerr@GLIBCXX_3.4"
+    },
+    {
+      "index": "79",
+      "address": 4200794,
+      "address_hex": "0x40195a",
+      "size": 123,
+      "type": "FUNC",
+      "bind": "WEAK",
+      "visibility": "DEFAULT",
+      "ndx": "15",
+      "name": "_ZSteqIcSt11char[...]"
+    }
+  ]
+}

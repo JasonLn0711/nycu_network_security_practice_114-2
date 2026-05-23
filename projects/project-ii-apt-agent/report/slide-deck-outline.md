@@ -18,6 +18,8 @@ Bullets:
 - Course: Network Security Practice - Attack and Defense
 - Project II: Autonomous APT Agent
 - Team: 313264012 Chen Jingzhong, 513559004 Lin Jiasheng
+- Work model: two-person group project with split implementation,
+  evidence, and report preparation
 - Result: successful bounded lab package with `/exploit`, `/triage`, and
   `/shared/success.txt` evidence
 
@@ -29,8 +31,8 @@ Visual:
 Talk track:
 
 > This project builds the external-container side of the course lab. The goal is
-> not a general attack tool; it is a bounded agent that interacts only with the
-> provided shared-volume grading environment.
+> a bounded agent that interacts with the provided shared-volume grading
+> environment.
 
 ## Slide 2 - Assignment Interface
 
@@ -56,9 +58,8 @@ Visual:
 
 Talk track:
 
-> The interface is the important part: the EC cannot directly fake success. It
-> must use the shared-volume protocol and cause the IC side to reach the
-> success condition.
+> The interface is the important part: the EC follows the shared-volume
+> protocol and causes the IC side to reach the success condition.
 
 ## Slide 3 - System Architecture
 
@@ -96,7 +97,7 @@ Talk track:
 
 Time: `2:20-3:25`
 
-Purpose: show why this is not just a fixed payload runner.
+Purpose: show why the system is analysis-driven.
 
 Bullets:
 
@@ -179,8 +180,8 @@ Round 6: 104 -> success
 
 Talk track:
 
-> Fast mode is best for grading. Adaptive mode is included to show the system is
-> not only a one-shot runner; it can update its next action based on feedback.
+> Fast mode is best for grading. Adaptive mode shows that the system can also
+> update its next action based on feedback.
 
 ## Slide 7 - System Features
 
@@ -211,8 +212,7 @@ Visual:
 Talk track:
 
 > The system features are designed for this class lab: enough autonomy to
-> analyze and adapt, but bounded so it does not become a general offensive
-> tool.
+> analyze and adapt, with a clear course-lab boundary.
 
 ## Slide 8 - Demo / Evidence Walkthrough
 
@@ -252,7 +252,7 @@ Bullets:
   `/exploit`, `/triage`, `config.data`, `exploit_done`.
 - Successful evidence exists in the package.
 - The work is bounded to the course lab.
-- It is not a general attack tool.
+- The work stays within the course-lab boundary.
 - Binary-version caveat: this success should be tied to this package's IC
   binary context.
 
@@ -262,4 +262,3 @@ Talk track:
 > lab flow in the successful package. The important technical point is the
 > helper function `execute_task`, which bridges controlled data in `user_input`
 > to the IC-side `/backdoor` execution path.
-

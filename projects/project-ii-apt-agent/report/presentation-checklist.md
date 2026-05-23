@@ -8,9 +8,9 @@ Use this checklist for the `2026-05-27 10:50` Project II report slot.
 - [ ] Prepare a `9` slide deck from `slide-deck-outline.md`.
 - [ ] Keep the deck under `10` minutes in rehearsal.
 - [ ] Open these files in tabs before presenting:
-  - [ ] `submissions/jingzhong-success/lab/shared/success.txt`
-  - [ ] `submissions/jingzhong-success/lab/shared/exploit-log.txt`
-  - [ ] `submissions/jingzhong-success/lab/shared/target_info.json`
+  - [ ] `report/evidence/success.txt`
+  - [ ] `report/evidence/exploit-log.txt`
+  - [ ] `report/evidence/target_info.json`
   - [ ] `report/slide-deck-outline.md` or exported slides
 - [ ] If using terminal demo, run the commands from
   `optional-demo-runbook.md` once before class.
@@ -35,12 +35,12 @@ Use this checklist for the `2026-05-27 10:50` Project II report slot.
 
 Use this wording:
 
-> Project I was completed by Jason for the group. For Project II, Jason's local
-> scaffold and recovery attempt did not reach the success gate. The successful
-> Project II package being presented here was completed by Chen Jingzhong. The
-> two work lines are preserved separately in the repo.
+> 我們是兩人分組分工完成這份 Project II。報告會以本組最後 package 的系統功能、
+> 系統特色與成功證據為主，細節包含 `/exploit`、`/triage`、target analysis、
+> adaptive probing，以及 `/shared/success.txt`。
 
-Do not spend time on this unless asked.
+Use this only when the instructor asks about division of work; keep the main
+report focused on system function and system features.
 
 ## If Asked Whether It Was A Live Run
 
@@ -57,4 +57,3 @@ Use this wording:
 - [ ] Save final slide deck or exported PDF under this `report/` folder.
 - [ ] If a live run was performed, save the terminal transcript.
 - [ ] Confirm E3 report upload responsibility before `2026-06-07`.
-
