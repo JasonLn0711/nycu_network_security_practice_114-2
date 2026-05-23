@@ -12,7 +12,7 @@
 
 - [ ] Wrapper is executable.
 - [ ] Wrapper calls `python3 -m src.exploit_runner`.
-- [ ] It checks `config.data`.
+- [ ] It creates `config.data` when the grader has removed the previous copy.
 - [ ] It checks `blogic.copy` or supplied-lab `blogic`.
 - [ ] It writes safe placeholder config by default.
 - [ ] If Phase II probe mode is enabled, it is labeled as a lab-only candidate
@@ -57,6 +57,8 @@
       for the TA message or LMS upload wording.
 - [ ] `docs/PROJECT_II_NEXT_STEP_RUNBOOK_2026-05-14.md` has been used to choose
       the next route.
+- [ ] `docs/PHASE2_EXPERIMENT_LOG.md` indexes every Phase II experiment,
+      including failures and positive primitives without full success.
 - [ ] Negative Phase II evidence is linked rather than hidden.
 
 ## Safety Readiness

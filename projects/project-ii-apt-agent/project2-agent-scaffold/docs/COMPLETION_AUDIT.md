@@ -10,6 +10,10 @@ The submission is **not yet full-credit complete** because Phase II success has
 not been observed in the real IC grading loop. The missing item is the final
 course-lab-specific candidate generation that makes the IC execute `/backdoor`.
 
+All Phase II recovery experiments, including failures and positive primitives
+that do not create `/shared/success.txt`, are indexed in
+`docs/PHASE2_EXPERIMENT_LOG.md`.
+
 Everything around the grading protocol is now implemented or scaffolded:
 
 - `/exploit` wrapper exists and is executable.
@@ -195,6 +199,157 @@ Verified in that pass:
 This closes the simple "re-enter user-input setup" boundary as a direct success
 route. The completion verdict is unchanged: protocol-complete partial, not
 full-credit complete.
+
+## 2026-05-15 Multiline Staging Follow-Up
+
+A further recovery pass tested the multi-line `parse_config()` behavior and is
+recorded in `docs/PHASE2_MULTILINE_STAGING_ATTEMPT_2026-05-15.md`.
+
+Verified in that pass:
+
+- earlier `user_input=` lines can stage controlled bytes beyond the final
+  line's terminating NUL in global `user_input`;
+- the final `user_input=` line can still be the stack-overflow trigger;
+- a longer staging line can reach heap-adjacent state, but allocator hardening
+  catches broad corruption;
+- local libc one-gadget candidates spawn `/bin/sh`, not `/backdoor`, and do not
+  satisfy the observed post-`log_message()` register/stack constraints.
+
+The useful new primitive is preserved as
+`PROJECT2_PHASE2_STRATEGY=multiline-staging`, but it does not yet provide the
+missing first-stage pivot or first-argument setup. The completion verdict is
+unchanged: protocol-complete partial, not full-credit complete.
+
+## 2026-05-15 Register-Reuse Follow-Up
+
+A bounded register-reuse pass tested whether `rax` after `log_message()` could
+be reused as a controlled command pointer by returning directly into the
+`maintenance_task()` tail sequence. The result is recorded in
+`docs/PHASE2_REGISTER_REUSE_ATTEMPT_2026-05-15.md`.
+
+Verified in that pass:
+
+- the selected EC candidate was written and IC consumed `/shared/exploit_done`;
+- no `/shared/success.txt` appeared;
+- a coredump was produced at `maintenance_task+74` after the selected
+  `system()` path returned;
+- `system()` returned `0x7f00`, and the later crash was the expected corrupted
+  saved-RBP epilogue crash;
+- the direct `rax`-reuse route is therefore closed as a full-credit mechanism.
+
+This does not change the completion verdict: protocol-complete partial, not
+full-credit complete.
+
+## 2026-05-15 Backward-Pivot Feasibility Follow-Up
+
+A bounded first-stage pivot feasibility block tested whether the fresh Phase II
+main binary or pinned libc contains a simple gadget that can move `rsp`
+backwards from the post-return position into controlled pre-RIP stack bytes. The
+result is recorded in
+`docs/PHASE2_BACKWARD_PIVOT_FEASIBILITY_2026-05-15.md`.
+
+Verified in that pass:
+
+- a fresh disposable IC was started from the supplied `lab.zip`;
+- the exact pinned libc was copied from the live IC;
+- the checked pivot family was limited to `sub rsp, imm; ret`,
+  negative `add rsp, imm; ret`, `lea rsp, [rsp-negative-imm]; ret`,
+  `xchg rsp, reg; ret`, and `mov rsp, reg; ret`;
+- no usable gadget in that family was found in the fresh binary set;
+- no live EC candidate was run because the hypothesis produced no concrete
+  first-stage pivot address.
+
+This closes the simple backward-stack-pivot route. The completion verdict is
+unchanged: protocol-complete partial, not full-credit complete.
+
+## 2026-05-15 Current-RDI Argument Follow-Up
+
+A bounded first-argument setup pass tested whether the current `rdi` register at
+`log_message()` return time can be reused by returning directly to
+`system@plt`. The result is recorded in
+`docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md`.
+
+Verified in that pass:
+
+- a fresh local Phase II IC was started from the supplied `lab.zip`;
+- the candidate did not use appended ROP, saved RBP, or direct `rax` reuse;
+- IC consumed `/shared/exploit_done`;
+- no `/shared/success.txt` appeared;
+- the coredump stopped inside libc `do_system()` with the command pointer set
+  to the empty `_IO_stdfile_1_lock` buffer;
+- the controlled `/backdoor` text remained in `user_input`, proving it did not
+  reach the first argument.
+
+This closes the direct current-`rdi` first-argument route. The completion
+verdict is unchanged: protocol-complete partial, not full-credit complete.
+
+## 2026-05-15 Post-Stream Argument / BSS Boundary Follow-Up
+
+A bounded follow-up tested the next stricter route: not current-`rdi`, not
+direct `rax`, not preserved saved RBP, and not appended ROP. The result is
+recorded in
+`docs/PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md`.
+
+Verified in that pass:
+
+- a marker crash at `log_message()` return preserved controlled data in
+  `user_input` at `0x404340`;
+- a stack/local slot at `[rsp-0x70]` still held `0x404340`, and a caller qword
+  at `[rsp+0x08]` pointed into the controlled stack buffer;
+- no fresh-binary or pinned-libc single-stage sequence was found that consumes
+  either pointer into `rdi` and immediately calls `system()`/`execve()`;
+- multi-line staging safely fills the data-page tail through first-line length
+  `L=3264`;
+- first-line lengths `L>=3300` cross into allocator/tcache state and crash
+  before a useful final return point.
+
+This closes the tested post-stream first-argument transfer family and preserves
+only a bounded non-stack staging primitive. The completion verdict is unchanged:
+protocol-complete partial, not full-credit complete.
+
+## 2026-05-15 BSS-Indirect Dispatch Feasibility Follow-Up
+
+A deeper static slice tested whether the bounded `.bss` staging range can be
+used through a one-shot register-derived dispatch gadget. The result is
+recorded in
+`docs/PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md`.
+
+Verified in that pass:
+
+- no live IC candidate was run because no concrete first-stage address was
+  found;
+- `server_2` and the pinned libc were searched for single-shot
+  `lea/mov rdi, [rax+disp]; (jmp|call) exec-family` and
+  `mov rdi, r*; (jmp|call) exec-family` families;
+- no candidate moved the first argument into the staged `.bss` range and then
+  reached `system`/`execve`-family;
+- hardcoded binary gadgets that set `rdi = 0x4040d8` target `.data` before
+  `user_input`, which the forward `strcpy()` primitive cannot reach.
+
+This closes the tested BSS-indirect dispatch route. The completion verdict is
+unchanged: protocol-complete partial, not full-credit complete.
+
+## 2026-05-15 Stack-Local First-Argument Feasibility Follow-Up
+
+A final same-day static slice tested whether the preserved stack-local pointer
+from the live post-stream core can be used directly by a stack-relative
+first-argument setup gadget. The result is recorded in
+`docs/PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md`.
+
+Verified in that pass:
+
+- no live IC candidate was run because no concrete first-stage address survived
+  static/manual review;
+- `server_2` has zero stack-relative `mov/lea rdi, [rsp+disp]` setup patterns
+  in its executable text;
+- the apparent libc exec-family hits are not valid success candidates: two
+  require `rbp`-relative state, and one `posix_spawn` path uses `rdi` as
+  `pid_t *` while its executable path is fixed to `/bin/sh`;
+- the preserved `[rsp-0x70] = 0x404340` pointer therefore does not provide a
+  usable one-stage first-argument setup in this artifact set.
+
+This closes the tested stack-local first-argument route. The completion verdict
+is unchanged: protocol-complete partial, not full-credit complete.
 
 ## Remaining Work For A Full-Credit Submission
 

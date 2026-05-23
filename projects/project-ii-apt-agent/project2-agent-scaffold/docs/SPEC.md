@@ -73,7 +73,7 @@ flowchart LR
 | FR-001 | `/exploit` exists and is executable | `test -f exploit && test -x exploit` locally; Docker exposes `/exploit`. |
 | FR-002 | `/triage` exists and is executable | `test -f triage && test -x triage` locally; Docker exposes `/triage`. |
 | FR-003 | `/exploit` is noninteractive | `timeout 30s ./exploit </dev/null` exits in mock setup. |
-| FR-004 | `/exploit` checks required shared files | Missing `config.data` or `blogic.copy` returns a clear error. |
+| FR-004 | `/exploit` checks required shared files | Missing `blogic.copy` / `blogic` returns a clear error; missing `config.data` is acceptable because the grader may remove it before `/exploit` creates the next candidate. |
 | FR-005 | `/exploit` writes placeholder config | `config.data` changes to safe placeholder content. |
 | FR-006 | `/exploit` signals after write | `exploit_done` appears only after config write event. |
 | FR-007 | `/triage` is noninteractive | `timeout 30s ./triage </dev/null` exits in mock setup. |
@@ -189,6 +189,7 @@ Each line of `round_log.jsonl` is JSON:
 | TC-004 | triage no-coredump | pytest temp shared dir |
 | TC-005 | triage with fake coredump | pytest temp shared dir |
 | TC-006 | static imports/docs | `scripts/run_static_checks.sh` |
+| TC-007 | Phase II experiment ledger exists | `docs/PHASE2_EXPERIMENT_LOG.md` |
 
 ## Safety Boundary
 
@@ -206,3 +207,5 @@ instructions to execute `/backdoor`.
 - [ ] State and logs are generated.
 - [ ] Docs explain that scaffold is not a solution.
 - [ ] Candidate generation TODO is still clearly marked.
+- [ ] Every Phase II experiment, including failed attempts, is indexed in
+      `docs/PHASE2_EXPERIMENT_LOG.md`.

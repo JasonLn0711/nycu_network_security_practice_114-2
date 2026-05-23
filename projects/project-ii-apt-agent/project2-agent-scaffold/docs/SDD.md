@@ -42,7 +42,7 @@ flowchart LR
 | `logger` | Writes JSONL events. | Raises normal filesystem errors to caller. |
 | `safety_guard` | Validates lab/repo path boundaries. | Raises `SafetyError`. |
 | `state_manager` | Loads, saves, and updates `triage_state.json`. | Uses default state on missing/invalid JSON. |
-| `environment_checker` | Checks `/shared`, config, blogic copy, and coredump dir. | Raises `EnvironmentCheckError`. |
+| `environment_checker` | Checks `/shared`, observable blogic copy, and coredump dir. | Raises `EnvironmentCheckError`; `/exploit` may create `config.data` when the grader has removed it. |
 | `config_planner` | Produces safe placeholder config. | No exploit logic; TODO hook remains. |
 | `coredump_analyzer` | Turns high-level coredump/no-coredump evidence into the next safe placeholder strategy. | No payload details; state-only decisions. |
 | `exploit_runner` | Coordinates one `/exploit` round. | Logs and returns nonzero on error. |
@@ -123,7 +123,7 @@ Important state fields:
 
 | Error | Detection | Response |
 | --- | --- | --- |
-| Missing `config.data` | exploit environment check | log error and return nonzero |
+| Missing `config.data` | exploit environment check | create the next candidate atomically |
 | Missing `blogic.copy` | exploit environment check | log error and return nonzero |
 | Missing coredump dir | triage environment check | create directory if possible |
 | No coredump | scanner returns empty list | write no-evidence state |
@@ -156,6 +156,7 @@ evidence, state update, and mock grader.
 | `test_exploit_protocol.py` | placeholder config write, marker, state, log |
 | `test_triage_protocol.py` | no-coredump and fake-coredump state updates |
 | `run_static_checks.sh` | wrappers, docs, imports |
+| `PHASE2_EXPERIMENT_LOG.md` | durable record for every Phase II experiment |
 
 ## Implementation Roadmap For Students
 
@@ -165,7 +166,8 @@ evidence, state update, and mock grader.
 4. Replace only the `ConfigPlanner` TODO with instructor-approved course-lab
    logic.
 5. Re-run static checks and tests.
-6. Document assumptions and known limitations.
+6. Document every Phase II experiment, success or failure, in
+   `docs/PHASE2_EXPERIMENT_LOG.md`.
 7. Keep all behavior inside the Docker lab.
 
 ## Open Questions

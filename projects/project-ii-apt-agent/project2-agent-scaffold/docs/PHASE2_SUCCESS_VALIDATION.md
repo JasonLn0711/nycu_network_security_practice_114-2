@@ -4,6 +4,9 @@ Date: 2026-05-13
 Scope: supplied Project II Phase II IC (`server_2`) running from the official
 local Docker lab bundle.
 
+Experiment ledger IDs: `P2-EXP-000`, `P2-EXP-001` in
+`docs/PHASE2_EXPERIMENT_LOG.md`.
+
 ## Direct Result
 
 **Not full-credit complete yet.** The latest EC candidate still does **not** make
@@ -12,6 +15,10 @@ the official IC create `/shared/success.txt`.
 This file is intentionally explicit so a reader who did not see the live debug
 session can tell what was tried, what was observed, and why the submission must
 not claim Phase II success yet.
+
+The canonical index of all Phase II experiments is
+`docs/PHASE2_EXPERIMENT_LOG.md`. Each success, failure, static infeasibility
+check, and positive primitive should have a row there.
 
 ## Candidate Under Test
 
@@ -125,8 +132,6 @@ Additional evidence from that pass:
   by this direct path because saved RBP and saved RIP cannot both be encoded
   through the current C-string copy path.
 
-The latest status remains **not full-credit complete**.
-
 ## 2026-05-14 Staging-Boundary Addendum
 
 The follow-up staging probe is recorded in
@@ -140,8 +145,6 @@ Additional evidence from that pass:
 - the untouched qwords after saved RIP are fixed by the original call chain and
   cannot act as a controlled appended chain under the current C-string
   overwrite model.
-
-The latest status remains **not full-credit complete**.
 
 ## 2026-05-14 Heap / Global-State Addendum
 
@@ -192,4 +195,112 @@ Additional evidence from that block:
 - the checked user-input setup boundary is therefore a stable no-success path,
   not a full-credit route.
 
+The latest status remains **not full-credit complete**.
+
+## 2026-05-15 Register-Reuse Addendum
+
+The bounded register-reuse probe is recorded in
+`docs/PHASE2_REGISTER_REUSE_ATTEMPT_2026-05-15.md`.
+
+Additional evidence from that pass:
+
+- a fresh Phase II IC container was started from the supplied `lab.zip`;
+- ASLR was confirmed disabled inside the container;
+- the EC candidate used
+  `PROJECT2_PHASE2_STRATEGY=register-reuse-system-rax`;
+- IC consumed `/shared/exploit_done`;
+- no `/shared/success.txt` was created;
+- a coredump appeared at `maintenance_task+74` after the selected `system()`
+  tail path returned;
+- `system()` returned `0x7f00`, so direct `rax` reuse is not a full-credit
+  route.
+
+The latest status remains **not full-credit complete**.
+
+## 2026-05-15 Current-RDI Argument Addendum
+
+The bounded current-`rdi` first-argument probe is recorded in
+`docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md`.
+
+Additional evidence from that pass:
+
+- a fresh local Phase II IC container was started from the supplied `lab.zip`;
+- a marker crash confirmed `rdi = 0x7ffff7d00710`, the empty
+  `_IO_stdfile_1_lock` buffer, at `log_message()` return time;
+- the EC candidate used `PROJECT2_PHASE2_STRATEGY=current-rdi-system`;
+- IC consumed `/shared/exploit_done`;
+- no `/shared/success.txt` was created;
+- the coredump stopped inside libc `do_system()` with
+  `line = 0x7ffff7d00710 ""`, while controlled `/backdoor` text remained in
+  `user_input`.
+
+The direct current-`rdi` route is therefore closed as a full-credit mechanism.
+The latest status remains **not full-credit complete**.
+
+## 2026-05-15 Post-Stream Argument / BSS Boundary Addendum
+
+The next bounded recovery block is recorded in
+`docs/PHASE2_POST_STREAM_ARGUMENT_AND_BSS_BOUNDARY_2026-05-15.md`.
+
+Additional evidence from that block:
+
+- the probe did not reuse direct current-`rdi`, direct `rax`, preserved saved
+  RBP, or appended ROP;
+- a marker crash at `log_message()` return showed controlled data still
+  survived at `0x404340`, with a preserved local slot
+  `[rsp-0x70] = 0x404340` and a caller qword `[rsp+0x08]` pointing into the
+  controlled stack buffer;
+- the same crash showed `rax = 0x404100` and
+  `rdi = 0x7ffff7d00710`, so neither register was already the needed first
+  argument;
+- a fresh main-binary plus pinned-libc scan found no single-stage sequence that
+  moves those preserved pointers into `rdi` and immediately calls
+  `system()`/`execve()`;
+- multi-line staging is safe through the data-page tail at first-line length
+  `L=3264`, but `L>=3300` crosses into allocator/tcache state and crashes
+  before a useful final return point.
+
+The post-stream pointer-transfer route is closed in the tested single-stage
+family. The `.bss` staging boundary is a positive primitive only, not a
+full-credit mechanism.
+
+## 2026-05-15 BSS-Indirect Dispatch Feasibility Addendum
+
+The follow-up static dispatch check is recorded in
+`docs/PHASE2_BSS_INDIRECT_DISPATCH_FEASIBILITY_2026-05-15.md`.
+
+Additional evidence from that block:
+
+- no live IC candidate was run because the static search produced no concrete
+  first-stage address;
+- `server_2` and the pinned libc were searched for single-shot
+  `lea/mov rdi, [rax+disp]; (jmp|call) exec-family` and
+  `mov rdi, r*; (jmp|call) exec-family` families;
+- no candidate both landed in the staged `.bss` range and transferred to
+  `system`/`execve`-family;
+- the binary's hardcoded `mov edi, 0x4040d8; jmp rax` gadgets point before
+  `user_input`, outside the forward `strcpy()` staging surface.
+
+The BSS-indirect dispatch route is closed in the tested artifact set. The
+latest status remains **not full-credit complete**.
+
+## 2026-05-15 Stack-Local First-Argument Feasibility Addendum
+
+The follow-up stack-local first-argument check is recorded in
+`docs/PHASE2_STACK_LOCAL_FIRST_ARGUMENT_FEASIBILITY_2026-05-15.md`.
+
+Additional evidence from that block:
+
+- no live IC candidate was run because the static/manual review produced no
+  concrete first-stage address;
+- `server_2` contains no stack-relative `mov/lea rdi, [rsp+disp]` setup pattern
+  in its executable text;
+- the only apparent libc exec-family hits are invalid for this problem: two
+  `rbp`-relative `execve` paths require the saved-RBP route that is already
+  closed, and one `posix_spawn` path puts the stack address in `rdi` as
+  `pid_t *` while the executable path is fixed in `rsi` to `/bin/sh`;
+- no tested stack-local path consumes `[rsp-0x70] = 0x404340` or controlled
+  caller-stack bytes into a success-relevant first argument.
+
+The stack-local first-argument setup route is closed in the tested artifact set.
 The latest status remains **not full-credit complete**.

@@ -155,11 +155,16 @@ Before any new technical attempt:
 4. Read the existing negative evidence:
 
    ```text
+   docs/PHASE2_EXPERIMENT_LOG.md
    docs/PHASE2_SUCCESS_VALIDATION.md
    docs/PHASE2_COMPLETION_ATTEMPT_2026-05-14.md
    docs/PHASE2_ARGUMENT_CONTROL_ATTEMPT_2026-05-14.md
    docs/PHASE2_STAGING_BOUNDARY_ATTEMPT_2026-05-14.md
    docs/PHASE2_HEAP_GLOBAL_STATE_ATTEMPT_2026-05-14.md
+   docs/PHASE2_MULTILINE_STAGING_ATTEMPT_2026-05-15.md
+   docs/PHASE2_REGISTER_REUSE_ATTEMPT_2026-05-15.md
+   docs/PHASE2_BACKWARD_PIVOT_FEASIBILITY_2026-05-15.md
+   docs/PHASE2_CURRENT_RDI_ARGUMENT_ATTEMPT_2026-05-15.md
    ```
 
 5. Pick exactly one bounded investigation track:
@@ -177,7 +182,14 @@ Before any new technical attempt:
 
 7. Run one bounded validation block.
 
-8. Stop after one falsifiable result and record it in a dated attempt note.
+8. Stop after one falsifiable result and record it in both places:
+
+   - a dated attempt note when the evidence is non-trivial;
+   - `docs/PHASE2_EXPERIMENT_LOG.md` as the canonical ledger entry.
+
+The ledger entry is mandatory even for a failed static feasibility check, a
+no-coredump/no-success run, or a positive primitive that still does not produce
+`/shared/success.txt`.
 
 Required stop conditions:
 
@@ -205,6 +217,7 @@ instructor requests otherwise:
 | Package inspection output | Confirms generated state is excluded. |
 | TA answer | Determines source zip vs Docker image vs both. |
 | IC-side `/shared/success.txt`, if produced | Only valid full-credit success evidence. |
+| `docs/PHASE2_EXPERIMENT_LOG.md` | Canonical record of every Phase II experiment, success or failure. |
 
 ## Immediate Work Block
 

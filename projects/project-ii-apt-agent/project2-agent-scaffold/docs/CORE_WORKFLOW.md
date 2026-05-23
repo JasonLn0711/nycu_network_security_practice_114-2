@@ -32,7 +32,7 @@ Before course-lab-specific logic is added, the workflow should answer safe,
 testable questions:
 
 ```text
-Does config.data exist?
+Will /exploit create the next config.data candidate?
 Does blogic.copy exist?
 What candidate profile did this round write?
 Did the IC side produce coredump evidence after the round?
@@ -133,6 +133,8 @@ Every round should leave evidence:
 | Input profile | `last_exploit.input_profile` |
 | Coredump summary | `last_triage.summary` |
 | Next strategy | `next_action.strategy_id` |
+| Durable experiment ledger | `docs/PHASE2_EXPERIMENT_LOG.md` |
+| Deep attempt note, when needed | `docs/PHASE2_*_ATTEMPT_YYYY-MM-DD.md` |
 
 This lets a grader answer:
 
@@ -143,6 +145,12 @@ Did /triage actually read evidence?
 Did /exploit actually consume state?
 Is the run repeatable?
 ```
+
+For full-credit recovery work, runtime JSONL is not enough. Each experiment,
+including failed static feasibility checks and no-success probes, must also be
+recorded in `docs/PHASE2_EXPERIMENT_LOG.md` with a stable experiment ID,
+hypothesis, environment, procedure, observed result, verdict, and evidence
+files.
 
 ## 6. Where The Student Actually Works
 

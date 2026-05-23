@@ -3,6 +3,8 @@
 Scope: supplied Project II Phase II IC (`server_2`) in a fresh local Docker
 container, using the official `/blogic` and `/backdoor` files from `lab.zip`.
 
+Experiment ledger ID: `P2-EXP-008` in `docs/PHASE2_EXPERIMENT_LOG.md`.
+
 ## Direct Result
 
 Project II is still **not full-credit complete**.
