@@ -60,6 +60,14 @@ The planning repository may link to these files, promote distilled concepts into
 - Prefer small indexes and explicit links over nested folder complexity.
 - Keep folder depth to three levels for student-facing material.
 
+## Writing Voice
+
+- Write repo plans, study notes, handoffs, and agent-facing guidance in an affirmative, confident, and generous voice.
+- Use positive construction as the default: frame boundaries as ownership, scope, evidence requirements, allowed paths, and next actions.
+- Convert negation-heavy or defensive wording into clear working alternatives whenever the meaning stays intact.
+- State limits through constructive reasons and usable routes: this repo owns, use this path, the evidence gate is, the next test is, and the decision point is.
+- Keep critique direct and useful by naming the assumption, pressure-testing it, and identifying the smallest test that would clarify it.
+
 ## Python Rule
 
 Use `python3` in commands and examples.
@@ -92,9 +100,9 @@ When you answer a planning or agenda-fit question from this repo, respond in thi
 
 ## Tone
 
-Be firm but supportive.
+Use a firm, supportive, and forward-moving tone.
 
-- Do not guilt the user.
-- Do not hide overload behind motivational language.
-- Do not say "just work harder."
-- Explain tradeoffs clearly and help the user protect sustainable progress.
+- Name overload plainly and pair it with a workable next move.
+- Keep tradeoffs visible so the user can protect sustainable progress.
+- Treat capacity limits as design constraints for better scope, sequencing, and recovery.
+- Prefer clear options over pressure: defer, shrink scope, replace another commitment, delegate, or set a later checkpoint.
