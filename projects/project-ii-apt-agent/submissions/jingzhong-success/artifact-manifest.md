@@ -9,6 +9,7 @@ Raw archive:
 | `lab-jingzhong-success-2026-05-23.rar` | `1beecb6e522254ed05a21ad26e52627d80691167122a1da70c0ede1a05065228` |
 | `report/autonomous-apt-agent-report-jingzhong-success-2026-05-23.docx` | `e6f05a3211c762c05eddf91baf04cabf31719e8de955c34dc388054f67e06fa7` |
 | `report/autonomous-apt-agent-report-extracted-text.txt` | `0588c6b0b9b1e6107a8d55675141e752c7fd162d8f7bea40895fa495ee57856a` |
+| `report/autonomous-apt-agent-technical-report-jingzhong-reference-2026-05-26.md` | `2b89519f833257f61460624f0ef90e8af1365f5256e2f1214f611f87586c6225` |
 
 ## Extracted Lab Inventory
 

@@ -190,6 +190,7 @@ Before implementation, confirm:
 | `submissions/README.md` | Submission-folder routing rules |
 | `submissions/jingzhong-success/` | Jingzhong's successful Project II package, moved from Downloads and extracted for review |
 | `submissions/jingzhong-success/artifact-manifest.md` | Checksums, file inventory, evidence notes, and archive-time static check |
+| `submissions/jingzhong-success/report/autonomous-apt-agent-technical-report-jingzhong-reference-2026-05-26.md` | Jingzhong-provided Markdown technical report for Project II presentation preparation |
 | `../../HANDOFF_PHASE2.md` | Machine handoff for the next Phase II agent: objective, verified facts, important symbols, failed/explored paths, current hypothesis, exact environment, useful commands, and FACT/THEORY separation |
 | `SPEC.md` | Local audit-oriented requirements, deliverables, functional requirements, acceptance tests, and grading interface |
 | `SDD.md` | Local audit-oriented software design document for the EC workflow, state files, logging, safety guards, and grader design |

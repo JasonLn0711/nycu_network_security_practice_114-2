@@ -110,6 +110,7 @@ Canonical area:
 - `submissions/jingzhong-success/lab/`
 - `submissions/jingzhong-success/report/autonomous-apt-agent-report-jingzhong-success-2026-05-23.docx`
 - `submissions/jingzhong-success/report/autonomous-apt-agent-report-extracted-text.txt`
+- `submissions/jingzhong-success/report/autonomous-apt-agent-technical-report-jingzhong-reference-2026-05-26.md`
 
 Incoming files moved into this repo:
 
@@ -117,6 +118,7 @@ Incoming files moved into this repo:
 | --- | --- |
 | `/Users/iKev/Downloads/lab.rar` | `submissions/jingzhong-success/lab-jingzhong-success-2026-05-23.rar` |
 | `/Users/iKev/Downloads/Autonomous_APT_Agent_Report.docx` | `submissions/jingzhong-success/report/autonomous-apt-agent-report-jingzhong-success-2026-05-23.docx` |
+| `/home/jnln3799/Downloads/ReportZhoung.md` | `submissions/jingzhong-success/report/autonomous-apt-agent-technical-report-jingzhong-reference-2026-05-26.md` |
 
 Jingzhong package contents:
 
@@ -192,6 +194,13 @@ Short attribution sentence:
 ## Report Summary
 
 The report title is `Autonomous APT Agent 系統功能展示與特色說明報告`.
+
+Jingzhong's Markdown reference report,
+`submissions/jingzhong-success/report/autonomous-apt-agent-technical-report-jingzhong-reference-2026-05-26.md`,
+is presentation-preparation material for the same successful package. It gives
+a fuller Taiwan Traditional Chinese technical walkthrough of the exploit path,
+agent architecture, adaptive probing, testing results, limitations, and
+recommended report framing.
 
 Named authors in the report:
 

@@ -18,6 +18,7 @@ from Jason's earlier unsuccessful `project2-agent-scaffold/` work line.
 | `lab/shared/` | Saved run artifacts including `config.data`, `success.txt`, tracked log-text copies, state, and target analysis. |
 | `report/autonomous-apt-agent-report-jingzhong-success-2026-05-23.docx` | Original Word report. |
 | `report/autonomous-apt-agent-report-extracted-text.txt` | Searchable text extraction of the Word report. |
+| `report/autonomous-apt-agent-technical-report-jingzhong-reference-2026-05-26.md` | Jingzhong-provided Markdown technical report for Project II presentation preparation. |
 | `report/extracted-media/` | Four embedded report images extracted from the Word package. |
 | `artifact-manifest.md` | File inventory, checksums, and evidence notes. |
 
@@ -39,6 +40,13 @@ Fri May 22 16:50:15 UTC 2026
 
 The report also describes adaptive offset probing, where the agent advances
 through candidates and reaches offset `104` within the 60-round limit.
+
+Jingzhong's Markdown reference report explains the same successful package in a
+presentation-ready Taiwan Traditional Chinese form: assignment loop, target
+vulnerability, ret-to-text payload, agent modules, adaptive probing, test
+results, limitations, and suggested report framing. Use it as a teammate source
+note for slide and speaker preparation; keep the Word report and saved lab
+artifacts as the archived submission evidence.
 
 ## Review Boundary
 

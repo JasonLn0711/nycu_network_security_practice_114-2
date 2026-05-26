@@ -64,6 +64,14 @@ Internal audit references stay outside the classroom flow:
 - `../OWNERSHIP_AND_OUTCOME.md`
 - `../PROJECT_II_COMPARATIVE_ANALYSIS.md`
 
+Teammate-provided presentation source note:
+
+- `../submissions/jingzhong-success/report/autonomous-apt-agent-technical-report-jingzhong-reference-2026-05-26.md`
+
+Use this Markdown note for presentation preparation when a fuller technical
+explanation is needed. Keep the classroom packet concise and use the archived
+evidence files as the demonstration source.
+
 ## Presentation Stance
 
 Present Project II as a two-person team deliverable with clear system function,
