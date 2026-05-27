@@ -41,8 +41,15 @@ plan is:
 | File | Role |
 | --- | --- |
 | `10-minute-presentation-plan.md` | Minute-by-minute plan and slide timing. |
+| `presentation-full-10-minute-zh.md` | Complete Traditional Chinese 10-minute presentation deck with actual saved lab evidence, experimental data, and Mermaid diagrams. |
+| `presentation-full-10-minute-english.md` | Complete English 10-minute presentation deck with actual saved lab evidence, experimental data, and Mermaid diagrams. |
+| `presentation-part-1-lab-overview.md` | Markdown presentation for the first lab-overview section, including architecture and process Mermaid diagrams. |
+| `presentation-part-2-vulnerability-source.md` | Markdown presentation continuing the walkthrough with `server.cpp` data flow, buffer overflow source, and a Mermaid process diagram. |
+| `presentation-part-3-exploit-payload-stack.md` | Markdown presentation continuing the walkthrough with `EC/exploit`, payload layout, stack frames, offset, GDB, and a Mermaid process diagram. |
+| `presentation-part-4-address-elf-protections.md` | Markdown presentation continuing the walkthrough with little-endian address packing, ELF binary analysis, Linux protections, and a Mermaid process diagram. |
 | `slide-deck-outline.md` | Slide titles, visual suggestions, bullet content, and talk track. |
 | `speaker-script.md` | A full Traditional Chinese speaker script that fits the `10` minute format. |
+| `speaker-script-full-10-minute-zh.md` | Full Traditional Chinese word-for-word script aligned to `presentation-full-10-minute-zh.md`. |
 | `optional-demo-runbook.md` | Safe demo choices, commands/evidence to show, and fallback plan. |
 | `presentation-checklist.md` | Before-class, during-class, and after-class checklist. |
 | `evidence/` | Team-facing copies of the saved evidence files to open during class. |
