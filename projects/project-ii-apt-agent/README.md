@@ -151,6 +151,8 @@ Before implementation, confirm:
 | `docs/SDD.md` | Student-facing software design document for the EC workflow, components, state, logs, error handling, and safety |
 | `docs/STUDENT_CHECKLIST.md` | Pre-submission checklist for container, entry points, state/logs, report, and safety |
 | `docs/SAFETY_BOUNDARY.md` | Lab-only safety boundary, forbidden behavior, safe wording, and self-checks |
+| `docs/BEGINNER_GUIDE_AUTONOMOUS_APT_AGENT_LAB.md` | Beginner-facing Traditional Chinese guide that frames Project II as a bounded autonomous attack/defense automation system before exploit details |
+| `docs/LAB_ZIP_STRUCTURE_AND_EXPLOIT_PATH_NOTES.md` | Traditional Chinese lab bundle notes covering `lab.zip` structure, `server.cpp` overflow source, payload concept, and recommended reading order |
 | `project2-agent-scaffold/` | Runnable classroom-safe EC scaffold with `/exploit`, `/triage`, mock grader, tests, state/logging, and docs; does not implement a real exploit |
 | `project2-agent-scaffold/docs/CORE_WORKFLOW.md` | Step-by-step explanation of the safe round-based feedback loop: action, execution, evidence, triage, state update, next action |
 | `project2-agent-scaffold/docs/COMPLETION_AUDIT.md` | Honest completion audit: implemented protocol pieces, current Phase II probe status, and remaining full-credit success evidence gap |
