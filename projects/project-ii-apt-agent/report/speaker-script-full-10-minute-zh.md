@@ -8,55 +8,71 @@ Target length: about `10` minutes.
 
 ## 0:00-0:25 - Title
 
-大家好，我們今天報告的題目是 Autonomous APT Agent。
+大家好，我們今天報告的題目是 Autonomous APT Agent，副標題是 Adaptive Binary Exploitation Workflow with Failure-Aware Coordination。
+
+我們是 313264012 陳靖中，以及 513559004 林家聖。
 
 這份 Project II 的重點，是把 binary exploitation 從單次手動攻擊，整理成一個可以分析、可以產生 payload、可以觀察結果、可以更新狀態的 autonomous cyber operation workflow。
 
-所以今天我會用系統架構的角度說明這份 lab，並用 exploit 細節作為支撐證據。
+今天我會用系統架構的角度說明這份 lab，並用 exploit 細節與實驗數據作為支撐證據。
 
-## 0:25-1:05 - Slide 1: Vision
+## 0:25-1:00 - Slide 1: Vision
 
 現代 cyber operation workflow 已經逐漸走向自動化和協調化。
 
-一個完整的流程通常不只是手動找漏洞，而是包含 automated analysis、adaptive retry、orchestration-based operations，以及多階段的 exploitation workflow。
+一個完整流程通常包含 automated analysis、adaptive retry、orchestration-based operations，以及 multi-stage exploitation workflow。
 
 因此，我們這份 Project II 建立的是一個 Autonomous APT Agent。它的核心能力是透過 binary analysis 找出目標資訊，再根據分析結果產生 payload，執行後觀察結果，最後把結果寫回 state，作為下一輪策略的依據。
 
-這就是我們這份專案想展示的主軸：binary exploitation 可以被組織成一個可協調、可觀察、可重試的 workflow。
+這就是這份專案的主軸：binary exploitation 可以被組織成一個可協調、可觀察、可重試的 workflow。
 
-## 1:05-1:45 - Slide 2: Project Objective
+## 1:00-1:35 - Slide 2: Project Objective
 
 這張圖是整個 agent 的高層流程。
 
-第一步是 Analyze Binary，也就是分析 target binary。第二步是 Generate Payload，根據分析結果產生攻擊輸入。第三步是 Launch Exploit，把 payload 放進 lab 指定的 shared volume。接著 Observe Result，觀察是否成功、是否 crash、是否有 coredump。最後 Update State，讓下一輪 Adaptive Retry 可以用新的狀態繼續嘗試。
+第一步是 Analyze Binary，也就是分析 target binary。第二步是 Generate Payload，根據分析結果產生攻擊輸入。第三步是 Launch Exploit，把 payload 放進 lab 指定的 shared volume。
+
+接著 Observe Result，觀察是否成功、是否 crash、是否有 coredump。最後 Update State，讓下一輪 Adaptive Retry 可以用新的狀態繼續嘗試。
 
 在本 lab 中，具體目標是 EC 產生 `/shared/config.data`，IC 執行 `blogic` 讀取這份 config，成功時觸發 `/backdoor`，最後產生 `success.txt` 作為成功證據。
 
-## 1:45-2:25 - Slide 3: Real Lab Architecture
+## 1:35-2:10 - Slide 3: Real Lab Architecture
 
 這份 lab 是一個 dual-container cyber range。
 
-EC，也就是 External Container，是我們的 agent 端。裡面有 `/exploit`、`/triage`，以及 `analyze_target.py`。
+EC，也就是 External Container，是 agent 端。裡面有 `/exploit`、`/triage`，以及 `analyze_target.py`。
 
-IC，也就是 Internal Container，是 target 端。它會執行 vulnerable binary，也就是 `blogic`，而成功目標是 IC 裡的 `/backdoor`。
+IC，也就是 Internal Container，是 target 端。它會執行 vulnerable binary，也就是 `blogic`，成功目標是 IC 裡的 `/backdoor`。
 
-EC 和 IC 之間的協調通道是 `/shared`。EC 透過 `/shared` 寫入 payload、同步 marker、state 和 log；IC 則透過同一個 shared volume 讀取 `config.data`，執行 `blogic`，成功後寫出 `success.txt`。
+EC 和 IC 之間的協調通道是 `/shared`。EC 透過 `/shared` 寫入 payload、同步 marker、state 和 log；IC 透過同一個 shared volume 讀取 `config.data`，執行 `blogic`，成功後寫出 `success.txt`。
 
-所以這份專案的第一個亮點，是它把攻擊端、目標端、coordination channel 都清楚拆開。
+這份架構的亮點，是它把攻擊端、目標端、coordination channel 都清楚拆開。
 
-## 2:25-3:00 - Slide 4: Actual Lab Package
+## 2:10-2:45 - Slide 4: Actual Lab Package
 
 這是實際 lab package 的結構。
 
-`EC/` 下面有 `exploit`、`triage`、`analyze_target.py` 和 Dockerfile。這是 agent 端的主要實作。
+`EC/` 下面有 `exploit`、`triage`、`analyze_target.py` 和 Dockerfile，這是 agent 端的主要實作。
 
-`IC/` 下面有 `server.cpp`、`server_1`、`server_2`、`backdoor` 和 Dockerfile。這是 target 端的程式與 binary。
+`IC/` 下面有 `server.cpp`、`server_1`、`server_2`、`backdoor` 和 Dockerfile，這是 target 端的程式與 binary。
 
 `shared/` 是保存 payload、state、log 和 success evidence 的地方。`docker.sh` 負責啟動 container，`grader.sh` 負責跑 grading loop。
 
 在我們保存的 successful package 中，extracted lab package 共保留 26 個檔案，而且保存了 `success.txt`、`exploit-log.txt`、`state.json` 和 `target_info.json`，所以這份報告的數據都可以對應到實驗 artifacts。
 
-## 3:00-3:35 - Slide 5: Core Vulnerability
+## 2:45-3:20 - Slide 4.1: Lab Files Work Together
+
+這一張補充檔案之間的關係。
+
+`docker.sh` 的角色是啟動 IC cyber range，準備好 `blogic` 和 `/shared`。`grader.sh` 則控制整個 round loop：它會呼叫 `/exploit`，等待 IC 執行，檢查 success，然後在需要時呼叫 `/triage`。
+
+`EC/analyze_target.py` 讀取 `/shared/blogic`，產生 `target_info.json`。`EC/exploit` 使用 analyzer 結果和 `state.json`，寫入 `config.data` 與 `exploit_done`。
+
+IC 端的 `server.cpp`、`server_1`、`server_2` 提供 vulnerable logic，最後作為 `blogic` 被執行。`IC/backdoor` 是成功目標，被觸發後會寫出 `success.txt`。
+
+所以整體關係是：`docker.sh` 準備環境，`grader.sh` 控制流程，`exploit` 產生 payload，`blogic` 消費 payload，`triage` 把結果轉成下一輪 state。
+
+## 3:20-3:55 - Slide 5: Core Vulnerability
 
 接下來看核心漏洞。
 
@@ -68,7 +84,7 @@ EC 和 IC 之間的協調通道是 `/shared`。EC 透過 `/shared` 寫入 payloa
 
 這個長度邊界缺口，讓 payload 可以影響 return path，最後把控制流程導向 `execute_task()`。
 
-## 3:35-4:15 - Slide 6: Exploitation Workflow
+## 3:55-4:30 - Slide 6: Exploitation Workflow
 
 這張 sequence diagram 是實際 attack chain。
 
@@ -80,7 +96,7 @@ EC 和 IC 之間的協調通道是 `/shared`。EC 透過 `/shared` 寫入 payloa
 
 payload 概念可以簡化成：`/backdoor\x00 + padding + ret_gadget + execute_task`。
 
-## 4:15-4:55 - Slide 7: Actual Autonomous Components
+## 4:30-5:05 - Slide 7: Actual Autonomous Components
 
 EC 裡面可以看成三個 agent component。
 
@@ -92,17 +108,19 @@ EC 裡面可以看成三個 agent component。
 
 所以這個系統具備 perception、action、observation、state update 的 agent workflow 結構。
 
-## 4:55-5:30 - Slide 8: Stateful Coordination Design
+## 5:05-5:35 - Slide 8: Stateful Coordination Design
 
 這張投影片說明 `/shared` 的角色。
 
-`/shared` 不只是資料夾，它也是 agent memory 和 protocol layer。
+`/shared` 是 agent memory 和 protocol layer。
 
-`config.data` 是給 `blogic` 消費的 payload input。`exploit_done` 是 EC 告訴 IC：payload 已經準備好了。`target_info.json` 保存 binary analysis 結果。`state.json` 保存 retry state、selected offset、target 和 gadget。`exploit-log.txt` 是 `/exploit` 的執行紀錄。`success.txt` 則是最後的成功證據。
+`config.data` 是給 `blogic` 消費的 payload input。`exploit_done` 是 EC 告訴 IC：payload 已經準備好了。`target_info.json` 保存 binary analysis 結果。`state.json` 保存 retry state、selected offset、target 和 gadget。
+
+`exploit-log.txt` 是 `/exploit` 的執行紀錄。`success.txt` 則是最後的成功證據。
 
 在 final saved run 裡，strategy 是 `adaptive_static_analysis_driven_agent`，mode 是 `final_exploit`，next action 是 `generate_final_payload`。這表示系統狀態是可以被追蹤和重現的。
 
-## 5:30-6:10 - Slide 9: Experimental Binary Analysis
+## 5:35-6:15 - Slide 9: Experimental Binary Analysis
 
 接下來看實驗數據。
 
@@ -114,7 +132,7 @@ PIE 是 false，代表 code address 是固定的。saved final target 的 NX 是
 
 這些數據證明 analyzer 會從 binary 中抽出可用的 exploitation planning facts。
 
-## 6:10-6:45 - Slide 10: Payload Planning Result
+## 6:15-6:50 - Slide 10: Payload Planning Result
 
 這張是 final payload 的規劃結果。
 
@@ -126,7 +144,7 @@ payload 結構是：前面放 `/backdoor\x00`，接著 padding 到 offset 104，
 
 這讓 exploit 從概念變成可量測的工程輸出：address、offset、payload length 和 mode 都有保存證據。
 
-## 6:45-7:30 - Slide 11: Adaptive Retry Workflow
+## 6:50-7:30 - Slide 11: Adaptive Retry Workflow
 
 這張圖展示 autonomous 行為最清楚的部分：adaptive retry。
 
@@ -148,7 +166,7 @@ round 5 測試 offset 96，產生 crash 和一個 coredump。`/triage` 讀到這
 
 這代表 exploit generation 和 success artifact 在同一個 timestamp 對齊。這是我們可以上台展示的直接成功證據。
 
-## 8:05-8:45 - Slide 13: Experimental Results
+## 8:05-8:40 - Slide 13: Experimental Results
 
 把成果整理成 capability，可以看到這份專案完成了幾個層次。
 
@@ -166,7 +184,7 @@ round 5 測試 offset 96，產生 crash 和一個 coredump。`/triage` 讀到這
 
 這些合起來，就是 binary exploitation as an orchestrated autonomous workflow。
 
-## 8:45-9:20 - Slide 14: Why This Project Matters
+## 8:40-9:15 - Slide 14: Why This Project Matters
 
 這個專案重要的地方，在於它把 exploit detail 提升成 system impression。
 
@@ -176,7 +194,7 @@ round 5 測試 offset 96，產生 crash 和一個 coredump。`/triage` 讀到這
 
 因此，這份 Project II 展示的是一個在 Docker cyber range 內運作的 lightweight autonomous cyber operation workflow。
 
-## 9:20-9:45 - Slide 15: Future Expansion
+## 9:15-9:40 - Slide 15: Future Expansion
 
 未來這個系統可以往 AI-assisted cyber operations 擴展。
 
@@ -188,9 +206,9 @@ round 5 測試 offset 96，產生 crash 和一個 coredump。`/triage` 讀到這
 
 第四個方向是 richer triage，把 coredump 和 registers 轉成更結構化的 next-action evidence。
 
-這些方向會讓 course lab 變成 agentic security research 的入門橋樑。
+這些方向會讓 course lab 成為 agentic security research 的入門橋樑。
 
-## 9:45-10:00 - Final Takeaway
+## 9:40-10:00 - Final Takeaway
 
 最後總結。
 
