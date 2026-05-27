@@ -148,6 +148,37 @@ lab/
 
 ---
 
+# 4.1 Lab Files Work Together
+
+## File Relationship
+
+| File / Folder | Relationship In The Workflow |
+| --- | --- |
+| `docker.sh` | 啟動 IC cyber range，準備 `blogic` 與 `/shared` |
+| `grader.sh` | 控制 round loop：呼叫 `/exploit`、等待 IC、檢查 success、呼叫 `/triage` |
+| `EC/analyze_target.py` | 讀取 `/shared/blogic`，產生 `target_info.json` |
+| `EC/exploit` | 使用 analyzer 結果與 state，寫入 `config.data` 與 `exploit_done` |
+| `IC/server.cpp` / `server_1` / `server_2` | 提供 vulnerable logic，編譯後作為 `blogic` 被 IC 執行 |
+| `IC/backdoor` | 成功目標，被觸發後寫出 `success.txt` |
+| `shared/` | 保存 payload、state、logs、target analysis、success evidence |
+
+檔案關係可以整理成：
+
+```text
+docker.sh → IC/blogic ready
+grader.sh → EC/exploit → shared/config.data + exploit_done
+IC/blogic → shared/success.txt or coredump
+grader.sh → EC/triage → shared/state.json
+```
+
+<!--
+這張補足檔案之間的關係。重點是：docker.sh 建環境，grader.sh 控制 loop，
+analyze_target.py 產生 target facts，exploit 產生 payload，IC/blogic 消費
+payload，triage 把結果轉成下一輪 state。
+-->
+
+---
+
 # 5. Core Vulnerability
 
 ## Vulnerable Logic

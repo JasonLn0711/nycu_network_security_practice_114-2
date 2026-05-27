@@ -150,6 +150,38 @@ architecture.
 
 ---
 
+# 4.1 How The Lab Files Work Together
+
+## File Relationships
+
+| File / Folder | Relationship In The Workflow |
+| --- | --- |
+| `docker.sh` | Starts the IC cyber range and prepares `blogic` plus `/shared` |
+| `grader.sh` | Controls the round loop: run `/exploit`, wait for IC, check success, run `/triage` |
+| `EC/analyze_target.py` | Reads `/shared/blogic` and writes `target_info.json` |
+| `EC/exploit` | Uses analyzer output and state to write `config.data` and `exploit_done` |
+| `IC/server.cpp` / `server_1` / `server_2` | Provide the vulnerable logic that becomes the executable `blogic` |
+| `IC/backdoor` | Success target; writes `success.txt` when triggered |
+| `shared/` | Stores payload, state, logs, target analysis, and success evidence |
+
+The relationship is:
+
+```text
+docker.sh → IC/blogic ready
+grader.sh → EC/exploit → shared/config.data + exploit_done
+IC/blogic → shared/success.txt or coredump
+grader.sh → EC/triage → shared/state.json
+```
+
+<!--
+This slide explains how the package files cooperate. docker.sh prepares the
+range, grader.sh controls the loop, analyze_target.py creates target facts,
+exploit creates payload input, IC/blogic consumes it, and triage turns the
+result into next-round state.
+-->
+
+---
+
 # 5. Core Vulnerability
 
 ## Vulnerable Logic In `server.cpp`
