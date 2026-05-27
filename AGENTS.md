@@ -15,15 +15,17 @@ The repo should support:
 - security practice resources
 - small agenda-fit checks when coursework is competing with other commitments
 
-## Non-goals
+## Scope Boundaries
 
-Do not turn this repository into:
+This repository stays focused as a course archive and study workspace. The
+following belong as links, references, or sibling-project material rather than
+as primary repo surfaces:
 
-- a web app
-- a heavy dashboard
-- a complex database
-- a replacement for the main planning repository
-- a place where every brainstorm becomes a permanent template
+- web apps
+- heavy dashboards
+- complex databases
+- main planning-repository responsibilities
+- permanent templates for every brainstorm
 
 ## Repository Roles
 
@@ -42,14 +44,14 @@ Do not turn this repository into:
 
 For raw network-security class materials, this repository is the source of truth.
 
-The planning repository may link to these files, promote distilled concepts into durable knowledge, or track deadlines, but it should not become the primary archive for raw handouts.
+The planning repository may link to these files, promote distilled concepts into durable knowledge, or track deadlines. This course repository remains the primary archive for raw handouts.
 
 ## Material Routing Rules
 
 - When adding a new official handout, put the raw file in `handouts/raw/`, rename it to lowercase kebab-case, and update `handouts/README.md`.
 - Update the root `README.md` only when the repository routing map itself changes.
 - Keep original course titles visible in index tables even when filenames are normalized.
-- Do not create empty note files just because a handout exists. Create curated Markdown only when it contains useful study content.
+- Create curated Markdown when it contains useful study content.
 - Put short handout-aligned summaries in `handouts/`.
 - Put lecture notes, exam-review notes, and long-form deep dives under the most relevant `lectures/weekXX-*` folder.
 - Put assignment-specific plans, walkthrough notes, and evidence under `homeworks/`.
@@ -63,10 +65,12 @@ The planning repository may link to these files, promote distilled concepts into
 ## Writing Voice
 
 - Write repo plans, study notes, handoffs, and agent-facing guidance in an affirmative, confident, and generous voice.
+- Write presentation files, teaching notes, and project explanations with the same affirmative voice: lead with what the system owns, what the workflow achieves, and what the next reader can do.
 - Use positive construction as the default: frame boundaries as ownership, scope, evidence requirements, allowed paths, and next actions.
-- Convert negation-heavy or defensive wording into clear working alternatives whenever the meaning stays intact.
+- Convert negation-heavy or reactive wording into clear working alternatives whenever the meaning stays intact.
 - State limits through constructive reasons and usable routes: this repo owns, use this path, the evidence gate is, the next test is, and the decision point is.
 - Keep critique direct and useful by naming the assumption, pressure-testing it, and identifying the smallest test that would clarify it.
+- For reports and slides, use positive, generous framing: present scope as a working boundary, present limits as design choices, and present risks with concrete review gates and constructive next moves.
 
 ## Python Rule
 
@@ -93,7 +97,7 @@ When you answer a planning or agenda-fit question from this repo, respond in thi
 
 - If the next `7` or `14` days are overloaded, say so explicitly.
 - If the agenda is only barely possible, label it `tight` rather than pretending it is fine.
-- Do not recommend solving overload by stealing from `sleep`, `health`, `family`, or `recovery` first.
+- Protect `sleep`, `health`, `family`, and `recovery` as sustainable-progress domains when solving overload.
 - Prefer concrete moves such as `defer`, `shrink scope`, `replace another commitment`, `delegate`, or `set a later checkpoint`.
 - If the new request would create a third primary lane, ask the user to choose which current primary lane loses priority.
 - Whole-life balance is in scope: study, work, family, health, life maintenance, and dream projects all count.
