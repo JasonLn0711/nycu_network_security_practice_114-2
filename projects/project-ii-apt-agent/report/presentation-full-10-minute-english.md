@@ -8,8 +8,12 @@ paginate: true
 
 ## Adaptive Binary Exploitation Workflow With Failure-Aware Coordination
 
-NYCU Network Security Practice  
+NYCU Network Security Practice
 Project II Class Presentation
+
+Team Members:
+313264012 Chen Jingzhong
+513559004 Lin Jiasheng
 
 <!--
 Opening: this is the complete English 10-minute pitch. The core message is that

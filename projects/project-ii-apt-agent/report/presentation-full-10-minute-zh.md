@@ -8,8 +8,12 @@ paginate: true
 
 ## Adaptive Binary Exploitation Workflow with Failure-Aware Coordination
 
-NYCU Network Security Practice  
+NYCU Network Security Practice
 Project II 課堂報告
+
+組員：
+313264012 陳靖中
+513559004 林家聖
 
 <!--
 開場重點：10 分鐘 pitch 的任務，是建立觀眾腦中的系統印象。主軸放在
