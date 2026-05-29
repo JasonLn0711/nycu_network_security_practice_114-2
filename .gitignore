@@ -24,6 +24,9 @@ target/
 # Generated safe antivirus test fixture
 projects/project-i-virus-scanner/demo/demo-tree/**/eicar.com.txt
 
+# Nested homework repositories
+homeworks/hw4-pi-memory-JasonLn0711/
+
 # LaTeX build artifacts
 *.aux
 *.fdb_latexmk
