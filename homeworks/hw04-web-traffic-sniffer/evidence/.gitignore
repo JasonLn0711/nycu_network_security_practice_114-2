@@ -1,0 +1,7 @@
+raw-local/
+*.har
+*.log
+*.jsonl
+*.cookies
+*.sqlite
+*.sqlite3

@@ -1,0 +1,72 @@
+{
+  "generated_at_utc": "2026-05-30T08:31:39.745849+00:00",
+  "assignment": "HW4 Web Traffic Sniffer",
+  "student_id": "513559004",
+  "privacy_note": "Manifest records file hashes and sizes only. Raw local evidence remains ignored under evidence/raw-local/.",
+  "artifacts": [
+    {
+      "id": "official_spec",
+      "path": "raw/hw04-web-traffic-sniffer-spec.pdf",
+      "role": "official assignment PDF",
+      "exists": true,
+      "size_bytes": 269245,
+      "sha256": "8702adb95470227c9f4ab2b867a4442233c064ebaeebbd6b95f11f304d99a648"
+    },
+    {
+      "id": "starter_zip",
+      "path": "raw/hw04-web-traffic-sniffer-example.zip",
+      "role": "official starter ZIP",
+      "exists": true,
+      "size_bytes": 986,
+      "sha256": "9c1b31d9a89ef4db7c78a507763fa8a263e42b808c9b50791523a8195f3357b6"
+    },
+    {
+      "id": "extension_manifest",
+      "path": "solution/Extension/manifest.json",
+      "role": "submitted extension manifest",
+      "exists": true,
+      "size_bytes": 371,
+      "sha256": "2fcd18c81b148e05221bb1427fdbb2a7cab3da4deacf0a27cd088526e7042da9"
+    },
+    {
+      "id": "extension_service_worker",
+      "path": "solution/Extension/background.js",
+      "role": "submitted extension service worker",
+      "exists": true,
+      "size_bytes": 7068,
+      "sha256": "f644863f53a9e750735c7cea863e218682ef8a5c0f5e447410bc700812d3a97e"
+    },
+    {
+      "id": "sanitized_evidence_png",
+      "path": "evidence/screenshots/sanitized-console-evidence.png",
+      "role": "tracked sanitized evidence",
+      "exists": true,
+      "size_bytes": 153715,
+      "sha256": "2b66c2d8e5e9067e17c6ebeb745ea1277d1ee86cccbf21ea18aa5dae711b0c2d"
+    },
+    {
+      "id": "sanitized_evidence_md",
+      "path": "evidence/screenshots/sanitized-console-evidence.md",
+      "role": "tracked sanitized evidence summary",
+      "exists": true,
+      "size_bytes": 551,
+      "sha256": "b0fc67d76f566628e8c7b26ff0c81050463c46172d6d857b739af8284b22ec1e"
+    },
+    {
+      "id": "report_pdf",
+      "path": "report/513559004_report.pdf",
+      "role": "final report PDF",
+      "exists": true,
+      "size_bytes": 177325,
+      "sha256": "05de6ae94b701252fb464291f6d18954a270185a185dc468a538217ab642bd1a"
+    },
+    {
+      "id": "submission_zip",
+      "path": "submission/final/HW6_513559004.zip",
+      "role": "final generated upload ZIP",
+      "exists": true,
+      "size_bytes": 156241,
+      "sha256": "9721be14e49b014a954f0567c09754af04db95e298f0f692bfa3daab46c668c7"
+    }
+  ]
+}

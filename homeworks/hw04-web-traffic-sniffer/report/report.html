@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>HW4 Web Traffic Sniffer Report</title>
+  <style>
+    body { font-family: Arial, "Noto Sans TC", sans-serif; line-height: 1.5; color: #17202a; margin: 36px; }
+    h1 { font-size: 28px; margin-bottom: 4px; }
+    h2 { border-bottom: 1px solid #d0d7de; padding-bottom: 4px; margin-top: 28px; }
+    h3 { margin-top: 18px; }
+    code { background: #f1f5f9; padding: 1px 4px; border-radius: 4px; }
+    table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 13px; }
+    th, td { border: 1px solid #cbd5e1; padding: 7px; vertical-align: top; }
+    th { background: #e2e8f0; }
+    .meta { color: #475569; margin-bottom: 20px; }
+    .scope { background: #f8fafc; border-left: 4px solid #2563eb; padding: 10px 12px; }
+    figure { margin: 18px 0; page-break-inside: avoid; }
+    figcaption { font-size: 13px; color: #475569; margin-top: 6px; }
+    img { max-width: 100%; border: 1px solid #cbd5e1; }
+  </style>
+</head>
+<body>
+  <h1>HW4 Web Traffic Sniffer Report</h1>
+  <div class="meta">
+    Student ID: 513559004<br>
+    Course: Network Security Practices - Attack and Defense<br>
+    Assignment: HW4. Web Traffic Sniffer
+  </div>
+
+  <div class="scope">
+    Traffic evidence was captured in a clean browser profile created for this
+    homework. The profile was used only for the Cambridge Dictionary scenario
+    and the HW4 extension, keeping the experiment aligned with a controlled
+    privacy evidence-capture context. Raw local evidence is kept outside Git;
+    report screenshots preserve domains, field names, payload types, and
+    payload structure while redacting values that may identify a user, browser,
+    session, account, or location.
+  </div>
+
+  <h2>Q1. Code Analysis</h2>
+  <p>
+    The extension uses Manifest V3 with a background service worker declared in
+    <code>manifest.json</code>. The manifest grants <code>webRequest</code> and
+    broad <code>&lt;all_urls&gt;</code> host permissions so the assignment can
+    observe outgoing browser requests during the Cambridge Dictionary scenario.
+    The broad host permission is controlled by code-level filtering in
+    <code>background.js</code>, so the console output focuses on advertising
+    traffic rather than general browser noise.
+  </p>
+  <p>
+    The service worker registers <code>chrome.webRequest.onBeforeRequest</code>
+    with the <code>requestBody</code> option. For each request, the code parses
+    the URL with <code>new URL(details.url)</code>, rejects static resources such
+    as CSS, JavaScript, images, fonts, and maps, checks the hostname against the
+    advertising-network allowlist, and logs only requests with payload evidence
+    through a body or query parameters. Final evidence uses
+    <code>DEBUG_MODE = false</code>; debug mode is reserved for candidate-domain
+    discovery when the live ad stack changes.
+  </p>
+  <p>
+    The decoder handles multiple payload forms. It first accepts
+    <code>requestBody.formData</code>, then decodes raw byte chunks with
+    <code>TextDecoder("utf-8")</code>. It attempts JSON parsing, then
+    URL-encoded form parsing, and finally preserves a readable raw string when
+    the data is not structured. Query parameters are logged separately so
+    requests with empty bodies still provide readable evidence.
+  </p>
+
+  <h2>Q2. Evidence Of Results</h2>
+  <p>
+    Figure 1 shows a Criteo-family request, Figure 2 shows an Amazon ad-system
+    request, and Figure 3 shows another ad-tech family. These outputs were
+    captured from the extension service worker in normal mode while navigating
+    Cambridge Dictionary in the clean profile.
+  </p>
+  <figure>
+    <img src="../evidence/screenshots/sanitized-console-evidence.png" alt="Sanitized service worker console evidence">
+    <figcaption>
+      Sanitized service worker console evidence. Values are redacted while
+      domain, method, filter reason, payload type, field names, and data-type
+      shape remain visible.
+    </figcaption>
+  </figure>
+  <table>
+    <tr><th>Figure</th><th>Receiver</th><th>Payload evidence</th><th>Interpretation</th></tr>
+    <tr>
+      <td>1</td>
+      <td><code>gum.criteo.com</code></td>
+      <td>Query fields including <code>origin</code>, <code>topUrl</code>, <code>domain</code>, and <code>bundle</code></td>
+      <td>Criteo receives page-context and auction-related request data from the browser session.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><code>web-banner.ads.aps.amazon-adsystem.com</code></td>
+      <td>JSON request body decoded by the extension runtime</td>
+      <td>Amazon ad-system receives a structured ad request during the Cambridge Dictionary page visit.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><code>cm.g.doubleclick.net</code></td>
+      <td>Query field <code>url</code> with value redacted as a URL</td>
+      <td>Additional ad-tech traffic appears beyond the two examples in the PDF, supporting the allowlist-plus-discovery strategy.</td>
+    </tr>
+  </table>
+
+  <h2>Q3. Privacy Risk Assessment</h2>
+  <p>
+    The observed traffic shows that advertiser and ad-tech endpoints can receive
+    page context, request timing, hostnames, and structured payload fields while
+    a user browses a dictionary site. Even when the visible page is not a login
+    page, these fields can support interest profiling, cross-site correlation,
+    and inference about lookup topics or browsing behavior. If stable
+    identifiers, cookies, or session IDs were exposed together with these fields,
+    the receiver could connect the dictionary visit to a broader advertising
+    profile.
+  </p>
+  <p>
+    The screenshots redact values that may identify the user or browser. The
+    remaining field names and data-type shapes are sufficient to show the
+    privacy risk: third-party advertising infrastructure receives structured
+    signals about the page context and the browser's ad auction activity.
+  </p>
+
+  <h2>Q4. HTTPS Analysis</h2>
+  <p>
+    HTTPS protects traffic while it travels across the network. It prevents an
+    ordinary network observer from reading or modifying the encrypted request in
+    transit. A browser extension with the proper permission is a different
+    security boundary. It runs inside the browser's extension architecture and
+    can observe request metadata and request bodies through browser APIs before
+    the network attacker model is the relevant layer.
+  </p>
+  <p>
+    Therefore, this extension is not breaking HTTPS encryption on the wire.
+    HTTPS remains useful for transport confidentiality, while extension
+    permissions create a browser-internal observation path that must be governed
+    separately.
+  </p>
+
+  <h2>Q5. Content Security Policy</h2>
+  <p>
+    Content Security Policy controls what a web page may load or execute in the
+    page context. Browser extensions operate under a separate permission model
+    controlled by the browser. When the user grants an extension broad host or
+    webRequest permissions, extension APIs and content scripts can observe or
+    interact with browser/page state in ways that are not equivalent to ordinary
+    website JavaScript.
+  </p>
+  <p>
+    The correct framing is not that CSP is simply broken. The relevant boundary
+    is extension privilege governance: permissions, extension review, user
+    approval, enterprise policy, and least-privilege design.
+  </p>
+
+  <h2>Q6. Attack Vectors And Mitigation</h2>
+  <p>
+    A malicious extension could perform form-data capture. With broad host
+    permissions and request-observation APIs, the extension could collect
+    submitted form fields or request payloads before they leave the browser.
+    Similar abuse patterns include cookie theft, keylogging through content
+    scripts, and ad injection.
+  </p>
+  <p>
+    Mitigations should focus on least privilege and extension governance:
+    review requested permissions, avoid unnecessary broad host access, use
+    extension allowlists on managed systems, separate sensitive browsing into
+    dedicated profiles, remove unused extensions, and prefer reputable
+    publishers with transparent source or review history.
+  </p>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "HW4 Web Traffic Sniffer",
+  "description": "Controlled homework extension for observing advertising request payloads on the Cambridge Dictionary scenario.",
+  "version": "1.0",
+  "permissions": [
+    "webRequest"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
