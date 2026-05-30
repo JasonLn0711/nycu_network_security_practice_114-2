@@ -1,38 +1,33 @@
-# HW04 - Pi Memory Locator
+# HW04 - Pi Memory Transfer Note
 
-HW04 owns its implementation history in a separate Git repository. This course
-archive tracks the assignment route, local path, and operating rules, while the
-code, experiments, report work, and submission commits stay inside the
-GitHub Classroom repository.
+HW04 Pi Memory now belongs to the AIASE course repository. This network-security
+archive keeps a concise transfer note so future agents can route the material
+to the correct course workspace.
 
-## Canonical Repository
+## Canonical Location
 
-- Local path: `homeworks/hw4-pi-memory-JasonLn0711/`
-- Remote: `https://github.com/Netdb-NCKU/hw4-pi-memory-JasonLn0711.git`
-- Nested branch observed locally: `main`
+- Repository: `../nycu-114-2-taica-ncku-aiase/`
+- Homework entry: `TAICA_AIASE2026/homeworks/HW4.md`
+- Full package: `TAICA_AIASE2026/homeworks/HW4-pi-memory/`
+- Original GitHub Classroom remote:
+  `https://github.com/Netdb-NCKU/hw4-pi-memory-JasonLn0711.git`
 - Assignment deadline from the bundled spec: `2026-06-09 23:59`; course
   announcements remain the final deadline source.
 
-## Git Routing Rule
+## Transfer Scope
 
-- Commit and push HW04 implementation work from
-  `homeworks/hw4-pi-memory-JasonLn0711/`.
-- Keep this outer course repo as the locator and study archive layer.
-- The outer `.gitignore` intentionally ignores
-  `homeworks/hw4-pi-memory-JasonLn0711/` so the nested `.git` directory and its
-  working tree stay under the HW04 repository's own history.
-- If the course archive later needs a static submission copy, create an explicit
-  snapshot without `.git` after submission and document that snapshot as an
-  archive artifact.
+The AIASE repository now owns the ordinary-file archive and working copy for
+HW4 Pi Memory. The transferred package includes the assignment spec,
+implementation, tests, benchmark corpus, demo notes, validation documents,
+GitHub Classroom CI files, and experiment logs.
+
+Nested Git metadata, local virtual environments, pytest caches, and other
+machine-local runtime state stay outside the archive scope.
 
 ## Working Commands
 
 ```bash
-cd homeworks/hw4-pi-memory-JasonLn0711
-git status --short --branch
-.venv/bin/python -m pytest -q
-git push origin main
+cd ../nycu-114-2-taica-ncku-aiase/TAICA_AIASE2026/homeworks/HW4-pi-memory
+python3 -m pytest -q
+python3 benchmark/run_benchmark.py --k 5 --per-query
 ```
-
-Update this locator only when the repository route, deadline, or submission
-status changes.
